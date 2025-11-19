@@ -1,0 +1,88 @@
+spring:
+  application:
+    name: debate-admin
+
+  datasource:
+    url: jdbc:mysql://localhost:3306/debate_db?useUnicode=true&characterEncoding=utf8&useSSL=false&serverTimezone=Asia/Seoul&allowPublicKeyRetrieval=true
+    username: debate_web
+    password: Qwer12#$
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.MySQL8Dialect
+        use_sql_comments: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+    time-zone: Asia/Seoul
+
+server:
+  port: 9101
+  servlet:
+    encoding:
+      charset: UTF-8
+      enabled: true
+      force: true
+
+jwt:
+  secret: debate-admin-secret-key-for-jwt-token-generation-please-change-in-production
+  expiration: 86400000 # 24시간 (밀리초)
+
+logging:
+  level:
+    com.debate: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+  # 로그 파일 설정은 logback-spring.xml에서 관리
+  # 출력 경로 예시: ../logs/DebateAdminBackEnd/20250101/debate-admin-2025-01-01 09-0.log
+
+# SpringDoc OpenAPI (Swagger) 설정
+springdoc:
+  api-docs:
+    path: /api-docs              # API 문서 JSON 경로
+  swagger-ui:
+    path: /swagger-ui.html       # Swagger UI 경로
+    enabled: true                 # Swagger UI 활성화
+    tags-sorter: alpha           # 태그 알파벳 순 정렬
+    operations-sorter: alpha     # 작업 알파벳 순 정렬
+  default-consumes-media-type: application/json
+  default-produces-media-type: application/json
+
+# 애플리케이션 정보 설정 (Actuator info 엔드포인트에 표시됨)
+info:
+  app:
+    name: ${spring.application.name}  # 애플리케이션 이름
+    version: 1.0.0                   # 애플리케이션 버전
+    description: 토론 플랫폼 관리자 백엔드 API  # 애플리케이션 설명
+  java:
+    version: ${java.version}          # Java 버전
+  spring:
+    version: ${spring.version}         # Spring 버전
+
+# 파일 업로드 설정
+file:
+  upload-dir: ../../Files/editor/images  # 파일 저장 디렉토리 (프로젝트 루트 기준: Debate/Files/editor/images)
+  upload-url-prefix: /files/editor/images  # 파일 접근 URL prefix
+
+# Spring Boot Actuator 설정
+# 기본 설정: 프로덕션 환경을 고려한 안전한 설정
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,loggers  # health, info, loggers 노출 (loggers는 개발용)
+  endpoint:
+    health:
+      show-details: when-authorized  # 헬스 상세 정보는 인증된 사용자에게만 (프로덕션 기본값)
+  info:
+    env:
+      enabled: true  # 환경 정보 포함
+

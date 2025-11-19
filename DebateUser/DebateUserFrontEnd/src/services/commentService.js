@@ -1,0 +1,63 @@
+/**
+ * 댓글 서비스 (Comment Service)
+ * 
+ * 댓글 관련 API 호출을 담당하는 서비스입니다.
+ * 
+ * 주요 기능:
+ * - 토론별 댓글 목록 조회 (페이징)
+ * - 댓글 작성
+ * - 댓글 삭제
+ */
+
+import api from './api'
+
+export const commentService = {
+  /**
+   * 토론별 댓글 목록 조회
+   * 
+   * 특정 토론의 댓글 목록을 페이징하여 가져옵니다.
+   * 
+   * @param {number} debateId - 토론 ID
+   * @param {number} page - 페이지 번호 (0부터 시작)
+   * @param {number} size - 페이지당 항목 수
+   * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
+   * @returns {Object} response.data - Page<CommentResponse> (페이징된 댓글 목록)
+   */
+  async getCommentsByDebate(debateId, page = 0, size = 20) {
+    const response = await api.get(`/comments/debate/${debateId}`, {
+      params: { page, size },
+    })
+    return response.data
+  },
+
+  /**
+   * 댓글 작성
+   * 
+   * 새로운 댓글을 작성합니다. 인증이 필요합니다.
+   * 
+   * @param {Object} commentData - 댓글 작성 데이터
+   * @param {number} commentData.debateId - 토론 ID
+   * @param {string} commentData.content - 댓글 내용
+   * @param {number} [commentData.parentId] - 부모 댓글 ID (대댓글인 경우)
+   * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
+   * @returns {Object} response.data - CommentResponse (작성된 댓글 정보)
+   */
+  async createComment(commentData) {
+    const response = await api.post('/comments', commentData)
+    return response.data
+  },
+
+  /**
+   * 댓글 삭제
+   * 
+   * 댓글을 삭제합니다. 작성자만 삭제 가능합니다.
+   * 
+   * @param {number} id - 삭제할 댓글 ID
+   * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
+   */
+  async deleteComment(id) {
+    const response = await api.delete(`/comments/${id}`)
+    return response.data
+  },
+}
+

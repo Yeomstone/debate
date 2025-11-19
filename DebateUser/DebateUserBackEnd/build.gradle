@@ -1,0 +1,87 @@
+// Gradle 빌드 스크립트
+// 토론 플랫폼 사용자 백엔드 프로젝트
+
+// 사용할 플러그인 정의
+plugins {
+    id 'java'                                              // Java 플러그인
+    id 'org.springframework.boot' version '3.2.0'          // Spring Boot 플러그인 (버전 3.2.0)
+    id 'io.spring.dependency-management' version '1.1.4'  // Spring 의존성 관리 플러그인
+}
+
+// 프로젝트 정보
+group = 'com.debate'        // 그룹 ID
+version = '1.0.0'         // 프로젝트 버전
+sourceCompatibility = '17' // Java 소스 호환성 버전 (Java 17)
+
+// 설정 구성
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor  // 컴파일 타임에만 필요한 의존성 (Lombok 등)
+    }
+}
+
+// 의존성 저장소 설정
+repositories {
+    mavenCentral()  // Maven 중앙 저장소 사용
+}
+
+// 프로젝트 전역 변수 정의
+ext {
+    jwtVersion = '0.12.3'  // JWT 라이브러리 버전
+}
+
+// 프로젝트 의존성 정의
+dependencies {
+    // Spring Boot Web - RESTful API 개발을 위한 웹 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    
+    // Spring Boot Data JPA - 데이터베이스 ORM을 위한 JPA 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    
+    // Spring Boot Security - 인증 및 권한 관리를 위한 보안 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-security'
+    
+    // Spring Boot Validation - 요청 데이터 검증을 위한 스타터
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+    
+    // SpringDoc OpenAPI (Swagger UI) - API 문서화 도구
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
+    
+    // MySQL Driver - MySQL 데이터베이스 연결 드라이버 (런타임에만 필요)
+    runtimeOnly 'com.mysql:mysql-connector-j'
+    
+    // JWT (JSON Web Token) 라이브러리
+    implementation "io.jsonwebtoken:jjwt-api:${jwtVersion}"        // JWT API
+    runtimeOnly "io.jsonwebtoken:jjwt-impl:${jwtVersion}"         // JWT 구현체 (런타임)
+    runtimeOnly "io.jsonwebtoken:jjwt-jackson:${jwtVersion}"      // JWT Jackson 직렬화 (런타임)
+    
+    // Lombok - 보일러플레이트 코드 자동 생성 (컴파일 타임에만 필요)
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'  // 어노테이션 처리기
+    
+    // Spring Boot DevTools - 개발 시 자동 재시작 및 라이브 리로드 (개발 환경에서만 사용)
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    
+    // 테스트 관련 의존성
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'  // Spring Boot 테스트 스타터
+    testImplementation 'org.springframework.security:spring-security-test'  // Spring Security 테스트
+
+    // Spring Boot Actuator - 애플리케이션 모니터링 및 관리 엔드포인트 제공
+    implementation 'org.springframework.boot:spring-boot-starter-actuator'
+}
+
+// 테스트 태스크 설정
+tasks.named('test') {
+    useJUnitPlatform()  // JUnit 5 플랫폼 사용
+}
+
+// Spring Boot JAR 파일 생성 설정
+tasks.named('bootJar') {
+    enabled = true  // 실행 가능한 JAR 파일 생성 활성화
+}
+
+// 일반 JAR 파일 생성 비활성화 (bootJar만 사용)
+tasks.named('jar') {
+    enabled = false
+}
+

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <!-- 프로퍼티 정의 -->
+    <property name="LOG_PATH" value="../logs/DebateUserBackEnd"/>
+    <property name="LOG_FILE_NAME" value="debate-user"/>
+    
+    <!-- 콘솔 출력 패턴 -->
+    <property name="CONSOLE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+    
+    <!-- 파일 출력 패턴 -->
+    <property name="FILE_LOG_PATTERN" value="%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"/>
+
+    <!-- 콘솔 Appender -->
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${CONSOLE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+    </appender>
+
+    <!-- 파일 Appender - 날짜별 폴더, 시간별 파일 -->
+    <appender name="FILE" class="ch.qos.logback.core.rolling.RollingFileAppender">
+        <!-- 파일 경로: ../logs/DebateUserBackEnd/YYYYMMDD/debate-user-YYYY-MM-DD HH-0.log -->
+        <file>${LOG_PATH}/${LOG_FILE_NAME}.log</file>
+        
+        <encoder>
+            <pattern>${FILE_LOG_PATTERN}</pattern>
+            <charset>UTF-8</charset>
+        </encoder>
+        
+        <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
+            <!-- 파일명 패턴: 날짜 폴더/파일명-날짜 시간-인덱스.log -->
+            <fileNamePattern>${LOG_PATH}/%d{yyyyMMdd}/${LOG_FILE_NAME}-%d{yyyy-MM-dd HH}-%i.log</fileNamePattern>
+            
+            <!-- 파일 최대 크기 -->
+            <maxFileSize>10MB</maxFileSize>
+            
+            <!-- 보관 기간 (일) -->
+            <maxHistory>30</maxHistory>
+            
+            <!-- 전체 로그 파일 최대 크기 -->
+            <totalSizeCap>1GB</totalSizeCap>
+            
+            <!-- 시간 기반 롤링 (매 시간) -->
+            <timeBasedFileNamingAndTriggeringPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedFNATP">
+                <maxFileSize>10MB</maxFileSize>
+            </timeBasedFileNamingAndTriggeringPolicy>
+        </rollingPolicy>
+    </appender>
+
+    <!-- 루트 로거 설정 -->
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+        <appender-ref ref="FILE"/>
+    </root>
+
+    <!-- 애플리케이션 로거 설정 -->
+    <logger name="com.debate" level="DEBUG"/>
+    <logger name="org.springframework.security" level="DEBUG"/>
+    <logger name="org.hibernate.SQL" level="DEBUG"/>
+    <logger name="org.hibernate.type.descriptor.sql.BasicBinder" level="TRACE"/>
+
+    <!-- Spring 프로파일별 설정 -->
+    <springProfile name="dev">
+        <root level="DEBUG">
+            <appender-ref ref="CONSOLE"/>
+            <appender-ref ref="FILE"/>
+        </root>
+    </springProfile>
+
+    <springProfile name="prod">
+        <root level="INFO">
+            <appender-ref ref="FILE"/>
+        </root>
+        <logger name="com.debate" level="INFO"/>
+    </springProfile>
+</configuration>
