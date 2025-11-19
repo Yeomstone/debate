@@ -1,583 +1,484 @@
-# Argu vs Debate 프로젝트 상세 비교 분석 보고서
-
-**작성일**: 2025년 1월  
-**비교 대상**: `D:\vs\Argu` vs `D:\vs\Debate`
-
----
+# Argu vs Debate 프로젝트 상세 비교 분석
 
 ## 📋 목차
-
-1. [프로젝트 개요 비교](#프로젝트-개요-비교)
-2. [프로젝트 구조 비교](#프로젝트-구조-비교)
+1. [프로젝트 개요](#프로젝트-개요)
+2. [디렉토리 구조 비교](#디렉토리-구조-비교)
 3. [백엔드 비교](#백엔드-비교)
 4. [프론트엔드 비교](#프론트엔드-비교)
-5. [설정 파일 비교](#설정-파일-비교)
-6. [파일 존재 여부 비교](#파일-존재-여부-비교)
-7. [텍스트 변경 상태 확인](#텍스트-변경-상태-확인)
-8. [누락된 파일 및 디렉토리](#누락된-파일-및-디렉토리)
-9. [데이터베이스 설정 비교](#데이터베이스-설정-비교)
-10. [종합 평가](#종합-평가)
+5. [목업(Mockup) 비교](#목업mockup-비교)
+6. [주요 변경 사항](#주요-변경-사항)
+7. [기술 스택 비교](#기술-스택-비교)
+8. [파일명 및 네이밍 변경](#파일명-및-네이밍-변경)
 
 ---
 
-## 프로젝트 개요 비교
+## 프로젝트 개요
 
 ### Argu 프로젝트
-- **프로젝트명**: Argu (논쟁 플랫폼)
-- **목적**: 사용자들이 다양한 주제에 대해 논쟁(토론)을 생성하고, 찬성/반대 입장을 선택하며, 댓글과 실시간 채팅을 통해 의견을 교환할 수 있는 플랫폼
-- **개발 상태**: ✅ 완성도 높음 (백엔드 90%, 프론트엔드 80%)
-- **문서화**: ✅ 상세 (README.md, PROJECT_ANALYSIS.md, README-Admin.md, README-Database.md)
+- **프로젝트명**: 논쟁(Argu) 플랫폼
+- **목적**: 사용자들이 논쟁 주제를 작성하고 토론할 수 있는 플랫폼
+- **위치**: `D:\vs\Argu`
 
 ### Debate 프로젝트
-- **프로젝트명**: Debate (토론 플랫폼)
-- **목적**: 사용자들이 다양한 주제에 대해 토론을 생성하고, 찬성/반대 입장을 선택하며, 댓글을 통해 의견을 교환할 수 있는 플랫폼
-- **개발 상태**: ✅ 완성도 높음 (백엔드 90%, 프론트엔드 80%)
-- **문서화**: ✅ 상세 (README.md, PROJECT_ANALYSIS.md, README-Admin.md, README-Database.md)
+- **프로젝트명**: 토론(Debate) 플랫폼
+- **목적**: 사용자들이 토론 주제를 작성하고 토론할 수 있는 플랫폼
+- **위치**: `D:\vs\Debate`
+
+### 핵심 차이점
+- **용어 변경**: "논쟁(Argu)" → "토론(Debate)"
+- **네이밍 컨벤션**: 모든 `argu` 관련 네이밍이 `debate`로 변경됨
+- **기능적 차이**: 없음 (동일한 기능 제공)
 
 ---
 
-## 프로젝트 구조 비교
+## 디렉토리 구조 비교
 
-### 전체 구조 비교
+### 공통 구조
+두 프로젝트 모두 동일한 구조를 가지고 있습니다:
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| **사용자 백엔드** | ✅ ArguUserBackEnd | ✅ DebateUserBackEnd | ✅ 완전 복사 |
-| **사용자 프론트엔드** | ✅ ArguUserFrontEnd | ✅ DebateUserFrontEnd | ✅ 완전 복사 |
-| **관리자 백엔드** | ✅ ArguAdminBackEnd | ✅ DebateAdminBackEnd | ✅ 완전 복사 |
-| **관리자 프론트엔드** | ✅ ArguAdminFrontEnd | ✅ DebateAdminFrontEnd | ✅ 완전 복사 |
-| **루트 문서** | ✅ README.md, README-Admin.md 등 | ✅ README.md, README-Admin.md 등 | ✅ 완전 복사 |
-| **Files 디렉토리** | ✅ Files/editor/images | ❌ 없음 | ⚠️ 누락 |
-| **mockup 디렉토리** | ✅ mockup/ | ❌ 없음 | ⚠️ 누락 |
-| **SQL 파일** | ✅ mysql_setup.sql, insert_categories.sql | ✅ mysql_setup.sql, insert_categories.sql | ✅ 완전 복사 |
-
-### 디렉토리 구조 상세
-
-#### Argu 프로젝트 구조
 ```
-Argu/
-├── ArguUser/
-│   ├── ArguUserBackEnd/         ✅ 완전 구현
-│   │   ├── src/main/java/com/argu/
-│   │   ├── build.gradle
-│   │   ├── mysql_setup.sql
-│   │   ├── insert_categories.sql
-│   │   ├── add_table_comments.sql
-│   │   ├── remove_username_column.sql
-│   │   ├── README-CURSOR.md
-│   │   ├── README-GRADLE.md
-│   │   └── settings.gradle
-│   └── ArguUserFrontEnd/        ✅ 완전 구현
-│       ├── src/
-│       ├── package.json
-│       ├── vite.config.js
-│       └── yarn-setup.bat, yarn-setup.ps1
-├── ArguAdmin/
-│   ├── ArguAdminBackEnd/        ✅ 완전 구현
-│   │   ├── src/main/java/com/argu/
-│   │   ├── build.gradle
-│   │   └── gradle/wrapper/
-│   └── ArguAdminFrontEnd/       ✅ 완전 구현
-│       ├── src/
-│       ├── package.json
-│       ├── vite.config.js
-│       └── public/images/ARGU.png
-├── Files/                       ✅ 있음
-│   └── editor/images/
-├── mockup/                      ✅ 있음
-│   ├── admin/
-│   └── user/
-├── README.md                    ✅ 있음
-├── README-Admin.md              ✅ 있음
-├── README-Database.md           ✅ 있음
-├── PROJECT_ANALYSIS.md          ✅ 있음
-└── insert_categories.sql        ✅ 있음
+프로젝트 루트/
+├── [프로젝트명]Admin/
+│   ├── [프로젝트명]AdminBackEnd/    # 관리자 백엔드 (Spring Boot)
+│   └── [프로젝트명]AdminFrontEnd/   # 관리자 프론트엔드 (React)
+├── [프로젝트명]User/
+│   ├── [프로젝트명]UserBackEnd/     # 사용자 백엔드 (Spring Boot)
+│   └── [프로젝트명]UserFrontEnd/    # 사용자 프론트엔드 (React)
+├── Files/                            # 업로드된 파일 저장소
+├── mockup/                           # HTML 목업
+└── README.md                         # 프로젝트 문서
 ```
 
-#### Debate 프로젝트 구조
-```
-Debate/
-├── DebateUser/
-│   ├── DebateUserBackEnd/       ✅ 완전 구현
-│   │   ├── src/main/java/com/debate/
-│   │   ├── build.gradle
-│   │   └── mysql_setup.sql
-│   └── DebateUserFrontEnd/      ✅ 완전 구현
-│       ├── src/
-│       ├── package.json
-│       ├── vite.config.js
-│       └── README.md
-├── DebateAdmin/
-│   ├── DebateAdminBackEnd/      ✅ 완전 구현
-│   │   ├── src/main/java/com/debate/
-│   │   └── build.gradle
-│   └── DebateAdminFrontEnd/      ✅ 완전 구현
-│       ├── src/
-│       ├── package.json
-│       ├── vite.config.js
-│       ├── README.md
-│       └── public/images/DEBATE.png, ARGU.png
-├── Files/                       ❌ 없음
-├── mockup/                      ❌ 없음
-├── README.md                    ✅ 있음
-├── README-Admin.md              ✅ 있음
-├── README-Database.md           ✅ 있음
-├── PROJECT_ANALYSIS.md          ✅ 있음
-├── PROJECT_COMPARISON_ANALYSIS.md ✅ 있음
-├── COPY_ANALYSIS_REPORT.md      ✅ 있음
-└── insert_categories.sql        ✅ 있음
-```
+### 차이점
+
+| 항목 | Argu | Debate |
+|------|------|--------|
+| 루트 디렉토리 | `ArguAdmin`, `ArguUser` | `DebateAdmin`, `DebateUser` |
+| 목업 파일명 | `argu-*.html` | `debate-*.html` |
+| 이미지 파일 | `ARGU.png` | `DEBATE.png` (또는 `ARGU.png` 남아있음) |
 
 ---
 
 ## 백엔드 비교
 
-### 1. 사용자 백엔드 (UserBackEnd)
+### 1. 프로젝트 설정 (build.gradle)
 
-#### Java 파일 비교
+#### 공통점
+- Spring Boot 3.2.0
+- Java 17
+- 동일한 의존성 버전
+- 동일한 빌드 설정
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| **패키지명** | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| **메인 클래스** | `ArguUserApplication` | `DebateUserApplication` | ✅ 변경 완료 |
-| **Controller** | 10개 (ArguController 등) | 10개 (DebateController 등) | ✅ 완전 복사 |
-| **Service** | 9개 (ArguService 등) | 9개 (DebateService 등) | ✅ 완전 복사 |
-| **Repository** | 9개 (ArguRepository 등) | 9개 (DebateRepository 등) | ✅ 완전 복사 |
-| **Entity** | 9개 (Argu, ArguOpinion 등) | 9개 (Debate, DebateOpinion 등) | ✅ 완전 복사 |
-| **DTO** | 13개 (CreateArguRequest 등) | 13개 (CreateDebateRequest 등) | ✅ 완전 복사 |
-| **Config** | 4개 | 4개 | ✅ 완전 복사 |
-| **Exception** | 4개 | 4개 | ✅ 완전 복사 |
-| **Security** | 2개 | 2개 | ✅ 완전 복사 |
-| **Util** | 2개 | 2개 | ✅ 완전 복사 |
+#### 차이점
 
-#### 주요 클래스명 변경
+| 항목 | Argu | Debate |
+|------|------|--------|
+| **group** | `com.argu` | `com.debate` |
+| **주석** | "논쟁 플랫폼" | "토론 플랫폼" |
 
-| Argu | Debate | 상태 |
-|------|--------|------|
-| `Argu` | `Debate` | ✅ 변경 완료 |
-| `ArguOpinion` | `DebateOpinion` | ✅ 변경 완료 |
-| `ArguStatus` | `DebateStatus` | ✅ 변경 완료 |
-| `ArguController` | `DebateController` | ✅ 변경 완료 |
-| `ArguService` | `DebateService` | ✅ 변경 완료 |
-| `ArguRepository` | `DebateRepository` | ✅ 변경 완료 |
-| `ArguResponse` | `DebateResponse` | ✅ 변경 완료 |
-| `CreateArguRequest` | `CreateDebateRequest` | ✅ 변경 완료 |
-| `UpdateArguRequest` | `UpdateDebateRequest` | ✅ 변경 완료 |
+**예시:**
+```gradle
+// Argu
+group = 'com.argu'
+// 논쟁 플랫폼 사용자 백엔드 프로젝트
 
-#### 추가 파일 비교
+// Debate
+group = 'com.debate'
+// 토론 플랫폼 사용자 백엔드 프로젝트
+```
 
-| 파일 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `add_table_comments.sql` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `remove_username_column.sql` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `README-CURSOR.md` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `README-GRADLE.md` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `settings.gradle` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `application-dev.yml` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `application-prod.yml` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
+### 2. 패키지 구조
 
-### 2. 관리자 백엔드 (AdminBackEnd)
+#### Argu 프로젝트
+```
+com.argu
+├── ArguUserApplication.java
+├── controller/
+│   ├── ArguController.java
+│   ├── ArguOpinionController.java
+│   └── ...
+├── service/
+│   ├── ArguService.java
+│   ├── ArguOpinionService.java
+│   └── ...
+├── repository/
+│   ├── ArguRepository.java
+│   ├── ArguOpinionRepository.java
+│   └── ...
+└── entity/
+    ├── Argu.java
+    ├── ArguOpinion.java
+    └── ...
+```
 
-#### Java 파일 비교
+#### Debate 프로젝트
+```
+com.debate
+├── DebateUserApplication.java
+├── controller/
+│   ├── DebateController.java
+│   ├── OpinionController.java
+│   └── ...
+├── service/
+│   ├── DebateService.java
+│   ├── DebateOpinionService.java
+│   └── ...
+├── repository/
+│   ├── DebateRepository.java
+│   ├── DebateOpinionRepository.java
+│   └── ...
+└── entity/
+    ├── Debate.java
+    ├── DebateOpinion.java
+    └── ...
+```
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| **패키지명** | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| **메인 클래스** | `ArguAdminApplication` | `DebateAdminApplication` | ✅ 변경 완료 |
-| **Controller** | 10개 (AdminArguController 등) | 10개 (AdminDebateController 등) | ✅ 완전 복사 |
-| **Service** | 9개 (AdminArguService 등) | 9개 (AdminDebateService 등) | ✅ 완전 복사 |
-| **Repository** | 7개 | 7개 | ✅ 완전 복사 |
-| **Entity** | 7개 | 7개 | ✅ 완전 복사 |
-| **DTO** | 6개 | 6개 | ✅ 완전 복사 |
-| **Config** | 4개 | 4개 | ✅ 완전 복사 |
-| **Exception** | 4개 | 4개 | ✅ 완전 복사 |
-| **Security** | 2개 | 2개 | ✅ 완전 복사 |
-| **Util** | 2개 | 2개 | ✅ 완전 복사 |
+### 3. 엔티티 클래스 비교
 
-#### 주요 클래스명 변경
+#### 주요 엔티티 변경
 
-| Argu | Debate | 상태 |
-|------|--------|------|
-| `AdminArguController` | `AdminDebateController` | ✅ 변경 완료 |
-| `AdminArguService` | `AdminDebateService` | ✅ 변경 완료 |
-| `ArguRepository` (Admin) | `DebateRepository` (Admin) | ✅ 변경 완료 |
+| Argu | Debate | 변경 내용 |
+|------|--------|----------|
+| `Argu` | `Debate` | 클래스명, 테이블명 변경 |
+| `ArguOpinion` | `DebateOpinion` | 클래스명 변경 |
+| `ArguStatus` | `DebateStatus` | 열거형 이름 변경 |
 
-#### Gradle Wrapper 비교
+#### 엔티티 상세 비교
 
-| 파일 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `gradlew` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `gradlew.bat` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `gradle/wrapper/gradle-wrapper.jar` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
+**Argu.java vs Debate.java**
+```java
+// Argu
+@Entity
+@Table(name = "argu")
+public class Argu {
+    @Comment("논쟁 ID")
+    private Long id;
+    
+    @Comment("논쟁 작성자 ID")
+    private User user;
+    
+    @Comment("논쟁 제목")
+    private String title;
+    
+    // ...
+    public enum ArguStatus {
+        SCHEDULED, ACTIVE, ENDED
+    }
+}
+
+// Debate
+@Entity
+@Table(name = "debate")
+public class Debate {
+    @Comment("토론 ID")
+    private Long id;
+    
+    @Comment("토론 작성자 ID")
+    private User user;
+    
+    @Comment("토론 제목")
+    private String title;
+    
+    // ...
+    public enum DebateStatus {
+        SCHEDULED, ACTIVE, ENDED
+    }
+}
+```
+
+**주요 차이점:**
+- 테이블명: `argu` → `debate`
+- 외래키 제약조건명: `fk_argu_user` → `fk_debate_user`
+- 주석: "논쟁" → "토론"
+- 열거형명: `ArguStatus` → `DebateStatus`
+
+### 4. 컨트롤러 비교
+
+| Argu | Debate | 엔드포인트 |
+|------|--------|-----------|
+| `ArguController` | `DebateController` | `/api/argu` → `/api/debate` |
+| `ArguOpinionController` | `OpinionController` | `/api/argu/{id}/opinions` → `/api/debate/{id}/opinions` |
+
+### 5. 서비스 및 리포지토리 비교
+
+| Argu | Debate |
+|------|--------|
+| `ArguService` | `DebateService` |
+| `ArguRepository` | `DebateRepository` |
+| `ArguOpinionService` | `DebateOpinionService` |
+| `ArguOpinionRepository` | `DebateOpinionRepository` |
+
+### 6. DTO 비교
+
+| Argu | Debate |
+|------|--------|
+| `CreateArguRequest` | `CreateDebateRequest` |
+| `UpdateArguRequest` | `UpdateDebateRequest` |
+| `ArguResponse` | `DebateResponse` |
 
 ---
 
 ## 프론트엔드 비교
 
-### 1. 사용자 프론트엔드 (UserFrontEnd)
+### 1. 프로젝트 설정 (package.json)
 
-#### 페이지 파일 비교
+#### 공통점
+- React 18.2.0
+- 동일한 의존성 버전
+- 동일한 스크립트 설정
 
-| 페이지 | Argu | Debate | 상태 |
-|--------|------|--------|------|
-| `HomePage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguListPage.jsx` / `DebateListPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguDetailPage.jsx` / `DebateDetailPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguCreatePage.jsx` / `DebateCreatePage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguEditPage.jsx` / `DebateEditPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `CategoryListPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `CategoryDetailPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `SearchPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `UserProfilePage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `MyPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `MyPageEdit.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `MyPageSettings.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `LoginPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `RegisterPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
+#### 차이점
 
-**총 페이지 수**: Argu 14개 = Debate 14개 ✅
+| 항목 | Argu | Debate |
+|------|------|--------|
+| **name** | `argu-user-frontend` | `debate-user-frontend` |
+| **description** | "논쟁 플랫폼 사용자 프론트엔드" | "토론 플랫폼 사용자 프론트엔드" |
 
-#### 컴포넌트 파일 비교
-
-| 컴포넌트 | Argu | Debate | 상태 |
-|----------|------|--------|------|
-| `Header.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `Footer.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `Layout.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ProtectedRoute.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguCard.jsx` / `DebateCard.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-
-#### 서비스 파일 비교
-
-| 서비스 | Argu | Debate | 상태 |
-|--------|------|--------|------|
-| `arguService.js` / `debateService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `authService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `categoryService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `commentService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `userService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `likeService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `opinionService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `reportService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `myPageService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `fileUploadService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `api.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-
-**총 서비스 파일 수**: Argu 11개 = Debate 11개 ✅
-
-#### Context 파일 비교
-
-| Context | Argu | Debate | 상태 |
-|---------|------|--------|------|
-| `AuthContext.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ThemeContext.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-
-#### 추가 파일 비교
-
-| 파일 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `yarn-setup.bat` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-| `yarn-setup.ps1` | ✅ 있음 | ❌ 없음 | ⚠️ 누락 |
-
-### 2. 관리자 프론트엔드 (AdminFrontEnd)
-
-#### 페이지 파일 비교
-
-| 페이지 | Argu | Debate | 상태 |
-|--------|------|--------|------|
-| `LoginPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `DashboardPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `UsersPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ArguPage.jsx` / `DebatePage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `CommentsPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `CategoriesPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `ReportsPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `StatisticsPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `SettingsPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `AdminsPage.jsx` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-
-**총 페이지 수**: Argu 10개 = Debate 10개 ✅
-
-#### 서비스 파일 비교
-
-| 서비스 | Argu | Debate | 상태 |
-|--------|------|--------|------|
-| `adminArguService.js` / `adminDebateService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminAuthService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminUserService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminCommentService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminCategoryService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminReportService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminStatisticsService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminDashboardService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `adminManagementService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `fileUploadService.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-| `api.js` | ✅ 있음 | ✅ 있음 | ✅ 완전 복사 |
-
-**총 서비스 파일 수**: Argu 11개 = Debate 11개 ✅
-
-#### 이미지 파일 비교
-
-| 파일 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `public/images/ARGU.png` | ✅ 있음 | ✅ 있음 (ARGU.png, DEBATE.png 둘 다) | ✅ 복사 완료 |
-
----
-
-## 설정 파일 비교
-
-### 1. build.gradle 비교
-
-#### 사용자 백엔드
-
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `group` | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| 주석 | "논쟁 플랫폼" | "토론 플랫폼" | ✅ 변경 완료 |
-| 의존성 | 동일 | 동일 | ✅ 동일 |
-
-#### 관리자 백엔드
-
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `group` | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| 주석 | "논쟁 플랫폼" | "토론 플랫폼" | ✅ 변경 완료 |
-| 의존성 | 동일 | 동일 | ✅ 동일 |
-
-### 2. package.json 비교
+### 2. 페이지 컴포넌트 비교
 
 #### 사용자 프론트엔드
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `name` | `argu-user-frontend` | `debate-user-frontend` | ✅ 변경 완료 |
-| `description` | "논쟁 플랫폼 사용자 프론트엔드" | "토론 플랫폼 사용자 프론트엔드" | ✅ 변경 완료 |
-| 의존성 | 동일 | 동일 | ✅ 동일 |
+| Argu | Debate | 경로 |
+|------|--------|------|
+| `ArguListPage.jsx` | `DebateListPage.jsx` | `/debate` |
+| `ArguDetailPage.jsx` | `DebateDetailPage.jsx` | `/debate/:id` |
+| `ArguCreatePage.jsx` | `DebateCreatePage.jsx` | `/debate/create` |
+| `ArguEditPage.jsx` | `DebateEditPage.jsx` | `/debate/:id/edit` |
 
 #### 관리자 프론트엔드
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `name` | `argu-admin-frontend` | `debate-admin-frontend` | ✅ 변경 완료 |
-| `description` | "논쟁 플랫폼 관리자 프론트엔드" | "토론 플랫폼 관리자 프론트엔드" | ✅ 변경 완료 |
-| 의존성 | 동일 | 동일 | ✅ 동일 |
+| Argu | Debate |
+|------|--------|
+| `ArguPage.jsx` | `DebatePage.jsx` |
 
-### 3. application.yml 비교
+### 3. 컴포넌트 비교
 
-#### 사용자 백엔드
+| Argu | Debate |
+|------|--------|
+| `components/argu/ArguCard.jsx` | `components/debate/DebateCard.jsx` |
+| `components/argu/ArguCard.css` | `components/debate/DebateCard.css` |
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `spring.application.name` | `argu-user` | `debate-user` | ✅ 변경 완료 |
-| `datasource.url` | `argu_db` | `debate_db` | ✅ 변경 완료 |
-| `datasource.username` | `argu_web` | `debate_web` | ✅ 변경 완료 |
-| `jwt.secret` | `argu-secret-key-...` | `debate-secret-key-...` | ✅ 변경 완료 |
-| `logging.level` | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| `info.app.description` | "논쟁 플랫폼" | "토론 플랫폼" | ✅ 변경 완료 |
-| `file.upload-dir` | `../../Files/editor/images` | `../../Files/editor/images` | ✅ 동일 (경로는 동일하지만 Files 디렉토리 없음) |
+### 4. 서비스 파일 비교
 
-#### 관리자 백엔드
+| Argu | Debate |
+|------|--------|
+| `services/arguService.js` | `services/debateService.js` |
+| `services/opinionService.js` | `services/opinionService.js` (동일) |
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `spring.application.name` | `argu-admin` | `debate-admin` | ✅ 변경 완료 |
-| `datasource.url` | `argu_db` | `debate_db` | ✅ 변경 완료 |
-| `datasource.username` | `argu_web` | `debate_web` | ✅ 변경 완료 |
-| `jwt.secret` | `argu-admin-secret-key-...` | `debate-admin-secret-key-...` | ✅ 변경 완료 |
-| `logging.level` | `com.argu` | `com.debate` | ✅ 변경 완료 |
-| `info.app.description` | "논쟁 플랫폼" | "토론 플랫폼" | ✅ 변경 완료 |
+### 5. 라우팅 비교
 
-### 4. index.html 비교
+**Argu 프로젝트:**
+```jsx
+<Route path="/argu" element={<ArguListPage />} />
+<Route path="/argu/create" element={<ArguCreatePage />} />
+<Route path="/argu/:id" element={<ArguDetailPage />} />
+<Route path="/argu/:id/edit" element={<ArguEditPage />} />
+```
 
-#### 사용자 프론트엔드
-
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `<title>` | "Argu - 논쟁 플랫폼" | "Debate - 토론 플랫폼" | ✅ 변경 완료 |
-
-#### 관리자 프론트엔드
-
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| `<title>` | "Argu Admin - 관리자 사이트" | "Debate Admin - 관리자 사이트" | ✅ 변경 완료 |
+**Debate 프로젝트:**
+```jsx
+<Route path="/debate" element={<DebateListPage />} />
+<Route path="/debate/create" element={<DebateCreatePage />} />
+<Route path="/debate/:id" element={<DebateDetailPage />} />
+<Route path="/debate/:id/edit" element={<DebateEditPage />} />
+```
 
 ---
 
-## 파일 존재 여부 비교
+## 목업(Mockup) 비교
 
-### ✅ 완전히 복사된 항목
+### 파일명 변경
 
-1. **백엔드 Java 소스 코드**: 모든 파일 복사 및 텍스트 변경 완료
-2. **프론트엔드 React 소스 코드**: 모든 파일 복사 및 텍스트 변경 완료
-3. **설정 파일**: build.gradle, package.json, application.yml 모두 복사 및 변경 완료
-4. **루트 문서**: README.md, README-Admin.md, README-Database.md 복사 및 변경 완료
-5. **SQL 파일**: mysql_setup.sql, insert_categories.sql 복사 및 변경 완료
+| Argu | Debate |
+|------|--------|
+| `argu-list.html` | `debate-list.html` |
+| `argu-detail.html` | `debate-detail.html` |
+| `argu-create.html` | `debate-create.html` |
+| `argu-edit.html` | `debate-edit.html` |
+| `my-page-argu.html` | `my-page-debate.html` |
+| `admin/argu.html` | `admin/debate.html` |
 
-### ⚠️ 누락된 파일 및 디렉토리
+### 클래스명 변경
 
-#### DebateUserBackEnd 누락 파일
-1. `add_table_comments.sql` - 테이블 주석 추가 스크립트
-2. `remove_username_column.sql` - 마이그레이션 스크립트
-3. `README-CURSOR.md` - Cursor 관련 문서
-4. `README-GRADLE.md` - Gradle 관련 문서
-5. `settings.gradle` - Gradle 설정 파일
-6. `application-dev.yml` - 개발 환경 설정
-7. `application-prod.yml` - 프로덕션 환경 설정
-8. `ArguUser.iml` - IntelliJ 프로젝트 파일 (선택사항)
+| Argu | Debate |
+|------|--------|
+| `argu-list` | `debate-list` |
+| `argu-item` | `debate-item` |
+| `argu-card` | `debate-card` |
+| `argu-title` | `debate-title` |
+| `argu-meta` | `debate-meta` |
+| `argu-stats` | `debate-stats` |
+| `argu-vote` | `debate-vote` |
+| `argu-grid` | `debate-grid` |
+| `argu-detail` | `debate-detail` |
+| `my-argu-item` | `my-debate-item` |
 
-#### DebateAdminBackEnd 누락 파일
-1. `gradlew` - Gradle Wrapper 실행 스크립트 (Unix/Linux)
-2. `gradlew.bat` - Gradle Wrapper 실행 스크립트 (Windows)
-3. `gradle/wrapper/gradle-wrapper.jar` - Gradle Wrapper JAR 파일
+### 텍스트 내용 변경
 
-#### DebateUserFrontEnd 누락 파일
-1. `yarn-setup.bat` - Yarn PATH 설정 스크립트 (Windows CMD)
-2. `yarn-setup.ps1` - Yarn PATH 설정 스크립트 (PowerShell)
+| Argu | Debate |
+|------|--------|
+| "논쟁" | "토론" |
+| "논쟁 작성" | "토론 작성" |
+| "논쟁 목록" | "토론 목록" |
+| "논쟁 상세" | "토론 상세" |
+| "인기 논쟁" | "인기 토론" |
+| "최신 논쟁" | "최신 토론" |
+| "논쟁 기간" | "토론 기간" |
+| "논쟁 시작" | "토론 시작" |
+| "논쟁 종료" | "토론 종료" |
 
-#### 루트 디렉토리 누락
-1. `Files/` - 파일 업로드 저장 디렉토리
-2. `mockup/` - 디자인 목업 파일 디렉토리
+### 이미지 파일
 
----
+| Argu | Debate |
+|------|--------|
+| `ARGU.png` | `DEBATE.png` (또는 `ARGU.png` 남아있을 수 있음) |
 
-## 텍스트 변경 상태 확인
+### JavaScript 설정 변경
 
-### ✅ 완전히 변경된 항목
-
-#### Java 파일
-- ✅ 패키지명: `com.argu` → `com.debate` (100% 변경)
-- ✅ 클래스명: `Argu*` → `Debate*` (100% 변경)
-- ✅ 주석: "논쟁" → "토론" (100% 변경)
-- ✅ 로그 메시지: "논쟁" → "토론" (100% 변경)
-
-#### JavaScript/JSX 파일
-- ✅ 파일명: `Argu*.jsx` → `Debate*.jsx` (100% 변경)
-- ✅ 서비스명: `arguService` → `debateService` (100% 변경)
-- ✅ 변수명: `argu`, `argus` → `debate`, `debates` (100% 변경)
-- ✅ 라우트 경로: `/argu` → `/debate` (100% 변경)
-- ✅ API 경로: `/argu` → `/debate` (100% 변경)
-- ✅ UI 텍스트: "논쟁" → "토론" (100% 변경)
-
-#### 설정 파일
-- ✅ application.yml: 모든 `argu` → `debate` 변경 완료
-- ✅ build.gradle: `com.argu` → `com.debate` 변경 완료
-- ✅ package.json: `argu-*` → `debate-*` 변경 완료
-
-#### 문서 파일
-- ✅ README.md: 모든 "논쟁" → "토론", "Argu" → "Debate" 변경 완료
-- ✅ README-Admin.md: 모든 텍스트 변경 완료
-- ✅ README-Database.md: 모든 텍스트 변경 완료
-- ✅ insert_categories.sql: 주석 변경 완료
-
-### 검증 결과
-
-#### Debate 프로젝트에서 "논쟁", "argu", "Argu" 검색
-- ✅ **결과**: `MethodArgumentNotValidException` (Spring 표준 예외, 변경 불필요)와 `COPY_ANALYSIS_REPORT.md` (분석 보고서, 변경 불필요)만 발견
-- ✅ **결론**: 모든 텍스트 변경 완료
-
-#### Argu 프로젝트에서 "토론", "debate", "Debate" 검색
-- ✅ **결과**: 일부 주석에서 "토론" 발견 (의도된 사용, 예: "논쟁(토론)을 생성")
-- ✅ **결론**: Argu 프로젝트는 원본 상태 유지
+| Argu | Debate |
+|------|--------|
+| `THEME_KEY = 'argu-theme'` | `THEME_KEY = 'debate-theme'` |
+| `THEME_KEY = 'argu-admin-theme'` | `THEME_KEY = 'debate-admin-theme'` |
 
 ---
 
-## 데이터베이스 설정 비교
+## 주요 변경 사항
 
-### MySQL 설정 비교
+### 1. 네이밍 컨벤션 변경
 
-| 항목 | Argu | Debate | 상태 |
-|------|------|--------|------|
-| **데이터베이스명** | `argu_db` | `debate_db` | ✅ 변경 완료 |
-| **사용자명** | `argu_web` | `debate_web` | ✅ 변경 완료 |
-| **비밀번호** | `Qwer12#$` | `Qwer12#$` | ✅ 동일 |
-| **포트** | 3306 | 3306 | ✅ 동일 |
-| **문자셋** | utf8mb4 | utf8mb4 | ✅ 동일 |
+#### 백엔드
+- **패키지명**: `com.argu` → `com.debate`
+- **클래스명**: `Argu*` → `Debate*`
+- **서비스명**: `ArguService` → `DebateService`
+- **리포지토리명**: `ArguRepository` → `DebateRepository`
+- **엔티티명**: `Argu` → `Debate`
+- **DTO명**: `*Argu*` → `*Debate*`
 
-### 테이블명 비교
+#### 프론트엔드
+- **컴포넌트명**: `Argu*` → `Debate*`
+- **서비스명**: `arguService` → `debateService`
+- **경로**: `/argu` → `/debate`
+- **폴더명**: `components/argu` → `components/debate`
 
-| Argu 테이블 | Debate 테이블 | 상태 |
-|-------------|---------------|------|
-| `argu` | `debate` | ✅ 변경 완료 |
-| `argu_opinion` | `debate_opinion` | ✅ 변경 완료 |
-| `users` | `users` | ✅ 동일 |
-| `categories` | `categories` | ✅ 동일 |
-| `comments` | `comments` | ✅ 동일 |
-| `likes` | `likes` | ✅ 동일 |
-| `bookmarks` | `bookmarks` | ✅ 동일 |
-| `reports` | `reports` | ✅ 동일 |
-| `chat_messages` | `chat_messages` | ✅ 동일 |
-| `admins` | `admins` | ✅ 동일 |
+#### 목업
+- **파일명**: `argu-*.html` → `debate-*.html`
+- **클래스명**: `argu-*` → `debate-*`
+- **텍스트**: "논쟁" → "토론"
 
----
+### 2. 데이터베이스 스키마 변경
 
-## 종합 평가
+#### 테이블명
+- `argu` → `debate`
+- 외래키 제약조건명도 함께 변경
 
-### 완성도 점수
+#### 컬럼명
+- 대부분 동일 (변경 없음)
 
-| 항목 | Argu | Debate | 차이 |
-|------|------|--------|------|
-| **사용자 백엔드** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐ (95%) | -5% (누락 파일) |
-| **사용자 프론트엔드** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐ (95%) | -5% (누락 파일) |
-| **관리자 백엔드** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐ (90%) | -10% (Gradle Wrapper 누락) |
-| **관리자 프론트엔드** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐⭐ (100%) | 0% |
-| **문서화** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐⭐ (100%) | 0% |
-| **텍스트 변경** | N/A | ⭐⭐⭐⭐⭐ (100%) | 완료 |
-| **전체 평균** | ⭐⭐⭐⭐⭐ (100%) | ⭐⭐⭐⭐ (96%) | -4% |
+### 3. API 엔드포인트 변경
 
-### 주요 성과
-
-1. ✅ **코드 복사**: 모든 소스 코드 파일 완전 복사
-2. ✅ **텍스트 변경**: 모든 "논쟁" → "토론", "Argu" → "Debate" 변경 완료
-3. ✅ **네이밍 일관성**: 모든 클래스명, 변수명, 파일명 일관되게 변경
-4. ✅ **설정 파일**: 모든 설정 파일 변경 완료
-5. ✅ **문서화**: 모든 문서 파일 복사 및 변경 완료
-
-### 개선 필요 사항
-
-1. ⚠️ **누락 파일 복사**: 
-   - DebateUserBackEnd: SQL 스크립트, README 파일, 설정 파일
-   - DebateAdminBackEnd: Gradle Wrapper 파일
-   - DebateUserFrontEnd: yarn-setup 스크립트
-   - 루트: Files 디렉토리, mockup 디렉토리
-
-2. ⚠️ **환경 설정 파일**: 
-   - `application-dev.yml`, `application-prod.yml` 복사 필요
-
-3. ⚠️ **빌드 도구**: 
-   - Gradle Wrapper 파일 복사 필요 (빌드 시 필요)
+| Argu | Debate |
+|------|--------|
+| `GET /api/argu` | `GET /api/debate` |
+| `POST /api/argu` | `POST /api/debate` |
+| `GET /api/argu/{id}` | `GET /api/debate/{id}` |
+| `PUT /api/argu/{id}` | `PUT /api/debate/{id}` |
+| `DELETE /api/argu/{id}` | `DELETE /api/debate/{id}` |
+| `GET /api/argu/{id}/opinions` | `GET /api/debate/{id}/opinions` |
 
 ---
 
-## 결론
+## 기술 스택 비교
 
-### 전체 평가
+### 공통 기술 스택
 
-**Debate 프로젝트는 Argu 프로젝트에서 성공적으로 변환되었습니다.**
+#### 백엔드
+- **언어**: Java 17
+- **프레임워크**: Spring Boot 3.2.0
+- **ORM**: JPA (Hibernate)
+- **보안**: Spring Security + JWT
+- **데이터베이스**: MySQL
+- **API 문서화**: SpringDoc OpenAPI (Swagger)
 
-- ✅ **핵심 기능**: 100% 복사 및 변경 완료
-- ✅ **텍스트 변경**: 100% 완료
-- ✅ **코드 품질**: Argu와 동일한 수준
-- ⚠️ **부가 파일**: 일부 누락 (기능에는 영향 없음)
+#### 프론트엔드
+- **라이브러리**: React 18.2.0
+- **라우팅**: React Router 6.20.0
+- **HTTP 클라이언트**: Axios 1.6.2
+- **에디터**: React Quill 2.0.0
+- **빌드 도구**: Vite 5.0.8
+- **스타일링**: CSS
 
-### 권장 사항
-
-1. **즉시 복사 권장** (기능에 영향):
-   - Gradle Wrapper 파일 (빌드 시 필요)
-   - application-dev.yml, application-prod.yml (환경별 설정)
-
-2. **선택적 복사** (기능에 영향 없음):
-   - Files 디렉토리 (파일 업로드 기능 사용 시)
-   - mockup 디렉토리 (디자인 참고용)
-   - SQL 마이그레이션 스크립트 (데이터베이스 마이그레이션 시)
-   - README-CURSOR.md, README-GRADLE.md (문서 참고용)
-   - yarn-setup 스크립트 (Yarn PATH 문제 시)
-
-### 최종 결론
-
-**Debate 프로젝트는 Argu 프로젝트의 완전한 변환본으로, 모든 핵심 기능과 코드가 정상적으로 복사되고 변경되었습니다. 일부 부가 파일이 누락되어 있지만, 프로젝트의 핵심 기능에는 영향을 주지 않습니다.**
+### 차이점
+**없음** - 두 프로젝트 모두 동일한 기술 스택을 사용합니다.
 
 ---
 
-**작성일**: 2025년 1월  
-**분석 도구**: 파일 시스템 탐색, grep 검색, 코드베이스 분석
+## 파일명 및 네이밍 변경
 
+### 백엔드 Java 파일
+
+| Argu | Debate |
+|------|--------|
+| `Argu.java` | `Debate.java` |
+| `ArguController.java` | `DebateController.java` |
+| `ArguService.java` | `DebateService.java` |
+| `ArguRepository.java` | `DebateRepository.java` |
+| `ArguOpinion.java` | `DebateOpinion.java` |
+| `ArguOpinionService.java` | `DebateOpinionService.java` |
+| `ArguOpinionRepository.java` | `DebateOpinionRepository.java` |
+| `CreateArguRequest.java` | `CreateDebateRequest.java` |
+| `UpdateArguRequest.java` | `UpdateDebateRequest.java` |
+| `ArguResponse.java` | `DebateResponse.java` |
+
+### 프론트엔드 파일
+
+| Argu | Debate |
+|------|--------|
+| `ArguListPage.jsx` | `DebateListPage.jsx` |
+| `ArguDetailPage.jsx` | `DebateDetailPage.jsx` |
+| `ArguCreatePage.jsx` | `DebateCreatePage.jsx` |
+| `ArguEditPage.jsx` | `DebateEditPage.jsx` |
+| `ArguCard.jsx` | `DebateCard.jsx` |
+| `arguService.js` | `debateService.js` |
+| `adminArguService.js` | `adminDebateService.js` |
+
+### 목업 HTML 파일
+
+| Argu | Debate |
+|------|--------|
+| `argu-list.html` | `debate-list.html` |
+| `argu-detail.html` | `debate-detail.html` |
+| `argu-create.html` | `debate-create.html` |
+| `argu-edit.html` | `debate-edit.html` |
+| `my-page-argu.html` | `my-page-debate.html` |
+| `admin/argu.html` | `admin/debate.html` |
+
+---
+
+## 요약
+
+### 핵심 변경 사항
+1. **프로젝트명**: Argu → Debate
+2. **용어**: 논쟁 → 토론
+3. **네이밍**: 모든 `argu` → `debate`
+4. **패키지**: `com.argu` → `com.debate`
+5. **테이블명**: `argu` → `debate`
+6. **API 경로**: `/api/argu` → `/api/debate`
+7. **프론트엔드 경로**: `/argu` → `/debate`
+
+### 기능적 차이
+**없음** - 두 프로젝트는 기능적으로 동일하며, 단순히 네이밍과 용어만 변경되었습니다.
+
+### 기술적 차이
+**없음** - 두 프로젝트는 동일한 기술 스택과 아키텍처를 사용합니다.
+
+### 마이그레이션 고려사항
+1. **데이터베이스 마이그레이션**: 테이블명 변경 시 데이터 마이그레이션 필요
+2. **API 호환성**: 기존 API 클라이언트 업데이트 필요
+3. **세션/토큰**: JWT 토큰의 클레임 변경 가능성
+4. **파일 업로드 경로**: 파일 저장 경로 변경 가능성
+5. **환경 변수**: 설정 파일의 프로젝트명 변경 필요
+
+---
+
+**작성일**: 2025년
+**비교 대상**: D:\vs\Argu vs D:\vs\Debate

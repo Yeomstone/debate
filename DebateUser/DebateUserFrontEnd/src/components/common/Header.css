@@ -1,0 +1,291 @@
+/**
+ * Header 컴포넌트 스타일
+ * 
+ * 애플리케이션 상단 네비게이션 헤더의 스타일을 정의합니다.
+ * 
+ * 주요 기능:
+ * - 고정 헤더 (스크롤 시 상단에 고정)
+ * - 로고 및 네비게이션 링크
+ * - 테마 전환 버튼
+ * - 사용자 액션 버튼
+ * - 반응형 디자인 (모바일 대응)
+ */
+
+/* ============================================
+   헤더 컨테이너 (Header Container)
+   ============================================ */
+/* 
+ * 헤더 기본 스타일
+ * position: sticky로 스크롤 시 상단에 고정
+ * z-index: 100으로 다른 요소 위에 표시
+ */
+.header {
+  background-color: var(--bg-primary);
+  border-bottom: 1px solid var(--border-color);
+  padding: 1rem 0;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  box-shadow: var(--shadow);
+}
+
+/* ============================================
+   헤더 레이아웃 (Header Layout)
+   ============================================ */
+/* 
+ * 헤더 내부 콘텐츠 레이아웃
+ * Flexbox를 사용하여 로고, 네비게이션, 액션 버튼을 배치
+ */
+.header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 2rem;
+}
+
+/* ============================================
+   로고 (Logo)
+   ============================================ */
+/* 로고 컨테이너 */
+.logo {
+  display: flex;
+  align-items: center;
+}
+
+/* 로고 이미지 */
+.logo-img {
+  height: 40px;
+  width: auto;
+  object-fit: contain;
+}
+
+/* ============================================
+   네비게이션 (Navigation)
+   ============================================ */
+/* 네비게이션 링크 컨테이너 */
+.nav {
+  display: flex;
+  gap: 1.5rem;
+  flex: 1; /* 남은 공간을 모두 차지 */
+}
+
+/* 네비게이션 링크 스타일 */
+.nav-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  transition: color 0.3s;
+}
+
+/* 네비게이션 링크 호버 효과 */
+.nav-link:hover {
+  color: var(--primary-color);
+}
+
+/* ============================================
+   헤더 액션 버튼 (Header Actions)
+   ============================================ */
+/* 테마 전환, 로그인/회원가입 버튼 컨테이너 */
+.header-actions {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* 테마 전환 버튼 */
+.theme-toggle {
+  background: none;
+  border: none;
+  font-size: 1.25rem;
+  cursor: pointer;
+  padding: 0.5rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+/* 테마 전환 버튼 호버 효과 */
+.theme-toggle:hover {
+  background-color: var(--bg-secondary);
+}
+
+/* ============================================
+   햄버거 버튼 (Hamburger Button)
+   ============================================ */
+/* 모바일에서만 표시되는 햄버거 버튼 */
+.hamburger-btn {
+  display: none;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.5rem;
+  z-index: 101;
+}
+
+.hamburger-icon {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 24px;
+  height: 20px;
+  position: relative;
+}
+
+.hamburger-icon span {
+  display: block;
+  height: 3px;
+  width: 100%;
+  background-color: var(--text-primary);
+  border-radius: 3px;
+  transition: all 0.3s ease;
+}
+
+.hamburger-icon.open span:nth-child(1) {
+  transform: rotate(45deg) translate(8px, 8px);
+}
+
+.hamburger-icon.open span:nth-child(2) {
+  opacity: 0;
+}
+
+.hamburger-icon.open span:nth-child(3) {
+  transform: rotate(-45deg) translate(7px, -7px);
+}
+
+/* ============================================
+   모바일 메뉴 오버레이 (Mobile Menu Overlay)
+   ============================================ */
+.mobile-menu-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: 99;
+  animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* ============================================
+   모바일 메뉴 (Mobile Menu)
+   ============================================ */
+.mobile-menu {
+  display: none;
+  position: fixed;
+  top: 0;
+  right: -100%;
+  width: 280px;
+  max-width: 85%;
+  height: 100vh;
+  background-color: var(--bg-primary);
+  box-shadow: -2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 100;
+  transition: right 0.3s ease;
+  overflow-y: auto;
+  padding: 1rem;
+}
+
+.mobile-menu.open {
+  right: 0;
+}
+
+/* 모바일 네비게이션 */
+.mobile-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 2rem;
+  padding-top: 3rem;
+}
+
+.mobile-nav-link {
+  color: var(--text-primary);
+  text-decoration: none;
+  font-weight: 500;
+  padding: 1rem;
+  border-radius: 0.5rem;
+  transition: background-color 0.3s;
+}
+
+.mobile-nav-link:hover {
+  background-color: var(--bg-secondary);
+  color: var(--primary-color);
+}
+
+/* 모바일 액션 버튼들 */
+.mobile-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.mobile-theme-toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: none;
+  border: 1px solid var(--border-color);
+  padding: 0.75rem 1rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 1rem;
+  transition: all 0.3s;
+  width: 100%;
+}
+
+.mobile-theme-toggle:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--primary-color);
+}
+
+.mobile-theme-toggle span:first-child {
+  font-size: 1.25rem;
+}
+
+.mobile-btn {
+  width: 100%;
+  text-align: center;
+  justify-content: center;
+}
+
+/* ============================================
+   반응형 디자인 (Responsive Design)
+   ============================================ */
+/* 
+ * 모바일 화면 (768px 이하) 대응
+ * 데스크톱 메뉴 숨기고 햄버거 메뉴 표시
+ */
+@media (max-width: 768px) {
+  /* 데스크톱 네비게이션과 액션 버튼 숨기기 */
+  .desktop-nav,
+  .desktop-actions {
+    display: none;
+  }
+
+  /* 햄버거 버튼 표시 */
+  .hamburger-btn {
+    display: block;
+  }
+
+  /* 모바일 메뉴 및 오버레이 표시 */
+  .mobile-menu,
+  .mobile-menu-overlay {
+    display: block;
+  }
+
+  /* 헤더 콘텐츠 레이아웃 조정 */
+  .header-content {
+    position: relative;
+  }
+}
+

@@ -1,0 +1,123 @@
+/**
+ * MyPageSettings ?§Ì???(Í≥ÑÏ†ï ?§Ï†ï ?òÏù¥ÏßÄ)
+ * 
+ * MyPage.css???§Ì??ºÏùÑ ?¨ÏÇ¨?©ÌïòÎ©¥ÏÑú ?§Ï†ï ???§Ì??ºÏùÑ Ï∂îÍ??©Îãà??
+ */
+
+@import './MyPage.css';
+
+/* ============================================
+   ???§Ì???(Form Styles)
+   ============================================ */
+.settings-form {
+  max-width: 800px;
+}
+
+.form-section {
+  margin-bottom: 2rem;
+  padding-bottom: 2rem;
+  border-bottom: 1px solid var(--border-color, #e0e0e0);
+}
+
+.form-section:last-of-type {
+  border-bottom: none;
+}
+
+.danger-section {
+  border-color: var(--danger-color, #dc3545);
+  border-width: 2px;
+}
+
+.form-section h3 {
+  font-size: 1.25rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary, #333);
+}
+
+.form-input {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color, #e0e0e0);
+  border-radius: 0.5rem;
+  background-color: var(--bg-secondary, #f5f5f5);
+  color: var(--text-primary, #333);
+  font-size: 1rem;
+  transition: border-color 0.3s;
+  font-family: inherit;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color, #007bff);
+}
+
+.form-input[readonly] {
+  background-color: var(--bg-tertiary, #e9ecef);
+  cursor: not-allowed;
+}
+
+.form-input.error {
+  border-color: var(--danger-color, #dc3545);
+}
+
+.form-help {
+  font-size: 0.875rem;
+  color: var(--text-secondary, #666);
+  margin-top: 0.5rem;
+}
+
+.form-error {
+  font-size: 0.875rem;
+  color: var(--danger-color, #dc3545);
+  margin-top: 0.5rem;
+}
+
+/* ???°ÏÖò Î≤ÑÌäº */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+/* ?ÑÌóò Î≤ÑÌäº */
+.btn-danger {
+  background-color: var(--danger-color, #dc3545);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 0.5rem;
+  cursor: pointer;
+  font-size: 1rem;
+  transition: background-color 0.3s;
+}
+
+.btn-danger:hover {
+  background-color: var(--danger-color-dark, #c82333);
+}
+
+/* Î∞òÏùë???îÏûê??*/
+@media (max-width: 968px) {
+  .my-page-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .my-page-sidebar {
+    order: 2;
+  }
+
+  .my-page-content {
+    order: 1;
+  }
+}
+

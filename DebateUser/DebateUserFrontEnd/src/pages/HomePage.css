@@ -1,0 +1,287 @@
+/**
+ * HomePage ?¤í???(?ˆí˜?´ì?)
+ * 
+ * ? í”Œë¦¬ì??´ì…˜??ë©”ì¸ ?ˆí˜?´ì? ?¤í??¼ì„ ?•ì˜?©ë‹ˆ??
+ * 
+ * ì£¼ìš” ê¸°ëŠ¥:
+ * - ?µí•© ê²€???¹ì…˜ (ê·¸ë¼?°ì´??ë°°ê²½)
+ * - ?¸ê¸° ?¼ìŸ ?¹ì…˜
+ * - ìµœì‹  ?¼ìŸ ?¹ì…˜
+ * - ì¹´í…Œê³ ë¦¬ ë¯¸ë¦¬ë³´ê¸° ?¹ì…˜
+ */
+
+/* ============================================
+   ê²€???¹ì…˜ (Search Section)
+   ============================================ */
+/* 
+ * ?ˆí˜?´ì? ?ë‹¨ ê²€???¹ì…˜
+ * ê·¸ë¼?°ì´??ë°°ê²½?¼ë¡œ ?œê°??ê°•ì¡°
+ */
+.search-section {
+  background: linear-gradient(135deg, var(--primary-color) 0%, var(--primary-dark) 100%);
+  color: white;
+  padding: 4rem 0;
+  margin-bottom: 3rem;
+}
+
+/* ê²€??ì»¨í…Œ?´ë„ˆ */
+.search-container {
+  max-width: 800px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+/* ê²€???¹ì…˜ ?œëª© */
+.search-title {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+/* ê²€???¹ì…˜ ë¶€?œëª© */
+.search-subtitle {
+  font-size: 1.125rem;
+  margin-bottom: 2rem;
+  opacity: 0.9;
+}
+
+/* ê²€????*/
+.search-form-main {
+  margin-bottom: 1.5rem;
+}
+
+/* 
+ * ê²€???…ë ¥ ë°•ìŠ¤
+ * ?…ë ¥ ?„ë“œ?€ ê²€??ë²„íŠ¼???˜ë???ë°°ì¹˜
+ */
+.search-box-main {
+  display: flex;
+  gap: 0.5rem;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+/* ê²€???…ë ¥ ?„ë“œ */
+.search-input-main {
+  flex: 1;
+  padding: 1rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+}
+
+/* ê²€??ë²„íŠ¼ */
+.search-btn-main {
+  padding: 1rem 2rem;
+  background-color: var(--secondary-color);
+  color: white;
+  border: none;
+  border-radius: 0.5rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background-color 0.3s;
+}
+
+/* ê²€??ë²„íŠ¼ ?¸ë²„ ?¨ê³¼ */
+.search-btn-main:hover {
+  background-color: var(--secondary-dark);
+}
+
+/* ============================================
+   ?¹ì…˜ ê³µí†µ ?¤í???(Common Section Styles)
+   ============================================ */
+/* ì½˜í…ì¸??¹ì…˜ (?¸ê¸° ?¼ìŸ, ìµœì‹  ?¼ìŸ ?? */
+.section {
+  margin-bottom: 4rem;
+}
+
+/* ?¹ì…˜ ?¤ë” (?œëª©ê³??”ë³´ê¸?ë§í¬) */
+.section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* ?¹ì…˜ ?œëª© */
+.section-header h2 {
+  font-size: 1.75rem;
+  font-weight: 700;
+}
+
+/* ?”ë³´ê¸?ë§í¬ */
+.more-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+}
+
+/* ?”ë³´ê¸?ë§í¬ ?¸ë²„ ?¨ê³¼ */
+.more-link:hover {
+  color: var(--primary-dark);
+}
+
+/* ============================================
+   ?¼ìŸ ê·¸ë¦¬??(Debate Grid)
+   ============================================ */
+/* 
+ * ?¼ìŸ ì¹´ë“œ ê·¸ë¦¬???ˆì´?„ì›ƒ
+ * auto-fillê³?minmaxë¥??¬ìš©?˜ì—¬ ë°˜ì‘??ê·¸ë¦¬???ì„±
+ * ìµœì†Œ 300px ?ˆë¹„??ì¹´ë“œë¥??ë™?¼ë¡œ ë°°ì¹˜
+ */
+.Debate-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ?¼ìŸ ëª©ë¡ (?¸ë¡œ ë°°ì¹˜) */
+.Debate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+/* ============================================
+   ?¼ìŸ ?„ì´??(Debate Item)
+   ============================================ */
+/* ?¼ìŸ ?„ì´??ë§í¬ */
+.Debate-item-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ?¼ìŸ ?„ì´??ì¹´ë“œ */
+.Debate-item {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+/* ?¼ìŸ ?„ì´???¸ë²„ ?¨ê³¼ */
+.Debate-item-link:hover .Debate-item {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ?¼ìŸ ?„ì´???¤ë” (ì¹´í…Œê³ ë¦¬, ?íƒœ ë°°ì?) */
+.Debate-item-header {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+/* ?¼ìŸ ?„ì´???œëª© */
+.Debate-item-title {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+  transition: color 0.3s;
+}
+
+/* ?¼ìŸ ?„ì´???¸ë²„ ???œëª© ?‰ìƒ ë³€ê²?*/
+.Debate-item-link:hover .Debate-item-title {
+  color: var(--primary-color);
+}
+
+/* ?¼ìŸ ?„ì´??ë©”í? ?•ë³´ (?‘ì„±?? ?‘ì„±?? */
+.Debate-item-meta {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  flex-wrap: wrap;
+}
+
+/* ?¼ìŸ ?„ì´??ë©”í? ?•ë³´ ë§í¬ */
+.Debate-item-meta .author-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  cursor: pointer;
+  transition: text-decoration 0.3s;
+}
+
+/* ?¼ìŸ ?„ì´??ë©”í? ?•ë³´ ë§í¬ ?¸ë²„ ?¨ê³¼ */
+.Debate-item-meta .author-link:hover {
+  text-decoration: underline;
+}
+
+/* ============================================
+   ì¹´í…Œê³ ë¦¬ ë¯¸ë¦¬ë³´ê¸° (Category Preview)
+   ============================================ */
+/* 
+ * ì¹´í…Œê³ ë¦¬ ì¹´ë“œ ê·¸ë¦¬???ˆì´?„ì›ƒ
+ * auto-fillê³?minmaxë¥??¬ìš©?˜ì—¬ ë°˜ì‘??ê·¸ë¦¬???ì„±
+ * ìµœì†Œ 200px ?ˆë¹„??ì¹´ë“œë¥??ë™?¼ë¡œ ë°°ì¹˜
+ */
+.category-preview {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ì¹´í…Œê³ ë¦¬ ì¹´ë“œ ë§í¬ */
+.category-card-link {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+}
+
+/* ì¹´í…Œê³ ë¦¬ ì¹´ë“œ */
+.category-card {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  box-shadow: var(--shadow);
+  text-align: center;
+  transition: transform 0.3s, box-shadow 0.3s;
+  cursor: pointer;
+}
+
+/* ì¹´í…Œê³ ë¦¬ ì¹´ë“œ ?¸ë²„ ?¨ê³¼ */
+.category-card-link:hover .category-card {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* ì¹´í…Œê³ ë¦¬ ?´ë¦„ */
+.category-name {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+/* ì¹´í…Œê³ ë¦¬ ?¼ìŸ ??*/
+.category-count {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* ì¹´í…Œê³ ë¦¬ ë§í¬ (ë³´ê¸° ë²„íŠ¼) */
+.category-link {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: 600;
+  transition: color 0.3s;
+  display: inline-block;
+}
+
+/* ì¹´í…Œê³ ë¦¬ ì¹´ë“œ ?¸ë²„ ??ë§í¬ ?‰ìƒ ë³€ê²?*/
+.category-card-link:hover .category-link {
+  color: var(--primary-dark);
+}
+
+
+
+
+
+
+
+

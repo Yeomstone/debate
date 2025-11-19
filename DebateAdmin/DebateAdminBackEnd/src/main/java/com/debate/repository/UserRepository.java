@@ -18,18 +18,12 @@ public interface UserRepository extends JpaRepository<User, Long> {
     /** 이메일로 회원 조회 */
     Optional<User> findByEmail(String email);
 
-    /** 사용자명으로 회원 조회 */
-    Optional<User> findByUsername(String username);
-
     /** 이메일 중복 여부 검사 */
     boolean existsByEmail(String email);
 
-    /** 사용자명 중복 여부 검사 */
-    boolean existsByUsername(String username);
-    
     @Query("SELECT u FROM User u WHERE " +
            "(:keyword IS NULL OR :keyword = '' OR " +
-           "u.email LIKE %:keyword% OR u.username LIKE %:keyword% OR u.nickname LIKE %:keyword%) " +
+           "u.email LIKE %:keyword% OR u.nickname LIKE %:keyword%) " +
            "AND (:status IS NULL OR u.status = :status)")
     /** 키워드와 상태 조건을 포함한 회원 검색 */
     Page<User> searchUsers(@Param("keyword") String keyword, 

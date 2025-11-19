@@ -1,0 +1,238 @@
+/**
+ * DebateCreatePage ?¤í???(?¼ìŸ ?‘ì„± ?˜ì´ì§€)
+ * 
+ * ?ˆë¡œ???¼ìŸ???‘ì„±?˜ëŠ” ?˜ì´ì§€???¤í??¼ì„ ?•ì˜?©ë‹ˆ??
+ * 
+ * ì£¼ìš” ê¸°ëŠ¥:
+ * - ?¼ìŸ ?‘ì„± ???ˆì´?„ì›ƒ
+ * - ???…ë ¥ ?„ë“œ ?¤í???
+ * - ? ì§œ ? íƒ ?„ë“œ (2??ê·¸ë¦¬??
+ * - ?ëŸ¬ ë©”ì‹œì§€ ?œì‹œ
+ * - ë°˜ì‘???”ì??
+ */
+
+/* ============================================
+   ?˜ì´ì§€ ì»¨í…Œ?´ë„ˆ (Page Container)
+   ============================================ */
+/* ?¼ìŸ ?‘ì„± ?˜ì´ì§€ ê¸°ë³¸ ?¤í???*/
+.Debate-create-page {
+  padding: 2rem 0;
+}
+
+/* ?˜ì´ì§€ ?œëª© */
+.Debate-create-page h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   ?¼ìŸ ?‘ì„± ??(Debate Form)
+   ============================================ */
+/* 
+ * ?¼ìŸ ?‘ì„± ??ì»¨í…Œ?´ë„ˆ
+ * ?¤ë¥¸ ?˜ì´ì§€?¤ê³¼ ?™ì¼???“ì´ ?¬ìš© (.container??max-width: 1200px)
+ */
+.Debate-form {
+  background-color: var(--bg-primary);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+/* ============================================
+   ???”ì†Œ (Form Elements)
+   ============================================ */
+/* ??ê·¸ë£¹ (?…ë ¥ ?„ë“œ?€ ?¼ë²¨) */
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* ???¼ë²¨ */
+.form-group label {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ???ŒíŠ¸ ?ìŠ¤??*/
+.form-hint {
+  margin-top: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+}
+
+/* React Quill ?ë””???¤í???*/
+.form-group .quill {
+  background-color: var(--bg-primary);
+}
+
+.form-group .ql-container {
+  font-size: 1rem;
+  min-height: 300px;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  border-color: var(--border-color);
+}
+
+.form-group .ql-toolbar {
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  border-color: var(--border-color);
+  background-color: var(--bg-secondary);
+}
+
+.form-group .ql-editor {
+  min-height: 300px;
+  color: var(--text-primary);
+}
+
+.form-group .ql-editor.ql-blank::before {
+  color: var(--text-secondary);
+  font-style: normal;
+}
+
+/* ?´ë?ì§€ ?¤í???*/
+.form-group .ql-editor img {
+  max-width: 100%;
+  height: auto;
+  border-radius: 0.5rem;
+  margin: 1rem 0;
+  display: block;
+  margin-left: auto;
+  margin-right: auto;
+}
+
+/* ?´ë?ì§€ ë¦¬ì‚¬?´ì¦ˆ ?¸ë“¤ ?¤í???*/
+.form-group .ql-editor img.ql-image-resizing {
+  cursor: nwse-resize;
+}
+
+/* ?ìŠ¤???•ë ¬ ?¤í???(?ë””???´ë?) */
+.form-group .ql-editor .ql-align-left {
+  text-align: left;
+}
+
+.form-group .ql-editor .ql-align-center {
+  text-align: center;
+}
+
+.form-group .ql-editor .ql-align-right {
+  text-align: right;
+}
+
+.form-group .ql-editor .ql-align-justify {
+  text-align: justify;
+}
+
+/* ?Œì´ë¸??¤í???*/
+.form-group .ql-editor table {
+  border-collapse: collapse;
+  width: 100%;
+  margin: 1rem 0;
+  border: 1px solid var(--border-color);
+}
+
+.form-group .ql-editor table td,
+.form-group .ql-editor table th {
+  border: 1px solid var(--border-color);
+  padding: 0.5rem;
+  min-width: 1em;
+}
+
+.form-group .ql-editor table th {
+  background-color: var(--bg-secondary);
+  font-weight: 600;
+}
+
+.form-group .ql-editor table .ql-table-better-cell {
+  position: relative;
+}
+
+/* ë§í¬ ?¤í???*/
+.form-group .ql-editor a {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.form-group .ql-editor a:hover {
+  color: var(--primary-dark);
+}
+
+/* ?¤í¬ëª¨ë“œ ?€??*/
+[data-theme="dark"] .form-group .ql-toolbar {
+  background-color: var(--bg-tertiary);
+}
+
+[data-theme="dark"] .form-group .ql-stroke {
+  stroke: var(--text-primary);
+}
+
+[data-theme="dark"] .form-group .ql-fill {
+  fill: var(--text-primary);
+}
+
+[data-theme="dark"] .form-group .ql-picker-label {
+  color: var(--text-primary);
+}
+
+/* 
+ * ????(Form Row)
+ * ?œì‘?¼ì‹œ?€ ì¢…ë£Œ?¼ì‹œë¥??˜ë???ë°°ì¹˜?˜ê¸° ?„í•œ 2??ê·¸ë¦¬??
+ */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+}
+
+/* ============================================
+   ?ëŸ¬ ë©”ì‹œì§€ (Error Message)
+   ============================================ */
+/* ??? íš¨??ê²€???ëŸ¬ ë©”ì‹œì§€ */
+.error-message {
+  background-color: #fee2e2;
+  color: var(--danger-color);
+  padding: 1rem;
+  border-radius: 0.5rem;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  font-weight: 600;
+}
+
+/* ============================================
+   ???¡ì…˜ ë²„íŠ¼ (Form Actions)
+   ============================================ */
+/* 
+ * ???œì¶œ/ì·¨ì†Œ ë²„íŠ¼ ì»¨í…Œ?´ë„ˆ
+ * ?¤ë¥¸ìª??•ë ¬
+ */
+.form-actions {
+  display: flex;
+  gap: 1rem;
+  justify-content: flex-end;
+  margin-top: 2rem;
+}
+
+/* ============================================
+   ë°˜ì‘???”ì??(Responsive Design)
+   ============================================ */
+/* 
+ * ëª¨ë°”???”ë©´ (768px ?´í•˜) ?€??
+ * ???‰ì„ 1?´ë¡œ ë³€ê²?
+ */
+@media (max-width: 768px) {
+  .form-row {
+    grid-template-columns: 1fr;
+  }
+}
+
+
+
+
+
+
+
+

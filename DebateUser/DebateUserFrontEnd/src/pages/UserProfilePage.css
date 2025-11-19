@@ -1,0 +1,79 @@
+/**
+ * UserProfilePage ?¤í???(?¬ìš©???„ë¡œ???˜ì´ì§€)
+ * 
+ * ?¹ì • ?¬ìš©?ì˜ ?„ë¡œ?„ì„ ?œì‹œ?˜ëŠ” ?˜ì´ì§€???¤í??¼ì„ ?•ì˜?©ë‹ˆ??
+ * 
+ * ì£¼ìš” ê¸°ëŠ¥:
+ * - ?¬ìš©???„ë¡œ???•ë³´ ?œì‹œ
+ * - ?„ë¡œ???„ë°”?€
+ * - ?¬ìš©???µê³„ ?•ë³´ (?¥í›„ ?•ì¥ ê°€??
+ */
+
+/* ============================================
+   ?˜ì´ì§€ ì»¨í…Œ?´ë„ˆ (Page Container)
+   ============================================ */
+/* ?¬ìš©???„ë¡œ???˜ì´ì§€ ê¸°ë³¸ ?¤í???*/
+.user-profile-page {
+  padding: 2rem 0;
+}
+
+/* ============================================
+   ?„ë¡œ???¹ì…˜ (Profile Section)
+   ============================================ */
+/* ?„ë¡œ???•ë³´ë¥??´ëŠ” ì¹´ë“œ ì»¨í…Œ?´ë„ˆ */
+.profile-section {
+  background-color: var(--bg-primary);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+}
+
+/* ============================================
+   ?„ë¡œ???¤ë” (Profile Header)
+   ============================================ */
+/* 
+ * ?„ë¡œ???¤ë” ?ì—­
+ * ?„ë°”?€, ?‰ë„¤?? ?„ì´?? ?ê¸°?Œê°œë¥??¬í•¨
+ */
+.profile-header {
+  display: flex;
+  gap: 1.5rem;
+}
+
+/* ?„ë¡œ???„ë°”?€ (?í˜•) */
+.profile-avatar {
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background-color: var(--bg-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.5rem;
+}
+
+/* ?„ë¡œ???•ë³´ ?ì—­ */
+.profile-info h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.profile-info p {
+  color: var(--text-secondary);
+  margin-bottom: 0.5rem;
+}
+
+/* ?ê¸°?Œê°œ (Bio) */
+.profile-bio {
+  color: var(--text-primary);
+  margin-top: 0.5rem;
+}
+
+
+
+
+
+
+
+

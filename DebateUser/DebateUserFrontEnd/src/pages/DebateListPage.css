@@ -1,0 +1,231 @@
+/**
+ * DebateListPage ?¤í???(?¼ìŸ ëª©ë¡ ?˜ì´ì§€)
+ * 
+ * ?¼ìŸ ëª©ë¡ ?˜ì´ì§€???¤í??¼ì„ ?•ì˜?©ë‹ˆ??
+ * 
+ * ì£¼ìš” ê¸°ëŠ¥:
+ * - ?˜ì´ì§€ ?¤ë” ë°??„í„° ?¹ì…˜
+ * - ?¼ìŸ ëª©ë¡ ?ˆì´?„ì›ƒ
+ * - ?˜ì´ì§€?¤ì´??
+ * - ë¹??íƒœ ?œì‹œ
+ */
+
+/* ============================================
+   ?˜ì´ì§€ ?¤ë” (Page Header)
+   ============================================ */
+/* 
+ * ?˜ì´ì§€ ?œëª©ê³??¡ì…˜ ë²„íŠ¼???˜ë???ë°°ì¹˜
+ * Flexboxë¥??¬ìš©?˜ì—¬ ?‘ìª½ ?•ë ¬
+ */
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+}
+
+/* ?˜ì´ì§€ ?œëª© */
+.page-header h1 {
+  font-size: 2rem;
+  font-weight: 700;
+}
+
+/* ============================================
+   ?„í„° ?¹ì…˜ (Filter Section)
+   ============================================ */
+/* 
+ * ?„í„° ì»¨í…Œ?´ë„ˆ
+ * ì¹´í…Œê³ ë¦¬, ?íƒœ, ?•ë ¬ ?µì…˜ ë°?ê²€?‰ì„ ?¬í•¨?˜ëŠ” ?¹ì…˜
+ */
+.filter-section {
+  background-color: var(--bg-primary);
+  padding: 1.5rem;
+  border-radius: 0.75rem;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+}
+
+/* ?„í„° ?µì…˜ ì»¨í…Œ?´ë„ˆ */
+.filters {
+  display: flex;
+  gap: 1rem;
+  flex-wrap: wrap; /* ?‘ì? ?”ë©´?ì„œ ì¤„ë°”ê¿?*/
+  margin-bottom: 1rem;
+}
+
+/* ê²€????*/
+.filter-section .search-form {
+  margin-top: 1rem;
+  margin-bottom: 0;
+}
+
+/* ê²€??ë°•ìŠ¤ */
+.filter-section .search-box {
+  display: flex;
+  gap: 0.75rem;
+  align-items: center;
+}
+
+/* ê²€???…ë ¥ ?„ë“œ */
+.filter-section .search-input {
+  flex: 1;
+  padding: 0.75rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.filter-section .search-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.filter-section .search-input::placeholder {
+  color: var(--text-secondary);
+}
+
+/* ê²€???•ë³´ (ê²€?‰ì–´ ?œì‹œ) */
+.filter-section .search-info {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-color);
+  color: var(--text-secondary);
+  font-size: 0.9rem;
+}
+
+.filter-section .search-info span {
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+/* ============================================
+   ? íƒ ?„ë“œ (Select Field)
+   ============================================ */
+/* ?„í„°??? íƒ ?œë¡­?¤ìš´ */
+.form-select {
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  cursor: pointer;
+}
+
+/* ?¬ì»¤???íƒœ: ?Œë‘ë¦??‰ìƒ ë³€ê²?ë°?ê·¸ë¦¼???¨ê³¼ */
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+/* ============================================
+   ?¼ìŸ ëª©ë¡ (Debate List)
+   ============================================ */
+/* ?¼ìŸ ì¹´ë“œ ëª©ë¡ ì»¨í…Œ?´ë„ˆ */
+.Debate-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* ============================================
+   ë¹??íƒœ (Empty State)
+   ============================================ */
+/* ?¼ìŸ???†ì„ ???œì‹œ?˜ëŠ” ë©”ì‹œì§€ */
+.empty-state {
+  text-align: center;
+  padding: 4rem 2rem;
+  color: var(--text-secondary);
+}
+
+/* ============================================
+   ?˜ì´ì§€?¤ì´??(Pagination)
+   ============================================ */
+/* ?˜ì´ì§€?¤ì´??ì»¨í…Œ?´ë„ˆ */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 3rem;
+}
+
+/* ?˜ì´ì§€ ë§í¬ ë²„íŠ¼ */
+.page-link {
+  padding: 0.5rem 1rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  text-decoration: none;
+  color: var(--text-primary);
+  background-color: var(--bg-primary);
+  cursor: pointer;
+  transition: all 0.3s;
+  font-size: 1rem;
+}
+
+/* ?˜ì´ì§€ ë§í¬ ?¸ë²„ ë°??œì„± ?íƒœ */
+.page-link:hover:not(:disabled),
+.page-link.active {
+  background-color: var(--primary-color);
+  color: white;
+  border-color: var(--primary-color);
+}
+
+/* ë¹„í™œ?±í™”???˜ì´ì§€ ë§í¬ (ì²??˜ì´ì§€/ë§ˆì?ë§??˜ì´ì§€) */
+.page-link:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* ============================================
+   ?”ë³´ê¸?ë²„íŠ¼ (Load More Button)
+   ============================================ */
+.load-more {
+  display: flex;
+  justify-content: center;
+  margin-top: 2rem;
+  margin-bottom: 2rem;
+}
+
+.load-more-btn {
+  padding: 0.75rem 2rem;
+  font-size: 1rem;
+  width: 100%;
+  max-width: 300px;
+}
+
+/* ============================================
+   ë°˜ì‘???”ì??(Responsive Design)
+   ============================================ */
+/* ëª¨ë°”?? ?°ìŠ¤?¬í†± ?˜ì´ì§??¨ê¸°ê¸? ?”ë³´ê¸?ë²„íŠ¼ ?œì‹œ */
+@media (max-width: 768px) {
+  .desktop-pagination {
+    display: none;
+  }
+
+  .mobile-load-more {
+    display: flex;
+  }
+}
+
+/* ?°ìŠ¤?¬í†±: ?”ë³´ê¸?ë²„íŠ¼ ?¨ê¸°ê¸? ?˜ì´ì§??œì‹œ */
+@media (min-width: 769px) {
+  .mobile-load-more {
+    display: none;
+  }
+
+  .desktop-pagination {
+    display: flex;
+  }
+}
+
+
+
+
+
+
+
+

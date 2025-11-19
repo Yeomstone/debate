@@ -98,7 +98,7 @@ api.interceptors.response.use(
       const errorResponse = error.response.data
       
       // 401 Unauthorized 에러 처리 (인증 실패)
-      if (error.response.status === 401) {
+      if (error.response.status === 401 || error.response.status === 403) {
         // 토큰 제거
         localStorage.removeItem('token')
         // 로그인 페이지로 리다이렉트

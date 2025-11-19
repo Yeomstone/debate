@@ -1,0 +1,82 @@
+/**
+ * CategoryListPage ?��???(카테고리 목록 ?�이지)
+ * 
+ * ?�체 카테고리 목록???�시?�는 ?�이지???��??�을 ?�의?�니??
+ * 
+ * 주요 기능:
+ * - 카테고리 그리???�이?�웃
+ * - 카테고리 카드 ?��???
+ * - ?�버 ?�과
+ */
+
+/* ============================================
+   ?�이지 컨테?�너 (Page Container)
+   ============================================ */
+/* 카테고리 목록 ?�이지 기본 ?��???*/
+.category-list-page {
+  padding: 2rem 0;
+}
+
+/* ?�이지 ?�목 */
+.category-list-page h1 {
+  font-size: 2rem;
+  font-weight: 700;
+  margin-bottom: 2rem;
+}
+
+/* ============================================
+   카테고리 그리??(Category Grid)
+   ============================================ */
+/* 
+ * 카테고리 카드 그리???�이?�웃
+ * auto-fill�?minmax�??�용?�여 반응??그리???�성
+ * 최소 250px ?�비??카드�??�동?�로 배치
+ */
+.category-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 1.5rem;
+}
+
+/* ============================================
+   카테고리 카드 (Category Card)
+   ============================================ */
+/* 
+ * 카테고리 카드 기본 ?��???
+ * ?�릭 가?�한 카드�??�용 (Link 컴포?�트)
+ */
+.category-card {
+  background-color: var(--bg-primary);
+  border-radius: 0.75rem;
+  padding: 2rem;
+  box-shadow: var(--shadow);
+  text-decoration: none;
+  color: var(--text-primary);
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+/* 카테고리 카드 ?�버 ?�과: ?�로 ?�짝 ?�라가�?그림??강화 */
+.category-card:hover {
+  transform: translateY(-2px);
+  box-shadow: var(--shadow-md);
+}
+
+/* 카테고리 ?�름 (h3) */
+.category-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+/* 카테고리 ?�명 (p) */
+.category-card p {
+  color: var(--text-secondary);
+}
+
+
+
+
+
+
+
+

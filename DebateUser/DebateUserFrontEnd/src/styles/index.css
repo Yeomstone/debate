@@ -1,0 +1,287 @@
+/**
+ * 전역 스타일 (Global Styles)
+ *
+ * 애플리케이션 전체에 적용되는 기본 스타일과 CSS 변수를 정의합니다.
+ *
+ * 주요 내용:
+ * - CSS 리셋 (모든 요소의 기본 margin, padding 제거)
+ * - CSS 변수 정의 (색상, 간격, 그림자 등)
+ * - 다크모드 지원
+ * - 공통 컴포넌트 스타일 (버튼, 폼, 카드 등)
+ * - 유틸리티 클래스
+ */
+
+/* ============================================
+   CSS 리셋 (Reset)
+   ============================================ */
+/* 모든 요소의 기본 margin, padding을 제거하고 box-sizing을 border-box로 설정 */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* ============================================
+   CSS 변수 정의 (Light Mode)
+   ============================================ */
+:root {
+  /*
+   * 메인 색상 (Primary Colors)
+   * 신뢰 - 깊은 블루 (Trust & Stability)
+   * 토론 플랫폼의 신뢰감과 안정성을 표현
+   */
+  --primary-color: #1e40af;
+  --primary-dark: #1e3a8a;
+  --primary-light: #3b82f6;
+
+  /*
+   * 보조 색상 (Secondary Colors)
+   * 열정 - 코랄 오렌지 (Passion & Energy)
+   * 토론의 열정과 활력을 표현
+   */
+  --secondary-color: #f97316;
+  --secondary-dark: #ea580c;
+  --secondary-light: #fb923c;
+
+  /*
+   * 강조 색상 (Accent Colors)
+   * 균형 - 에메랄드 그린 (Balance & Harmony)
+   * 건설적인 토론의 균형감을 표현
+   */
+  --accent-color: #10b981;
+  --accent-dark: #059669;
+  --accent-light: #34d399;
+
+  /*
+   * 상태 색상 (Status Colors)
+   * UI 요소의 상태를 나타내는 색상
+   */
+  --success-color: #10b981;
+  --danger-color: #ef4444;
+  --warning-color: #f59e0b;
+  --info-color: #3b82f6;
+
+  /*
+   * 텍스트 색상 (Text Colors)
+   * 가독성을 위한 텍스트 색상 계층
+   */
+  --text-primary: #1f2937;
+  --text-secondary: #6b7280;
+  --text-light: #9ca3af;
+
+  /*
+   * 배경 색상 (Background Colors)
+   * 레이어별 배경 색상
+   */
+  --bg-primary: #ffffff;
+  --bg-secondary: #f9fafb;
+  --bg-tertiary: #f3f4f6;
+
+  /*
+   * 테두리 및 그림자 (Borders & Shadows)
+   * 요소의 구분과 깊이감 표현
+   */
+  --border-color: #e5e7eb;
+  --border-light: #f3f4f6;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+}
+
+/* ============================================
+   다크모드 변수 (Dark Mode)
+   ============================================ */
+[data-theme="dark"] {
+  /* 다크모드에서는 색상을 더 밝게 조정하여 가독성 확보 */
+  --primary-color: #3b82f6;
+  --primary-dark: #2563eb;
+  --primary-light: #60a5fa;
+
+  --secondary-color: #fb923c;
+  --secondary-dark: #f97316;
+  --secondary-light: #fdba74;
+
+  --accent-color: #34d399;
+  --accent-dark: #10b981;
+  --accent-light: #6ee7b7;
+
+  --success-color: #34d399;
+  --danger-color: #f87171;
+  --warning-color: #fbbf24;
+  --info-color: #60a5fa;
+
+  /* 다크모드 텍스트: 밝은 색상 사용 */
+  --text-primary: #f9fafb;
+  --text-secondary: #d1d5db;
+  --text-light: #9ca3af;
+
+  /* 다크모드 배경: 어두운 색상 사용 */
+  --bg-primary: #1f2937;
+  --bg-secondary: #111827;
+  --bg-tertiary: #0f172a;
+
+  /* 다크모드 테두리 및 그림자: 더 진한 그림자 사용 */
+  --border-color: #374151;
+  --border-light: #1f2937;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+  --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+  --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.4);
+  --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.5);
+}
+
+/* ============================================
+   기본 요소 스타일 (Base Element Styles)
+   ============================================ */
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  color: var(--text-primary);
+  background-color: var(--bg-secondary);
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
+
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* ============================================
+   버튼 스타일 (Button Styles)
+   ============================================ */
+.btn {
+  display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  text-align: center;
+}
+
+.btn-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-dark);
+}
+
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.btn-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.btn-danger:hover {
+  background-color: #dc2626;
+}
+
+/* ============================================
+   폼 스타일 (Form Styles)
+   ============================================ */
+.form-input,
+.form-textarea,
+.form-select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(30, 64, 175, 0.1);
+}
+
+.form-textarea {
+  min-height: 120px;
+  resize: vertical;
+}
+
+/* ============================================
+   카드 스타일 (Card Styles)
+   ============================================ */
+.card {
+  background-color: var(--bg-primary);
+  border-radius: 0.75rem;
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  margin-bottom: 1.5rem;
+}
+
+/* ============================================
+   배지 스타일 (Badge Styles)
+   ============================================ */
+.badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 1rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.badge-primary {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+.badge-success {
+  background-color: var(--success-color);
+  color: white;
+}
+
+.badge-danger {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+.badge-warning {
+  background-color: var(--warning-color);
+  color: white;
+}
+
+/* ============================================
+   유틸리티 클래스 (Utility Classes)
+   ============================================ */
+.text-center {
+  text-align: center;
+}
+
+.mt-1 { margin-top: 0.5rem; }
+.mt-2 { margin-top: 1rem; }
+.mt-3 { margin-top: 1.5rem; }
+.mt-4 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.5rem; }
+.mb-2 { margin-bottom: 1rem; }
+.mb-3 { margin-bottom: 1.5rem; }
+.mb-4 { margin-bottom: 2rem; }
+
+.p-1 { padding: 0.5rem; }
+.p-2 { padding: 1rem; }
+.p-3 { padding: 1.5rem; }
+.p-4 { padding: 2rem; }
+
