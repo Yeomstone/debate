@@ -1,0 +1,36 @@
+/* ê´€ë¦¬ì ê´€ë¦??˜ì´ì§€ ?¤í???*/
+
+.admins-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 12px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.role-super {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+[data-theme='dark'] .role-super {
+  background-color: #78350f;
+  color: #fcd34d;
+}
+
+.role-admin {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+[data-theme='dark'] .role-admin {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+}
+

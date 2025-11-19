@@ -1,0 +1,67 @@
+/* ?†Í≥† Í¥ÄÎ¶??òÏù¥ÏßÄ ?§Ì???*/
+
+.reports-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.filter-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.pending-count {
+  margin-left: 1rem;
+  color: var(--warning-color);
+  font-weight: 600;
+}
+
+.urgent-row {
+  background-color: #fff3cd;
+}
+
+[data-theme='dark'] .urgent-row {
+  background-color: #3d2e00;
+}
+
+.reason-text {
+  color: var(--text-primary);
+  max-width: 200px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status-pending {
+  background-color: #fef3c7;
+  color: #92400e;
+}
+
+[data-theme='dark'] .status-pending {
+  background-color: #78350f;
+  color: #fcd34d;
+}
+
+.status-approved {
+  background-color: #fee2e2;
+  color: #991b1b;
+}
+
+[data-theme='dark'] .status-approved {
+  background-color: #7f1d1d;
+  color: #fca5a5;
+}
+
+.status-rejected {
+  background-color: #dbeafe;
+  color: #1e40af;
+}
+
+[data-theme='dark'] .status-rejected {
+  background-color: #1e3a8a;
+  color: #93c5fd;
+}
+

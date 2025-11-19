@@ -1,0 +1,54 @@
+/* Ïπ¥ÌÖåÍ≥†Î¶¨ Í¥ÄÎ¶??òÏù¥ÏßÄ ?§Ì???*/
+
+.categories-page {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.order-controls {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.btn-icon {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 4px;
+  padding: 0.25rem 0.5rem;
+  cursor: pointer;
+  font-size: 0.875rem;
+  color: var(--text-primary);
+  transition: all 0.2s;
+  min-width: 32px;
+}
+
+.btn-icon:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--primary-color);
+}
+
+.btn-icon:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+.order-num {
+  font-weight: 600;
+  color: var(--text-primary);
+  min-width: 30px;
+  text-align: center;
+}
+
+.description-text {
+  color: var(--text-secondary);
+  font-size: 0.875rem;
+  max-width: 300px;
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
