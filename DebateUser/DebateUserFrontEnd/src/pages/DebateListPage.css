@@ -126,7 +126,7 @@
    ?�쟁 목록 (Debate List)
    ============================================ */
 /* ?�쟁 카드 목록 컨테?�너 */
-.Debate-list {
+.debate-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

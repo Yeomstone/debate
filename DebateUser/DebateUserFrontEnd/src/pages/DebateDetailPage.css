@@ -15,7 +15,7 @@
    ?¼ìŸ ?ì„¸ ?•ë³´ (Debate Detail)
    ============================================ */
 /* ?¼ìŸ ?ì„¸ ?•ë³´ ì¹´ë“œ */
-.Debate-detail {
+.debate-detail {
   background-color: var(--bg-primary);
   border-radius: 0.75rem;
   padding: 2rem;
@@ -24,7 +24,7 @@
 }
 
 /* ?¼ìŸ ?¤ë” ?ì—­ */
-.Debate-detail-header {
+.debate-detail-header {
   margin-bottom: 2rem;
   padding-bottom: 1.5rem;
   border-bottom: 2px solid var(--border-color);
@@ -34,7 +34,7 @@
  * ?¼ìŸ ë©”í? ?•ë³´ ?ë‹¨
  * ì¹´í…Œê³ ë¦¬, ?íƒœ, ê¸°ê°„ ë°°ì?ë¥??¬í•¨?˜ëŠ” ì»¨í…Œ?´ë„ˆ
  */
-.Debate-meta-top {
+.debate-meta-top {
   display: flex;
   gap: 0.5rem;
   margin-bottom: 1rem;
@@ -51,7 +51,7 @@
 }
 
 /* ?¼ìŸ ?œëª© */
-.Debate-detail-title {
+.debate-detail-title {
   font-size: 2rem;
   font-weight: 700;
   margin-bottom: 1rem;
@@ -62,7 +62,7 @@
    ?‘ì„±???•ë³´ (Author Information)
    ============================================ */
 /* ?‘ì„±???•ë³´ ì»¨í…Œ?´ë„ˆ */
-.Debate-author-info {
+.debate-author-info {
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -101,7 +101,7 @@
 }
 
 /* ?¼ìŸ ?¡ì…˜ ë²„íŠ¼ ì»¨í…Œ?´ë„ˆ (?˜ì •/?? œ) */
-.Debate-actions {
+.debate-actions {
   display: flex;
   gap: 0.5rem;
 }
@@ -128,35 +128,35 @@
    ?¼ìŸ ?´ìš© (Debate Content)
    ============================================ */
 /* ?¼ìŸ ë³¸ë¬¸ ?´ìš© */
-.Debate-detail-content {
+.debate-detail-content {
   font-size: 1.125rem;
   line-height: 1.8;
   margin-bottom: 2rem;
 }
 
-.Debate-detail-content p {
+.debate-detail-content p {
   margin-bottom: 1rem;
 }
 
 /* ?ìŠ¤???•ë ¬ ?¤í???*/
-.Debate-detail-content .ql-align-left {
+.debate-detail-content .ql-align-left {
   text-align: left;
 }
 
-.Debate-detail-content .ql-align-center {
+.debate-detail-content .ql-align-center {
   text-align: center;
 }
 
-.Debate-detail-content .ql-align-right {
+.debate-detail-content .ql-align-right {
   text-align: right;
 }
 
-.Debate-detail-content .ql-align-justify {
+.debate-detail-content .ql-align-justify {
   text-align: justify;
 }
 
 /* ?Œì´ë¸??¤í???*/
-.Debate-detail-content table {
+.debate-detail-content table {
   border-collapse: collapse;
   width: 100%;
   margin: 1.5rem 0;
@@ -165,59 +165,59 @@
   display: block;
 }
 
-.Debate-detail-content table td,
-.Debate-detail-content table th {
+.debate-detail-content table td,
+.debate-detail-content table th {
   border: 1px solid var(--border-color);
   padding: 0.75rem;
   min-width: 1em;
 }
 
-.Debate-detail-content table th {
+.debate-detail-content table th {
   background-color: var(--bg-secondary);
   font-weight: 600;
   text-align: left;
 }
 
-.Debate-detail-content table tbody tr:nth-child(even) {
+.debate-detail-content table tbody tr:nth-child(even) {
   background-color: var(--bg-secondary);
 }
 
-.Debate-detail-content table tbody tr:hover {
+.debate-detail-content table tbody tr:hover {
   background-color: var(--bg-tertiary);
 }
 
 /* React Quillë¡??‘ì„±??HTML ì½˜í…ì¸??¤í???*/
-.Debate-detail-content h1,
-.Debate-detail-content h2,
-.Debate-detail-content h3 {
+.debate-detail-content h1,
+.debate-detail-content h2,
+.debate-detail-content h3 {
   margin-top: 1.5rem;
   margin-bottom: 1rem;
   font-weight: 700;
 }
 
-.Debate-detail-content h1 {
+.debate-detail-content h1 {
   font-size: 2rem;
 }
 
-.Debate-detail-content h2 {
+.debate-detail-content h2 {
   font-size: 1.5rem;
 }
 
-.Debate-detail-content h3 {
+.debate-detail-content h3 {
   font-size: 1.25rem;
 }
 
-.Debate-detail-content ul,
-.Debate-detail-content ol {
+.debate-detail-content ul,
+.debate-detail-content ol {
   margin-left: 2rem;
   margin-bottom: 1rem;
 }
 
-.Debate-detail-content li {
+.debate-detail-content li {
   margin-bottom: 0.5rem;
 }
 
-.Debate-detail-content blockquote {
+.debate-detail-content blockquote {
   border-left: 4px solid var(--primary-color);
   padding-left: 1rem;
   margin: 1rem 0;
@@ -225,7 +225,7 @@
   font-style: italic;
 }
 
-.Debate-detail-content code {
+.debate-detail-content code {
   background-color: var(--bg-secondary);
   padding: 0.25rem 0.5rem;
   border-radius: 0.25rem;
@@ -233,7 +233,7 @@
   font-size: 0.9em;
 }
 
-.Debate-detail-content pre {
+.debate-detail-content pre {
   background-color: var(--bg-secondary);
   padding: 1rem;
   border-radius: 0.5rem;
@@ -241,22 +241,22 @@
   margin: 1rem 0;
 }
 
-.Debate-detail-content pre code {
+.debate-detail-content pre code {
   background-color: transparent;
   padding: 0;
 }
 
-.Debate-detail-content a {
+.debate-detail-content a {
   color: var(--primary-color);
   text-decoration: underline;
 }
 
-.Debate-detail-content a:hover {
+.debate-detail-content a:hover {
   color: var(--primary-dark);
 }
 
 /* ?´ë?ì§€ ?¤í???*/
-.Debate-detail-content img {
+.debate-detail-content img {
   max-width: 100%;
   height: auto;
   border-radius: 0.5rem;
@@ -271,7 +271,7 @@
    ?µê³„ ?•ë³´ (Statistics)
    ============================================ */
 /* ?¼ìŸ ?µê³„ ì»¨í…Œ?´ë„ˆ (ì¡°íšŒ?? ì¢‹ì•„?? ?“ê?) */
-.Debate-stats-detail {
+.debate-stats-detail {
   display: flex;
   gap: 2rem;
   padding: 1.5rem;
@@ -304,7 +304,7 @@
    ?¼ìŸ ?í˜¸?‘ìš© (Debate Interactions)
    ============================================ */
 /* ì¢‹ì•„??ë²„íŠ¼ ???í˜¸?‘ìš© ?”ì†Œ ì»¨í…Œ?´ë„ˆ */
-.Debate-interactions {
+.debate-interactions {
   display: flex;
   justify-content: center;
   gap: 1rem;

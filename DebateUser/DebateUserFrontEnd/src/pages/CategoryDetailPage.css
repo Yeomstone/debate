@@ -48,7 +48,7 @@
    ?�쟁 목록 (Debate List)
    ============================================ */
 /* ?�당 카테고리???�쟁 카드 목록 */
-.Debate-list {
+.debate-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;

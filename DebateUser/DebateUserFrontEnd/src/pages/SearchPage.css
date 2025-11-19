@@ -62,7 +62,7 @@
 }
 
 /* 검?�된 ?�쟁 목록 */
-.Debate-list {
+.debate-list {
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
