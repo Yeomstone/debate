@@ -20,6 +20,8 @@ import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import "./Header.css";
+import debateLogoLight from "../../assets/debate-onlylogo.png";
+import debateLogoDark from "../../assets/debate-logo-dark.png";
 
 /**
  * Header 컴포넌트
@@ -31,6 +33,7 @@ const Header = () => {
   const { user, logout, isAuthenticated } = useAuth(); // 인증 관련 상태 및 함수
   const { theme, toggleTheme } = useTheme(); // 테마 관련 상태 및 함수
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수
+  const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight; // 추가!
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 열림/닫힘 상태
 
   /**
@@ -97,9 +100,10 @@ const Header = () => {
             {/* 로고 */}
             <Link to="/" className="header-logo">
               <img
-                src="\src\assets\debate-onlylogo.png"
+                src={currentLogo}
                 alt="DEBATE"
                 className="logo-image"
+                style={{ width: "50px", height: "100px" }}
               />
               <span className="logo-text">DEBATE</span>
             </Link>

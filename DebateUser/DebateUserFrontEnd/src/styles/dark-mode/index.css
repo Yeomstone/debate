@@ -1,0 +1,18 @@
+/**
+ * 다크모드 통합 Import 파일
+ * 
+ * 이 파일 하나만 import하면 모든 다크모드 스타일이 적용됩니다.
+ * 
+ * 사용 방법:
+ * main.jsx 또는 App.jsx에서
+ * import './styles/dark-mode/index.css'
+ */
+
+/* 1. 기본 요소 (body, main 등) */
+@import "./base.css";
+
+/* 2. 재사용 컴포넌트 (카드, 버튼, 폼 등) */
+@import "./components.css";
+
+/* 3. 홈페이지 전용 - */
+@import "./homepage-ultra.css";

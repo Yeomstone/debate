@@ -15,6 +15,9 @@ import { categoryService } from "../services/categoryService";
 import { debateService } from "../services/debateService";
 import { format } from "date-fns"; // 날짜 포맷팅을 위해 사용
 import "./HomePage.css";
+import { useTheme } from "../context/ThemeContext";
+import debateLogoLight from "../assets/debate-onlylogo.png";
+import debateLogoDark from "../assets/debate-logo-dark.png";
 
 const HomePage = () => {
   const navigate = useNavigate();
@@ -26,6 +29,8 @@ const HomePage = () => {
   const [recentDebates, setRecentDebates] = useState([]);
   const [hotDebates, setHotDebates] = useState([]);
   const [loading, setLoading] = useState(true);
+  const { theme } = useTheme();
+  const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight;
 
   // === 초기 데이터 로드 ===
   useEffect(() => {
@@ -176,7 +181,7 @@ const HomePage = () => {
         <div className="hero-content">
           {/* 로고 이미지 */}
           <div className="hero-logo">
-            <img src={debateLogo} alt="DEBATE Logo" className="logo-image" />
+            <img src={currentLogo} alt="DEBATE Logo" className="logo-image" />
           </div>
 
           <h1 className="hero-title">DEBATE</h1>

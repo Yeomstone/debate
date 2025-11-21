@@ -1,0 +1,387 @@
+/**
+ * 홈페이지 다크모드 강제 적용 (Ultra Priority)
+ * 
+ * !important를 사용하여 기존 스타일을 강제로 오버라이드합니다.
+ * 모든 선택자에 높은 우선순위를 부여합니다.
+ */
+
+/* ============================================
+   히어로 섹션 - 최고 우선순위
+   ============================================ */
+
+/* 히어로 섹션 전체 배경 - 노란색 제거 */
+[data-theme="dark"] .hero-section,
+[data-theme="dark"] .home-page .hero-section,
+[data-theme="dark"] body .hero-section,
+[data-theme="dark"] main .hero-section {
+  background: var(--bg-secondary, #111827) !important;
+  background-color: var(--bg-secondary, #111827) !important;
+  background-image: none !important;
+}
+
+/* 히어로 콘텐츠 배경 */
+[data-theme="dark"] .hero-content {
+  background: transparent !important;
+}
+
+/* 히어로 로고 배경 원 (투명하게) */
+[data-theme="dark"] .hero-section::before,
+[data-theme="dark"] .hero-section::after {
+  background-color: rgba(255, 215, 0, 0.05) !important;
+  opacity: 0.2 !important;
+}
+
+/* ============================================
+   히어로 섹션 텍스트 - 흰색으로 강제 변경
+   ============================================ */
+
+/* DEBATE 제목 */
+[data-theme="dark"] .hero-title,
+[data-theme="dark"] .hero-section .hero-title,
+[data-theme="dark"] .hero-section h1 {
+  color: #f9fafb !important;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+}
+
+/* 부제목/설명 */
+[data-theme="dark"] .hero-subtitle,
+[data-theme="dark"] .hero-section .hero-subtitle,
+[data-theme="dark"] .hero-section p {
+  color: #d1d5db !important;
+}
+
+/* 로고 이미지 필터 효과 */
+[data-theme="dark"] .hero-logo img,
+[data-theme="dark"] .logo-image {
+  filter: brightness(1.2) drop-shadow(0 8px 16px rgba(255, 215, 0, 0.3)) !important;
+}
+
+/* ============================================
+   검색 박스 - 다크 테마
+   ============================================ */
+
+/* 검색 폼 전체 */
+[data-theme="dark"] .hero-search-form,
+[data-theme="dark"] .search-form {
+  background: transparent !important;
+}
+
+/* 검색 박스 컨테이너 */
+[data-theme="dark"] .search-box,
+[data-theme="dark"] .hero-section .search-box {
+  background: var(--bg-tertiary, #0f172a) !important;
+  border-color: var(--border-color, #374151) !important;
+  box-shadow: 4px 4px 0px var(--border-color, #374151) !important;
+}
+
+[data-theme="dark"] .search-box:hover {
+  box-shadow: 6px 6px 0px var(--border-color, #374151) !important;
+}
+
+[data-theme="dark"] .search-box:focus-within {
+  border-color: #ffd700 !important;
+  box-shadow: 6px 6px 0px #ffd700 !important;
+}
+
+/* 검색 아이콘 */
+[data-theme="dark"] .search-icon,
+[data-theme="dark"] .search-box .search-icon {
+  color: #9ca3af !important;
+}
+
+/* 검색 입력창 */
+[data-theme="dark"] .search-input,
+[data-theme="dark"] .search-box .search-input,
+[data-theme="dark"] .hero-section input[type="search"],
+[data-theme="dark"] .hero-section input[type="text"] {
+  background: transparent !important;
+  color: #f9fafb !important;
+  border: none !important;
+}
+
+[data-theme="dark"] .search-input::placeholder,
+[data-theme="dark"] .search-box input::placeholder {
+  color: #6b7280 !important;
+}
+
+/* 검색 버튼 */
+[data-theme="dark"] .search-button,
+[data-theme="dark"] .search-btn,
+[data-theme="dark"] .search-box button {
+  background-color: #ffd700 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* ============================================
+   카테고리 섹션 - 다크 배경
+   ============================================ */
+
+/* 카테고리 섹션 전체 */
+[data-theme="dark"] .category-section,
+[data-theme="dark"] .categories-section,
+[data-theme="dark"] body .category-section {
+  background-color: var(--bg-primary, #1f2937) !important;
+  background: var(--bg-primary, #1f2937) !important;
+}
+
+/* 카테고리 제목 */
+[data-theme="dark"] .category-section h2,
+[data-theme="dark"] .category-section .section-title,
+[data-theme="dark"] .categories-section h2 {
+  color: #f9fafb !important;
+}
+
+/* 카테고리 부제목 */
+[data-theme="dark"] .category-section p,
+[data-theme="dark"] .category-section .section-subtitle,
+[data-theme="dark"] .categories-section p {
+  color: #d1d5db !important;
+}
+
+/* 카테고리 그리드 */
+[data-theme="dark"] .category-grid,
+[data-theme="dark"] .categories-grid {
+  background: transparent !important;
+}
+
+/* 카테고리 카드 */
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .category-item {
+  background-color: var(--bg-secondary, #111827) !important;
+  border-color: var(--border-color, #374151) !important;
+}
+
+[data-theme="dark"] .category-card:hover,
+[data-theme="dark"] .category-item:hover {
+  background-color: var(--bg-tertiary, #0f172a) !important;
+  border-color: #ffd700 !important;
+}
+
+/* 카테고리 아이콘 */
+[data-theme="dark"] .category-icon {
+  background-color: var(--bg-tertiary, #0f172a) !important;
+}
+
+/* 카테고리 이름 */
+[data-theme="dark"] .category-name,
+[data-theme="dark"] .category-title,
+[data-theme="dark"] .category-card h3,
+[data-theme="dark"] .category-item h3 {
+  color: #f9fafb !important;
+}
+
+/* 카테고리 설명 */
+[data-theme="dark"] .category-description,
+[data-theme="dark"] .category-card p,
+[data-theme="dark"] .category-item p {
+  color: #9ca3af !important;
+}
+
+/* ============================================
+   토론 섹션 - 다크 배경
+   ============================================ */
+
+/* 토론 섹션 전체 */
+[data-theme="dark"] .debates-section,
+[data-theme="dark"] .posts-section,
+[data-theme="dark"] body .debates-section {
+  background-color: var(--bg-primary, #1f2937) !important;
+  background: var(--bg-primary, #1f2937) !important;
+}
+
+/* 섹션 헤더 */
+[data-theme="dark"] .section-header {
+  background: transparent !important;
+  border-bottom-color: var(--border-color, #374151) !important;
+}
+
+/* 토론 플롤로보기 제목 */
+[data-theme="dark"] .section-header h2,
+[data-theme="dark"] .section-header h3,
+[data-theme="dark"] .debates-section h2 {
+  color: white;
+}
+[data-theme="dark"] .debates-section h3 {
+  color: #060606 !important;
+}
+
+/* 탭 버튼 (최근/HOT) */
+[data-theme="dark"] .tab-button,
+[data-theme="dark"] .recent-tab,
+[data-theme="dark"] .hot-tab {
+  background-color: var(--bg-secondary, #111827) !important;
+  color: #d1d5db !important;
+  border-color: var(--border-color, #374151) !important;
+}
+
+/* 활성 탭 (HOT) */
+[data-theme="dark"] .tab-button.active,
+[data-theme="dark"] .hot-tab.active,
+[data-theme="dark"] .tab-button[class*="active"] {
+  background-color: #ffd700 !important;
+  color: #000000 !important;
+  border-color: #000000 !important;
+}
+
+/* 토론 카드 */
+[data-theme="dark"] .debate-card,
+[data-theme="dark"] .post-card {
+  background-color: var(--bg-secondary, #111827) !important;
+  border-color: var(--border-color, #374151) !important;
+}
+
+/* 빈 메시지 */
+[data-theme="dark"] .empty-message,
+[data-theme="dark"] .no-data,
+[data-theme="dark"] .debates-section p {
+  color: #9ca3af !important;
+}
+
+/* ============================================
+   CTA 섹션 (지금 바로 토론에 참여하세요)
+   ============================================ */
+
+/* CTA 섹션 전체 */
+[data-theme="dark"] .cta-section,
+[data-theme="dark"] .join-section,
+[data-theme="dark"] body .cta-section {
+  background-color: #000000 !important;
+  background: #000000 !important;
+}
+
+/* CTA 제목 (노란색) */
+[data-theme="dark"] .cta-section h2,
+[data-theme="dark"] .join-section h2 {
+  color: #ffd700 !important;
+}
+
+/* CTA 설명 */
+[data-theme="dark"] .cta-section p,
+[data-theme="dark"] .join-section p {
+  color: #d1d5db !important;
+}
+
+/* CTA 버튼 */
+[data-theme="dark"] .cta-button,
+[data-theme="dark"] .join-button,
+[data-theme="dark"] .cta-section button {
+  background-color: #ffd700 !important;
+  color: #000000 !important;
+  border-color: #ffd700 !important;
+}
+
+/* ============================================
+   푸터 - 다크 배경
+   ============================================ */
+
+/* 푸터 전체 */
+[data-theme="dark"] footer,
+[data-theme="dark"] .footer,
+[data-theme="dark"] body footer {
+  background-color: var(--bg-secondary, #111827) !important;
+  background: var(--bg-secondary, #111827) !important;
+  border-top-color: var(--border-color, #374151) !important;
+}
+
+/* 푸터 제목 */
+[data-theme="dark"] footer h3,
+[data-theme="dark"] footer h4,
+[data-theme="dark"] .footer h3,
+[data-theme="dark"] .footer h4 {
+  color: #f9fafb !important;
+}
+
+/* 푸터 텍스트 */
+[data-theme="dark"] footer p,
+[data-theme="dark"] footer span,
+[data-theme="dark"] .footer p,
+[data-theme="dark"] .footer span {
+  color: #9ca3af !important;
+}
+
+/* 푸터 링크 */
+[data-theme="dark"] footer a,
+[data-theme="dark"] .footer a {
+  color: #d1d5db !important;
+}
+
+[data-theme="dark"] footer a:hover,
+[data-theme="dark"] .footer a:hover {
+  color: #ffd700 !important;
+}
+
+/* 저작권 */
+[data-theme="dark"] .copyright {
+  color: #6b7280 !important;
+}
+
+/* ============================================
+   모든 토론 보기 버튼
+   ============================================ */
+
+[data-theme="dark"] .view-all-button,
+[data-theme="dark"] .see-more-button,
+[data-theme="dark"] .debates-section button {
+  background-color: var(--bg-secondary, #111827) !important;
+  color: #f9fafb !important;
+  border-color: var(--border-color, #374151) !important;
+}
+
+[data-theme="dark"] .view-all-button:hover,
+[data-theme="dark"] .see-more-button:hover {
+  background-color: var(--bg-tertiary, #0f172a) !important;
+  border-color: #ffd700 !important;
+}
+
+/* ============================================
+   인라인 스타일 강제 오버라이드
+   ============================================ */
+
+/* 노란색 배경을 모두 다크로 변경 */
+[data-theme="dark"] [style*="background"][style*="ffc107"],
+[data-theme="dark"] [style*="background"][style*="FFD700"],
+[data-theme="dark"] [style*="background"][style*="ffd54f"],
+[data-theme="dark"] [style*="background"][style*="fff9c4"],
+[data-theme="dark"] [style*="background"][style*="yellow"] {
+  background: var(--bg-secondary, #111827) !important;
+  background-color: var(--bg-secondary, #111827) !important;
+}
+
+/* 검은색 텍스트를 흰색으로 변경 */
+[data-theme="dark"] [style*="color"][style*="#000"],
+[data-theme="dark"] [style*="color"][style*="black"],
+[data-theme="dark"] [style*="color"][style*="#1a1a1a"] {
+  color: #f9fafb !important;
+}
+
+/* linear-gradient 배경 제거 */
+[data-theme="dark"] [style*="linear-gradient"] {
+  background: var(--bg-secondary, #111827) !important;
+  background-image: none !important;
+}
+
+/* ============================================
+   반응형 조정
+   ============================================ */
+
+@media (max-width: 768px) {
+  [data-theme="dark"] .hero-section {
+    padding: 3rem 1rem !important;
+  }
+
+  [data-theme="dark"] .hero-title {
+    font-size: 3rem !important;
+  }
+}
+
+/* ============================================
+   트랜지션
+   ============================================ */
+
+[data-theme="dark"] .hero-section,
+[data-theme="dark"] .category-section,
+[data-theme="dark"] .debates-section,
+[data-theme="dark"] .cta-section {
+  transition: background-color 0.3s ease, color 0.3s ease !important;
+}

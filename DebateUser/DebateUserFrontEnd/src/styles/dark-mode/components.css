@@ -1,0 +1,368 @@
+/**
+ * 다크모드 컴포넌트 스타일 (Component Dark Mode Styles)
+ * 
+ * 카드, 버튼, 폼, 모달 등 재사용 컴포넌트의 다크모드 스타일
+ * 약 400줄
+ */
+
+/* ============================================
+   카드 컴포넌트
+   ============================================ */
+
+[data-theme="dark"] .card,
+[data-theme="dark"] .debate-card,
+[data-theme="dark"] .post-card,
+[data-theme="dark"] .category-card,
+[data-theme="dark"] .user-card {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .card:hover,
+[data-theme="dark"] .debate-card:hover,
+[data-theme="dark"] .category-card:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+  border-color: var(--border-light, #1f2937);
+}
+
+/* ============================================
+   버튼
+   ============================================ */
+
+/* 기본 버튼 */
+[data-theme="dark"] .btn,
+[data-theme="dark"] button {
+  background-color: var(--bg-secondary, #111827);
+  color: var(--text-primary, #f9fafb);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .btn:hover,
+[data-theme="dark"] button:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+}
+
+/* 프라이머리 버튼 */
+[data-theme="dark"] .btn-primary {
+  background-color: #ffd700;
+  color: #000000;
+  border-color: #000000;
+}
+
+[data-theme="dark"] .btn-primary:hover {
+  background-color: #ffed4e;
+}
+
+/* 세컨더리 버튼 */
+[data-theme="dark"] .btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary, #f9fafb);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .btn-secondary:hover {
+  background-color: var(--bg-secondary, #111827);
+}
+
+/* ============================================
+   폼 요소
+   ============================================ */
+
+/* 입력 필드 */
+[data-theme="dark"] input,
+[data-theme="dark"] textarea,
+[data-theme="dark"] select {
+  background-color: var(--bg-tertiary, #0f172a);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] input:focus,
+[data-theme="dark"] textarea:focus,
+[data-theme="dark"] select:focus {
+  border-color: #ffd700;
+  outline-color: #ffd700;
+}
+
+[data-theme="dark"] input::placeholder,
+[data-theme="dark"] textarea::placeholder {
+  color: var(--text-light, #9ca3af);
+}
+
+/* 레이블 */
+[data-theme="dark"] label {
+  color: var(--text-secondary, #d1d5db);
+}
+
+/* ============================================
+   네비게이션
+   ============================================ */
+
+/* 사이드바 */
+[data-theme="dark"] .sidebar {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+}
+
+/* 메뉴 아이템 */
+[data-theme="dark"] .sidebar-menu-item,
+[data-theme="dark"] .nav-item {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .sidebar-menu-item:hover,
+[data-theme="dark"] .nav-item:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+  color: #ffd700;
+}
+
+/* 활성 메뉴 */
+[data-theme="dark"] .sidebar-menu-item.active,
+[data-theme="dark"] .nav-item.active {
+  background-color: var(--bg-tertiary, #0f172a);
+  color: #ffd700;
+  border-left-color: #ffd700;
+}
+
+/* ============================================
+   모달
+   ============================================ */
+
+/* 모달 오버레이 */
+[data-theme="dark"] .modal-overlay {
+  background-color: rgba(0, 0, 0, 0.8);
+}
+
+/* 모달 컨텐츠 */
+[data-theme="dark"] .modal,
+[data-theme="dark"] .modal-content {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* 모달 헤더 */
+[data-theme="dark"] .modal-header {
+  border-bottom-color: var(--border-color, #374151);
+}
+
+/* 모달 푸터 */
+[data-theme="dark"] .modal-footer {
+  border-top-color: var(--border-color, #374151);
+}
+
+/* ============================================
+   테이블
+   ============================================ */
+
+[data-theme="dark"] table {
+  background-color: var(--bg-secondary, #111827);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] thead,
+[data-theme="dark"] th {
+  background-color: var(--bg-tertiary, #0f172a);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] tbody tr {
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] tbody tr:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+}
+
+[data-theme="dark"] td {
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* ============================================
+   뱃지 및 태그
+   ============================================ */
+
+[data-theme="dark"] .badge {
+  background-color: var(--bg-tertiary, #0f172a);
+  color: var(--text-primary, #f9fafb);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .tag {
+  background-color: var(--bg-tertiary, #0f172a);
+  color: var(--text-secondary, #d1d5db);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .tag:hover {
+  background-color: var(--bg-secondary, #111827);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* ============================================
+   드롭다운
+   ============================================ */
+
+[data-theme="dark"] .dropdown-menu {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .dropdown-item {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .dropdown-item:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+  color: #ffd700;
+}
+
+/* ============================================
+   알림
+   ============================================ */
+
+[data-theme="dark"] .alert {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .alert-success {
+  background-color: rgba(52, 211, 153, 0.1);
+  border-color: var(--success-color, #34d399);
+  color: var(--success-color, #34d399);
+}
+
+[data-theme="dark"] .alert-error,
+[data-theme="dark"] .alert-danger {
+  background-color: rgba(248, 113, 113, 0.1);
+  border-color: var(--danger-color, #f87171);
+  color: var(--danger-color, #f87171);
+}
+
+[data-theme="dark"] .alert-warning {
+  background-color: rgba(251, 191, 36, 0.1);
+  border-color: var(--warning-color, #fbbf24);
+  color: var(--warning-color, #fbbf24);
+}
+
+[data-theme="dark"] .alert-info {
+  background-color: rgba(96, 165, 250, 0.1);
+  border-color: var(--info-color, #60a5fa);
+  color: var(--info-color, #60a5fa);
+}
+
+/* ============================================
+   페이지네이션
+   ============================================ */
+
+[data-theme="dark"] .pagination {
+  background-color: var(--bg-secondary, #111827);
+}
+
+[data-theme="dark"] .page-item {
+  background-color: var(--bg-primary, #1f2937);
+  border-color: var(--border-color, #374151);
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .page-item:hover {
+  background-color: var(--bg-tertiary, #0f172a);
+  border-color: #ffd700;
+}
+
+[data-theme="dark"] .page-item.active {
+  background-color: #ffd700;
+  color: #000000;
+  border-color: #000000;
+}
+
+/* ============================================
+   댓글
+   ============================================ */
+
+[data-theme="dark"] .comments-section {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .comment-item {
+  background-color: var(--bg-primary, #1f2937);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .comment-author {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] .comment-content {
+  color: var(--text-secondary, #d1d5db);
+}
+
+/* ============================================
+   로딩 스피너
+   ============================================ */
+
+[data-theme="dark"] .spinner,
+[data-theme="dark"] .loading {
+  border-color: var(--border-color, #374151);
+  border-top-color: #ffd700;
+}
+
+/* ============================================
+   유저 프로필
+   ============================================ */
+
+[data-theme="dark"] .profile-card {
+  background-color: var(--bg-secondary, #111827);
+  border-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .profile-header {
+  background-color: var(--bg-tertiary, #0f172a);
+  border-bottom-color: var(--border-color, #374151);
+}
+
+[data-theme="dark"] .profile-info {
+  color: var(--text-primary, #f9fafb);
+}
+
+/* ============================================
+   푸터
+   ============================================ */
+
+[data-theme="dark"] footer,
+[data-theme="dark"] .footer {
+  background-color: var(--bg-secondary, #111827);
+  border-top-color: var(--border-color, #374151);
+  color: var(--text-secondary, #d1d5db);
+}
+
+[data-theme="dark"] footer a,
+[data-theme="dark"] .footer a {
+  color: var(--text-primary, #f9fafb);
+}
+
+[data-theme="dark"] footer a:hover,
+[data-theme="dark"] .footer a:hover {
+  color: #ffd700;
+}
+
+/* ============================================
+   트랜지션
+   ============================================ */
+
+.card,
+.debate-card,
+button,
+.btn,
+input,
+textarea,
+select {
+  transition: background-color 0.3s ease, color 0.3s ease,
+    border-color 0.3s ease;
+}

@@ -1,0 +1,146 @@
+/**
+ * 다크모드 기본 스타일 (Base Dark Mode Styles)
+ * 
+ * body, main 등 기본 HTML 요소의 다크모드 스타일
+ * 약 150줄
+ */
+
+/* ============================================
+   전역 요소
+   ============================================ */
+
+/* body 전체 */
+[data-theme="dark"] body {
+  background-color: var(--bg-primary, #1f2937);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* 메인 컨테이너 */
+[data-theme="dark"] main,
+[data-theme="dark"] .main-content,
+[data-theme="dark"] .content-wrapper {
+  background-color: var(--bg-primary, #1f2937);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* 섹션 */
+[data-theme="dark"] section {
+  background-color: var(--bg-primary, #1f2937) !important;
+}
+
+/* 컨테이너 */
+[data-theme="dark"] .container,
+[data-theme="dark"] .wrapper {
+  background-color: transparent !important;
+}
+
+/* 페이지 컨테이너 */
+[data-theme="dark"] .page-container {
+  background-color: var(--bg-primary, #1f2937) !important;
+}
+
+/* ============================================
+   배경 유틸리티
+   ============================================ */
+
+[data-theme="dark"] .white-section,
+[data-theme="dark"] .light-section,
+[data-theme="dark"] .bg-white,
+[data-theme="dark"] .bg-light {
+  background-color: var(--bg-primary, #1f2937) !important;
+}
+
+[data-theme="dark"] .white-box,
+[data-theme="dark"] .content-box {
+  background-color: var(--bg-secondary, #111827);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* ============================================
+   텍스트 유틸리티
+   ============================================ */
+
+[data-theme="dark"] .text-muted {
+  color: var(--text-light, #9ca3af) !important;
+}
+
+[data-theme="dark"] .text-primary {
+  color: var(--text-primary, #f9fafb) !important;
+}
+
+[data-theme="dark"] .text-secondary {
+  color: var(--text-secondary, #d1d5db) !important;
+}
+
+/* ============================================
+   구분선
+   ============================================ */
+
+[data-theme="dark"] hr,
+[data-theme="dark"] .divider {
+  border-color: var(--border-color, #374151);
+}
+
+/* ============================================
+   그림자 효과
+   ============================================ */
+
+[data-theme="dark"] .shadow {
+  box-shadow: var(--shadow);
+}
+
+[data-theme="dark"] .shadow-md {
+  box-shadow: var(--shadow-md);
+}
+
+[data-theme="dark"] .shadow-lg {
+  box-shadow: var(--shadow-lg);
+}
+
+[data-theme="dark"] .shadow-xl {
+  box-shadow: var(--shadow-xl);
+}
+
+/* ============================================
+   스크롤바 (Webkit)
+   ============================================ */
+
+[data-theme="dark"] ::-webkit-scrollbar-track {
+  background-color: var(--bg-secondary, #111827);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb {
+  background-color: var(--border-color, #374151);
+  border-color: var(--bg-secondary, #111827);
+}
+
+[data-theme="dark"] ::-webkit-scrollbar-thumb:hover {
+  background-color: var(--text-light, #9ca3af);
+}
+
+/* ============================================
+   선택 텍스트
+   ============================================ */
+
+[data-theme="dark"] ::selection {
+  background-color: rgba(255, 215, 0, 0.3);
+  color: var(--text-primary, #f9fafb);
+}
+
+/* ============================================
+   포커스 스타일
+   ============================================ */
+
+[data-theme="dark"] *:focus {
+  outline-color: #ffd700;
+}
+
+/* ============================================
+   트랜지션
+   ============================================ */
+
+body,
+main,
+section {
+  transition: background-color 0.3s ease, color 0.3s ease;
+}
