@@ -1,5 +1,9 @@
 # Gradle
+# 모든 위치의 .gradle 디렉토리 무시
 .gradle/
+**/.gradle/
+**/.gradle/**
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
@@ -8,6 +12,7 @@ build/
 bin/
 out/
 .gradletasknamecache
+
 # Keep Gradle Wrapper files
 !gradlew
 !gradlew.bat

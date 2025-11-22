@@ -44,9 +44,9 @@
   gap: 16px;
 }
 
-/* 햄버거 버튼 */
+/* 햄버거 버튼 - 모바일에서만 표시 */
 .hamburger-btn {
-  display: flex;
+  display: none; /* 기본적으로 숨김 */
   align-items: center;
   justify-content: center;
   width: 40px;
@@ -88,9 +88,50 @@
   background-clip: text;
 }
 
-/* ===== 중앙 영역: 비어있음 (검색바 제거) ===== */
+/* ===== 중앙 영역: 네비게이션 메뉴 ===== */
 .header-center {
-  flex: 1; /* 공간 차지만 함 */
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+/* 헤더 네비게이션 메뉴 */
+.header-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.header-nav-item {
+  padding: 8px 16px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 500;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.header-nav-item:hover {
+  background-color: var(--hover-bg);
+  color: var(--primary-color);
+}
+
+/* 토론 작성 버튼 (강조) */
+.header-nav-item-primary {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000;
+  font-weight: 600;
+}
+
+.header-nav-item-primary:hover {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  color: #000;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
 }
 
 /* ===== 오른쪽 영역: 테마 + 사용자 메뉴 ===== */
@@ -387,6 +428,16 @@
     padding: 0 16px;
   }
 
+  /* 모바일에서 햄버거 버튼 표시 */
+  .hamburger-btn {
+    display: flex;
+  }
+
+  /* 모바일에서 헤더 네비게이션 메뉴 숨김 */
+  .header-nav {
+    display: none;
+  }
+
   /* 모바일에서 로고 텍스트 숨김 */
   .logo-text {
     display: none;
@@ -401,6 +452,16 @@
   .sidebar {
     width: 280px;
     left: -280px;
+  }
+
+  /* 모바일에서 사이드바 열림 상태 */
+  .sidebar.sidebar-open {
+    left: 0;
+  }
+
+  /* 모바일에서 사이드바 오버레이 더 진하게 */
+  .sidebar-overlay {
+    background-color: rgba(0, 0, 0, 0.6);
   }
 }
 

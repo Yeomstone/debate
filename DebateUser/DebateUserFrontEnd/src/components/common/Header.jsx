@@ -15,7 +15,7 @@
  * - 사이드바 메뉴로 네비게이션 개선
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -68,6 +68,25 @@ const Header = () => {
     setIsSidebarOpen(false);
   };
 
+  /**
+   * 사이드바 열림/닫힘에 따라 body 스크롤 제어
+   * 모바일에서 사이드바가 열렸을 때 배경 스크롤 방지
+   */
+  useEffect(() => {
+    if (isSidebarOpen) {
+      // 사이드바가 열렸을 때 body 스크롤 막기
+      document.body.style.overflow = "hidden";
+    } else {
+      // 사이드바가 닫혔을 때 body 스크롤 복원
+      document.body.style.overflow = "";
+    }
+
+    // 컴포넌트 언마운트 시 스크롤 복원
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [isSidebarOpen]);
+
   return (
     <>
       {/* ===== 고정 헤더 ===== */}
@@ -109,9 +128,29 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* 중앙 영역: 비어있음 (검색바 제거됨) */}
+          {/* 중앙 영역: 네비게이션 메뉴 */}
           <div className="header-center">
-            {/* 검색 기능은 홈페이지 본문으로 이동 */}
+            <nav className="header-nav">
+              {/* 토론 목록 */}
+              <Link to="/debate" className="header-nav-item">
+                토론목록
+              </Link>
+
+              {/* 토론 작성 (항상 표시, 클릭 시 로그인 필요 시 로그인 페이지로 이동) */}
+              <Link to="/debate/create" className="header-nav-item header-nav-item-primary">
+                토론작성
+              </Link>
+
+              {/* 카테고리 */}
+              <Link to="/categories" className="header-nav-item">
+                카테고리
+              </Link>
+
+              {/* 랭킹 (홈페이지로 링크, 추후 랭킹 페이지 생성 시 변경 가능) */}
+              <Link to="/" className="header-nav-item">
+                랭킹
+              </Link>
+            </nav>
           </div>
 
           {/* 오른쪽 영역: 테마 전환 + 사용자 메뉴 */}
@@ -310,6 +349,27 @@ const Header = () => {
                 <path d="m21 21-4.35-4.35" />
               </svg>
               <span>검색</span>
+            </Link>
+
+            {/* 랭킹 메뉴 */}
+            <Link to="/" className="nav-item" onClick={closeSidebar}>
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6" />
+                <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18" />
+                <path d="M4 22h16" />
+                <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22" />
+                <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22" />
+                <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z" />
+              </svg>
+              <span>랭킹</span>
             </Link>
           </div>
 
