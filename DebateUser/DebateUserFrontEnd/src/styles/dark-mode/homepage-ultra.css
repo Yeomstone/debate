@@ -39,8 +39,8 @@
 [data-theme="dark"] .hero-title,
 [data-theme="dark"] .hero-section .hero-title,
 [data-theme="dark"] .hero-section h1 {
-  color: #f9fafb !important;
-  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3) !important;
+  color: #ffffff !important;
+  text-shadow: 2px 2px 4px rgba(255, 255, 255, 0.3) !important;
 }
 
 /* 부제목/설명 */
@@ -200,10 +200,10 @@
 [data-theme="dark"] .section-header h2,
 [data-theme="dark"] .section-header h3,
 [data-theme="dark"] .debates-section h2 {
-  color: white;
+  color: rgb(255, 255, 255);
 }
-[data-theme="dark"] .debates-section h3 {
-  color: #060606 !important;
+[data-theme="dark"] .debates-section h3.column-header {
+  color: #ffffff !important;
 }
 
 /* 탭 버튼 (최근/HOT) */
