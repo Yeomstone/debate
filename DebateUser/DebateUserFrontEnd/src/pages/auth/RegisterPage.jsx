@@ -16,7 +16,7 @@
  * @component
  */
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import "./Auth.css";
@@ -174,7 +174,12 @@ const RegisterPage = () => {
     setFormData({ ...formData, password: newPassword });
     setPasswordStrength(checkPasswordStrength(newPassword));
   };
-
+  // [추가] 중복 확인 상태 (idle, loading, success, error)
+  const [emailCheck, setEmailCheck] = useState({ status: "idle", message: "" });
+  const [nicknameCheck, setNicknameCheck] = useState({
+    status: "idle",
+    message: "",
+  });
   /**
    * 회원가입 폼 제출 핸들러
    *
@@ -192,9 +197,83 @@ const RegisterPage = () => {
    *
    * @param {Event} e - 폼 제출 이벤트
    */
+  // [추가] 가짜 중복 확인 API (나중에 실제 백엔드 API로 교체 필요)
+  const checkDuplicateAPI = async (type, value) => {
+    return new Promise((resolve, reject) => {
+      setTimeout(() => {
+        // 테스트 로직: 'test'가 포함되면 중복으로 간주
+        if (value.includes("test")) {
+          reject(
+            new Error(
+              `이미 사용 중인 ${type === "email" ? "이메일" : "닉네임"}입니다.`
+            )
+          );
+        } else {
+          resolve(true);
+        }
+      }, 500);
+    });
+  };
+
+  // [추가] 이메일 중복 확인 (0.5초 딜레이)
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!formData.email)
+        return setEmailCheck({ status: "idle", message: "" });
+      if (!emailPattern.test(formData.email))
+        return setEmailCheck({
+          status: "error",
+          message: "올바른 형식이 아닙니다.",
+        });
+
+      setEmailCheck({ status: "loading", message: "확인 중..." });
+      try {
+        await checkDuplicateAPI("email", formData.email);
+        setEmailCheck({
+          status: "success",
+          message: "사용 가능한 이메일입니다.",
+        });
+      } catch (err) {
+        setEmailCheck({ status: "error", message: err.message });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [formData.email]);
+
+  // [추가] 닉네임 중복 확인 (0.5초 딜레이)
+  useEffect(() => {
+    const timer = setTimeout(async () => {
+      if (!formData.nickname)
+        return setNicknameCheck({ status: "idle", message: "" });
+      if (!nicknamePattern.test(formData.nickname))
+        return setNicknameCheck({
+          status: "error",
+          message: "2자 이상 입력하세요.",
+        });
+
+      setNicknameCheck({ status: "loading", message: "확인 중..." });
+      try {
+        await checkDuplicateAPI("nickname", formData.nickname);
+        setNicknameCheck({
+          status: "success",
+          message: "사용 가능한 닉네임입니다.",
+        });
+      } catch (err) {
+        setNicknameCheck({ status: "error", message: err.message });
+      }
+    }, 500);
+    return () => clearTimeout(timer);
+  }, [formData.nickname]);
+
   const handleSubmit = async (e) => {
     e.preventDefault(); // 폼 기본 제출 동작 방지
     setError(""); // 이전 에러 메시지 초기화
+
+    // [추가] 중복 확인 통과 여부 체크
+    if (emailCheck.status !== "success" || nicknameCheck.status !== "success") {
+      setError("이메일과 닉네임을 확인해주세요.");
+      return;
+    }
 
     // ========================================
     // 유효성 검사
@@ -318,40 +397,46 @@ const RegisterPage = () => {
         {/* ======================================== */}
         <form onSubmit={handleSubmit} className="auth-form">
           {/* 이메일 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              이메일 *
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) =>
-                setFormData({ ...formData, email: e.target.value })
-              }
-              required
-              className="form-input"
-              placeholder="example@email.com"
-            />
-          </div>
+          <input
+            type="email"
+            id="email"
+            value={formData.email}
+            onChange={(e) =>
+              setFormData({ ...formData, email: e.target.value })
+            }
+            required
+            className={`form-input ${
+              emailCheck.status === "error" ? "input-error" : ""
+            }`}
+            placeholder="example@email.com"
+          />
+          {/* [추가] 메시지 표시 영역 */}
+          {emailCheck.message && (
+            <div className={`validation-message ${emailCheck.status}`}>
+              {emailCheck.message}
+            </div>
+          )}
 
           {/* 닉네임 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="nickname" className="form-label">
-              닉네임 *
-            </label>
-            <input
-              type="text"
-              id="nickname"
-              value={formData.nickname}
-              onChange={(e) =>
-                setFormData({ ...formData, nickname: e.target.value })
-              }
-              required
-              className="form-input"
-              placeholder="2자 이상 입력하세요"
-            />
-          </div>
+          <input
+            type="text"
+            id="nickname"
+            value={formData.nickname}
+            onChange={(e) =>
+              setFormData({ ...formData, nickname: e.target.value })
+            }
+            required
+            className={`form-input ${
+              nicknameCheck.status === "error" ? "input-error" : ""
+            }`}
+            placeholder="2자 이상 입력하세요"
+          />
+          {/* [추가] 메시지 표시 영역 */}
+          {nicknameCheck.message && (
+            <div className={`validation-message ${nicknameCheck.status}`}>
+              {nicknameCheck.message}
+            </div>
+          )}
 
           {/* 비밀번호 입력 필드 */}
           <div className="form-group">

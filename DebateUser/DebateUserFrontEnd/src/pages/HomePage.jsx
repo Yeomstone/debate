@@ -1,10 +1,10 @@
 /**
- * HomePage - 메인 홈페이지 컴포넌트 (API 연동 및 전체 코드 복원)
+ * HomePage - 메인 홈페이지 컴포넌트 (기획서 반영 완료)
  *
- * 기능:
- * 1. HERO 섹션: 검색 기능 API 연동 준비
- * 2. 카테고리 섹션: 백엔드 카테고리 목록 조회 및 아이콘/색상 매핑
- * 3. 게시글 섹션: 최근/HOT 게시글 API 호출 및 데이터 바인딩
+ * 수정사항:
+ * 1. 섹션 순서: 히어로 → CTA → 토론 → 카테고리 (기획서대로 변경)
+ * 2. 게시글 개수: 5개 → 8개로 변경
+ * 3. 카테고리 그리드: 동적 레이아웃 적용 예정 (CSS)
  */
 
 import { useState, useEffect } from "react";
@@ -13,7 +13,7 @@ import { useAuth } from "../context/AuthContext";
 import debateLogo from "../assets/debate-onlylogo.png";
 import { categoryService } from "../services/categoryService";
 import { debateService } from "../services/debateService";
-import { format } from "date-fns"; // 날짜 포맷팅을 위해 사용
+import { format } from "date-fns";
 import "./HomePage.css";
 import { useTheme } from "../context/ThemeContext";
 import debateLogoLight from "../assets/debate-onlylogo.png";
@@ -53,7 +53,6 @@ const HomePage = () => {
   }, []);
 
   // === 헬퍼 함수: 카테고리 스타일 매핑 ===
-  // 백엔드에는 아이콘/색상 정보가 없으므로 프론트에서 순서대로 매핑
   const getCategoryStyle = (index) => {
     const styles = [
       { icon: "🏛️", color: "#FF6B6B" }, // 정치
@@ -65,7 +64,6 @@ const HomePage = () => {
       { icon: "📚", color: "#E67E22" }, // 교육
       { icon: "⚽", color: "#3498DB" }, // 스포츠
     ];
-    // 스타일 배열 길이로 나눈 나머지를 사용하여 순환 할당
     return styles[index % styles.length];
   };
 
@@ -77,7 +75,6 @@ const HomePage = () => {
   const loadCategories = async () => {
     try {
       const data = await categoryService.getAllCategories();
-      // 데이터가 배열인지 확인
       const categoryList = Array.isArray(data) ? data : [];
 
       const mappedCategories = categoryList.map((cat, index) => {
@@ -98,12 +95,12 @@ const HomePage = () => {
   };
 
   /**
-   * 최근 게시글 로드 (최신순 5개)
+   * 최근 게시글 로드 (최신순 8개)
    */
   const loadRecentDebates = async () => {
     try {
-      // page=0, size=5, sort='latest'
-      const pageData = await debateService.getAllDebates(0, 5, "latest");
+      // page=0, size=8, sort='latest'
+      const pageData = await debateService.getAllDebates(0, 8, "latest");
       const content = pageData.content || [];
 
       const mappedDebates = content.map((debate) => ({
@@ -127,12 +124,12 @@ const HomePage = () => {
   };
 
   /**
-   * HOT 게시글 로드 (인기순 5개)
+   * HOT 게시글 로드 (인기순 8개)
    */
   const loadHotDebates = async () => {
     try {
-      // page=0, size=5, sort='popular'
-      const pageData = await debateService.getAllDebates(0, 5, "popular");
+      // page=0, size=8, sort='popular'
+      const pageData = await debateService.getAllDebates(0, 8, "popular");
       const content = pageData.content || [];
 
       const mappedDebates = content.map((debate) => ({
@@ -176,7 +173,7 @@ const HomePage = () => {
 
   return (
     <div className="home-page">
-      {/* ===== Hero Section ===== */}
+      {/* ===== 1. Hero Section ===== */}
       <section className="hero-section">
         <div className="hero-content">
           {/* 로고 이미지 */}
@@ -229,49 +226,44 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ===== 카테고리 섹션 ===== */}
-      <section className="categories-section">
+      {/* ===== 2. CTA Section ===== */}
+      <section className="cta-section">
         <div className="container">
-          <div className="section-header">
-            <h2 className="section-title">카테고리별 토론</h2>
-            <p className="section-subtitle">
-              관심 있는 주제의 카테고리를 선택해보세요
+          <div className="cta-content">
+            <h2 className="cta-title">지금 바로 토론에 참여하세요!</h2>
+            <p className="cta-description">
+              다양한 주제로 여러분의 의견을 나누고, 새로운 시각을 발견해보세요.
             </p>
+            {isAuthenticated ? (
+              <button
+                className="btn-debate btn-debate-primary btn-debate-lg"
+                onClick={() => navigate("/debate/create")}
+              >
+                토론 시작하기
+              </button>
+            ) : (
+              <button
+                className="btn-debate btn-debate-primary btn-debate-lg"
+                onClick={() => navigate("/auth/register")}
+              >
+                회원가입하기
+              </button>
+            )}
           </div>
-
-          {/* 카테고리 데이터가 로딩 중이거나 없을 때 처리 */}
-          {loading && categories.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "2rem" }}>
-              로딩 중...
-            </div>
-          ) : (
-            <div className="categories-grid">
-              {categories.map((category) => (
-                <div
-                  key={category.id}
-                  className="category-card"
-                  onClick={() => handleCategoryClick(category.id)}
-                  style={{ "--category-color": category.color }}
-                >
-                  <div className="category-icon">{category.icon}</div>
-                  <h3 className="category-name">{category.name}</h3>
-                  <p className="category-count">
-                    {category.debateCount}개의 토론
-                  </p>
-                </div>
-              ))}
-            </div>
-          )}
         </div>
       </section>
 
-      {/* ===== 게시글 섹션 (최근 + 핫 좌우 분할) ===== */}
+      {/* ===== 3. 토론 섹션 (네이버 카페 스타일) ===== */}
       <section className="debates-section">
         <div className="container">
           <div className="section-header">
-            <h2 className="section-title">토론 둘러보기</h2>
+            <h2 className="section-title">인기 토론</h2>
+            <p className="section-subtitle">
+              지금 가장 핫한 토론에 참여해보세요
+            </p>
           </div>
 
+          {/* 좌우 2열 그리드: 최근 게시글 + HOT 게시글 */}
           <div className="debates-grid">
             {/* 왼쪽: 최근 게시글 */}
             <div className="debates-column">
@@ -284,8 +276,7 @@ const HomePage = () => {
                   stroke="currentColor"
                   strokeWidth="2"
                 >
-                  <circle cx="12" cy="12" r="10"></circle>
-                  <polyline points="12 6 12 12 16 14"></polyline>
+                  <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
                 </svg>
                 <h3>최근 게시글</h3>
               </div>
@@ -525,28 +516,53 @@ const HomePage = () => {
         </div>
       </section>
 
-      {/* ===== CTA Section ===== */}
-      <section className="cta-section">
+      {/* ===== 4. 카테고리 섹션 ===== */}
+      <section className="categories-section">
         <div className="container">
-          <div className="cta-content">
-            <h2 className="cta-title">지금 바로 토론에 참여하세요!</h2>
-            <p className="cta-description">
-              다양한 주제로 여러분의 의견을 나누고, 새로운 시각을 발견해보세요.
+          <div className="section-header">
+            <h2 className="section-title">토론 카테고리</h2>
+            <p className="section-subtitle">
+              관심있는 주제를 선택하고 토론에 참여하세요
             </p>
-            {isAuthenticated ? (
-              <button
-                className="btn-debate btn-debate-primary btn-debate-lg"
-                onClick={() => navigate("/debate/create")}
+          </div>
+
+          <div className="categories-grid" data-count={categories.length}>
+            {loading && categories.length === 0 ? (
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "2rem",
+                }}
               >
-                토론 시작하기
-              </button>
+                카테고리 로딩 중...
+              </div>
+            ) : categories.length > 0 ? (
+              categories.map((category) => (
+                <div
+                  key={category.id}
+                  className="category-card"
+                  style={{ "--category-color": category.color }}
+                  onClick={() => handleCategoryClick(category.id)}
+                >
+                  <div className="category-icon">{category.icon}</div>
+                  <h3 className="category-name">{category.name}</h3>
+                  <p className="category-count">
+                    {category.debateCount.toLocaleString()}개의 토론
+                  </p>
+                </div>
+              ))
             ) : (
-              <button
-                className="btn-debate btn-debate-primary btn-debate-lg"
-                onClick={() => navigate("/auth/register")}
+              <div
+                style={{
+                  gridColumn: "1 / -1",
+                  textAlign: "center",
+                  padding: "2rem",
+                  color: "#666",
+                }}
               >
-                회원가입하기
-              </button>
+                등록된 카테고리가 없습니다.
+              </div>
             )}
           </div>
         </div>

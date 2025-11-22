@@ -662,3 +662,37 @@
     color: var(--primary-black);
   }
 }
+/* [추가] 유효성 검사 메시지 스타일 */
+.validation-message {
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-top: 0.4rem;
+  animation: fadeIn 0.3s ease-out;
+}
+
+.validation-message.success {
+  color: var(--success-color);
+}
+.validation-message.error {
+  color: var(--error-color);
+}
+.validation-message.loading {
+  color: var(--text-gray);
+}
+
+/* 에러 시 인풋 테두리 빨간색 */
+.input-error {
+  border-color: var(--error-color) !important;
+  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.1) !important;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
