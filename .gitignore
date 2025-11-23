@@ -4,6 +4,11 @@
 **/.gradle/
 **/.gradle/**
 
+# Gradle buildOutputCleanup.lock 파일 (모든 위치)
+**/buildOutputCleanup.lock
+**/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
