@@ -415,6 +415,9 @@ const RegisterPage = () => {
         {/* ======================================== */}
         <form onSubmit={handleSubmit} className="auth-form">
           {/* 이메일 입력 필드 */}
+          <label htmlFor="text" className="form-label">
+            이메일
+          </label>
           <input
             type="email"
             id="email"
@@ -436,6 +439,9 @@ const RegisterPage = () => {
           )}
 
           {/* 닉네임 입력 필드 */}
+          <label htmlFor="text" className="form-label">
+            이름
+          </label>
           <input
             type="text"
             id="nickname"
