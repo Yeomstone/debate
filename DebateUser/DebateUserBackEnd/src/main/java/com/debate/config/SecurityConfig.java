@@ -36,7 +36,7 @@ public class SecurityConfig {
     /**
      * 비밀번호 암호화 인코더 빈 등록
      * BCrypt 알고리즘을 사용하여 비밀번호를 해시화합니다.
-     * 
+     *
      * @return BCryptPasswordEncoder 인스턴스
      */
     @Bean
@@ -47,7 +47,7 @@ public class SecurityConfig {
     /**
      * 인증 관리자 빈 등록
      * 사용자 인증을 처리하는 AuthenticationManager를 생성합니다.
-     * 
+     *
      * @param config 인증 설정
      * @return AuthenticationManager 인스턴스
      */
@@ -59,7 +59,7 @@ public class SecurityConfig {
     /**
      * 보안 필터 체인 설정
      * HTTP 요청에 대한 보안 규칙을 정의합니다.
-     * 
+     *
      * @param http HttpSecurity 객체
      * @return SecurityFilterChain 인스턴스
      */
@@ -97,24 +97,31 @@ public class SecurityConfig {
 
     /**
      * CORS (Cross-Origin Resource Sharing) 설정
-     * 프론트엔드와의 통신을 위한 CORS 정책을 정의합니다.
-     * 
-     * @return CorsConfigurationSource 인스턴스
+     * 수정됨: 다양한 포트 허용을 위해 AllowedOriginPatterns 사용
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        
-        // 허용할 Origin (프론트엔드 주소)
-        //configuration.setAllowedOrigins(List.of("http://localhost:3000", "http://localhost:5173"));
-        configuration.setAllowedOrigins(List.of("http://localhost:9002"));
-        
+
+        // [수정] 특정 포트(9002)만 허용하던 것을 모든 패턴 허용으로 변경하거나, 필요한 포트를 모두 추가
+        // configuration.setAllowedOrigins(List.of("http://localhost:9002")); // 기존 코드
+
+        // 방법 1: 모든 Origin 패턴 허용 (개발 단계에서 추천)
+        configuration.setAllowedOriginPatterns(List.of("*"));
+
+        // 방법 2: 명시적으로 허용할 프론트엔드 주소 목록 (보안상 더 안전)
+        // configuration.setAllowedOrigins(List.of(
+        //     "http://localhost:3000",
+        //     "http://localhost:5173",
+        //     "http://localhost:9002"
+        // ));
+
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
-        
+
         // 허용할 HTTP 헤더
         configuration.setAllowedHeaders(List.of("*"));
-        
+
         // 인증 정보(쿠키 등) 허용
         configuration.setAllowCredentials(true);
 
@@ -124,4 +131,3 @@ public class SecurityConfig {
         return source;
     }
 }
-

@@ -192,6 +192,7 @@ const HomePage = () => {
             <div className="search-box">
               <svg
                 className="search-icon"
+                //오른쪽으로 이동
                 width="24"
                 height="24"
                 viewBox="0 0 24 24"
