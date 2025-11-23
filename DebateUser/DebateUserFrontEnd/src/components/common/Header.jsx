@@ -36,6 +36,20 @@ const Header = () => {
   const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight; // 추가!
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 열림/닫힘 상태
 
+  // ===== 프로필 드롭다운 상태 =====
+  // 프로필(아바타)을 눌렀을 때 드롭다운 메뉴 열림/닫힘을 관리
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+  // 프로필 메뉴 토글 (열기/닫기)
+  const toggleProfileMenu = () => {
+    setIsProfileMenuOpen(!isProfileMenuOpen);
+  };
+
+  // 프로필 메뉴 닫기
+  const closeProfileMenu = () => {
+    setIsProfileMenuOpen(false);
+  };
+
   /**
    * 로그아웃 처리 함수
    *
@@ -137,7 +151,10 @@ const Header = () => {
               </Link>
 
               {/* 토론 작성 (항상 표시, 클릭 시 로그인 필요 시 로그인 페이지로 이동) */}
-              <Link to="/debate/create" className="header-nav-item header-nav-item-primary">
+              <Link
+                to="/debate/create"
+                className="header-nav-item header-nav-item-primary"
+              >
                 토론작성
               </Link>
 
@@ -216,18 +233,68 @@ const Header = () => {
                   <span className="notification-badge">3</span>
                 </button>
 
-                {/* 사용자 아바타 */}
-                <Link to="/my" className="user-avatar">
-                  {user?.profileImage ? (
-                    // 프로필 이미지가 있으면 이미지 표시
-                    <img src={user.profileImage} alt={user.nickname} />
-                  ) : (
-                    // 프로필 이미지가 없으면 닉네임 첫 글자 표시
-                    <div className="avatar-placeholder">
-                      {user?.nickname?.charAt(0) || "U"}
+                {/* =========================  
+    사용자 프로필 드롭다운 (구글 스타일)
+========================= */}
+                <div className="profile-wrapper">
+                  {/* 아바타 버튼 */}
+                  <button className="user-avatar" onClick={toggleProfileMenu}>
+                    {user?.profileImage ? (
+                      <img src={user.profileImage} alt={user.nickname} />
+                    ) : (
+                      <div className="avatar-placeholder">
+                        {user?.nickname?.charAt(0) || "U"}
+                      </div>
+                    )}
+                  </button>
+
+                  {/* 드롭다운 메뉴 */}
+                  {isProfileMenuOpen && (
+                    <div className="profile-dropdown google-style">
+                      {/* 상단 프로필 박스 */}
+                      <div className="dropdown-profile-box">
+                        <div className="dropdown-profile-avatar">
+                          {user?.profileImage ? (
+                            <img src={user.profileImage} alt={user.nickname} />
+                          ) : (
+                            <div className="avatar-placeholder-lg">
+                              {user?.nickname?.charAt(0) || "U"}
+                            </div>
+                          )}
+                        </div>
+
+                        <div className="dropdown-profile-info">
+                          <p className="profile-name">{user?.nickname}</p>
+                          {/* 이메일 제거 */}
+                        </div>
+                      </div>
+
+                      <div className="divider" />
+
+                      {/* 메뉴 영역 */}
+                      <Link
+                        to="/my"
+                        onClick={closeProfileMenu}
+                        className="dropdown-item"
+                      >
+                        내 정보
+                      </Link>
+
+                      <Link
+                        to="/my/settings"
+                        onClick={closeProfileMenu}
+                        className="dropdown-item"
+                      >
+                        계정 수정
+                      </Link>
+
+                      {/* 버튼 태그지만 스타일은 위 링크들과 똑같이 적용됨 */}
+                      <button onClick={handleLogout} className="dropdown-item">
+                        로그아웃
+                      </button>
                     </div>
                   )}
-                </Link>
+                </div>
               </>
             ) : (
               // 로그인되지 않은 경우: 로그인/회원가입 버튼

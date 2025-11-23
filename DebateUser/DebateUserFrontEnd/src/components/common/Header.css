@@ -487,3 +487,128 @@
   --text-tertiary: #9ca3af;
   --hover-bg: #374151;
 }
+
+/* ================================
+   프로필 드롭다운 컨테이너
+   (아바타 + 드롭다운 위치 잡기)
+================================ */
+.profile-wrapper {
+  position: relative;
+  display: inline-block;
+}
+
+/* =====================================
+   드롭다운 박스 (공통 스타일)
+===================================== */
+.profile-dropdown {
+  position: absolute;
+  top: 50px; /* 위치 조금 더 아래로 조정 */
+  right: 0;
+  /* 사이드바와 동일한 배경색 및 테두리 변수 사용 */
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  overflow: hidden; /* 내부 요소가 둥근 모서리를 넘지 않도록 */
+}
+
+/* 구글 스타일 (너비 조정) */
+.profile-dropdown.google-style {
+  width: 240px;
+  padding: 8px 0;
+}
+
+/* ================================
+   상단 프로필 정보 박스
+================================ */
+.dropdown-profile-box {
+  display: flex;
+  align-items: center;
+  padding: 12px 20px;
+  gap: 12px;
+}
+
+/* 프로필 이미지 */
+.dropdown-profile-avatar img {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1px solid var(--border-color);
+}
+
+/* 프로필 플레이스홀더 */
+.avatar-placeholder-lg {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #fff;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+}
+
+/* 프로필 텍스트 정보 */
+.dropdown-profile-info {
+  flex: 1;
+  overflow: hidden;
+}
+
+.dropdown-profile-info .profile-name {
+  font-size: 0.95rem;
+  font-weight: 600;
+  /* 사이드바 텍스트와 동일한 변수 사용 */
+  color: var(--text-primary);
+  margin: 0;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* 구분선 */
+.divider {
+  height: 1px;
+  background-color: var(--border-color); /* 테마 변수 사용 */
+  margin: 8px 0;
+}
+
+/* ======================================
+   드롭다운 메뉴 아이템
+====================================== */
+.dropdown-item {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 10px 20px;
+  font-size: 0.9rem;
+  font-weight: 500;
+  text-align: left;
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  text-decoration: none;
+  /* 사이드바 텍스트와 동일한 변수 사용 */
+  color: var(--text-primary);
+  transition: all 0.2s ease;
+}
+
+/* 호버 효과: 사이드바와 동일한 배경색 변수 사용 */
+.dropdown-item:hover {
+  background-color: var(--hover-bg);
+  color: var(--primary-color); /* 호버 시 포인트 컬러 */
+}
+
+/* 로그아웃 버튼 스타일 */
+.dropdown-item.logout {
+  color: #ff4444;
+}
+
+.dropdown-item.logout:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+  color: #ff4444;
+}
