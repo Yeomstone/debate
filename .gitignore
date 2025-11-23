@@ -4,6 +4,15 @@
 **/.gradle/
 **/.gradle/**
 
+# Gradle lock files (모든 .lock 파일 무시, 단 yarn.lock은 제외)
+**/*.lock
+!yarn.lock
+!**/yarn.lock
+# Gradle buildOutputCleanup.lock 파일 (명시적 추가)
+**/buildOutputCleanup.lock
+**/.gradle/buildOutputCleanup/buildOutputCleanup.lock
+.gradle/buildOutputCleanup/buildOutputCleanup.lock
+
 build/
 !gradle/wrapper/gradle-wrapper.jar
 !gradle/wrapper/gradle-wrapper.properties
