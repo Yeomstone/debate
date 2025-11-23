@@ -7,11 +7,29 @@ import com.debate.util.SecurityUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
+import com.debate.dto.response.UserRankingResponse;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
+import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
+@Tag(name = "사용자 API", description = "사용자 정보 조회 및 랭킹 API")
+
 public class UserController {
+    /**
+     * 사용자 랭킹 조회 (받은 좋아요 수 기준)
+     *
+     * @param limit 조회할 상위 사용자 수 (기본값: 10)
+     * @return 사용자 랭킹 목록
+     */
+    @Operation(summary = "사용자 랭킹 조회", description = "받은 좋아요 수가 많은 사용자 순으로 랭킹을 조회합니다.")
+    @GetMapping("/ranking")
+    public ResponseEntity<ApiResponse<List<UserRankingResponse>>> getUserRanking(
+            @RequestParam(defaultValue = "10") int limit) {
+        List<UserRankingResponse> ranking = userService.getUserRanking(limit);
+        return ResponseEntity.ok(ApiResponse.success(ranking));
+    }
     private final UserService userService;
     private final SecurityUtil securityUtil;
 
