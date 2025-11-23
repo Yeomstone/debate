@@ -164,7 +164,7 @@ const Header = () => {
               </Link>
 
               {/* 랭킹 (홈페이지로 링크, 추후 랭킹 페이지 생성 시 변경 가능) */}
-              <Link to="/ranking" className="header-nav-item">
+              <Link to="/" className="header-nav-item">
                 랭킹
               </Link>
             </nav>
@@ -288,7 +288,7 @@ const Header = () => {
                         계정 수정
                       </Link>
 
-                      {/* 버튼 태그지만 스타일은 위 링크들과 똑같이 적용됨 */}
+                      {/* [수정] logout 클래스 제거 -> 다른 메뉴와 완전 동일해짐 */}
                       <button onClick={handleLogout} className="dropdown-item">
                         로그아웃
                       </button>
