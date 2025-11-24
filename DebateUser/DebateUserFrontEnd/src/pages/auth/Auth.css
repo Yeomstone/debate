@@ -1,27 +1,6 @@
 /**
  * Auth.css - 인증 페이지 스타일시트
- * 
- * 적용 대상:
- * - LoginPage.jsx (로그인 페이지)
- * - RegisterPage.jsx (회원가입 페이지)
- * 
- * 디자인 컨셉:
- * - DEBATE 브랜딩: 노란색(#FFC107) + 검은색(#000000)
- * - 말풍선 모양의 버튼 (로고와 일관성)
- * - 각진 디자인으로 강한 인상
- * - 입체감 있는 그림자 효과
- * 
- * 주요 스타일:
- * 1. 색상 변수
- * 2. 페이지 레이아웃
- * 3. 로고 섹션
- * 4. 폼 컨테이너
- * 5. 입력 필드
- * 6. 버튼 (DEBATE 브랜딩)
- * 7. 에러 메시지
- * 8. 비밀번호 강도 표시
- * 9. 반응형 디자인
- * 10. 다크 모드 지원
+ * 수정 사항: 에러 메시지를 인풋창 바로 밑에 붙이기 위한 레이아웃 조정
  */
 
 /* ===== 색상 변수 ===== */
@@ -105,7 +84,6 @@
   animation: float 3s ease-in-out infinite;
 }
 
-/* 로고 이미지 스타일 */
 .logo-image {
   width: 100px;
   height: 100px;
@@ -121,10 +99,6 @@
   50% {
     transform: translateY(-10px);
   }
-}
-
-.debate-logo svg {
-  filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.2));
 }
 
 .auth-title {
@@ -174,17 +148,20 @@
   text-align: center;
 }
 
-/* ===== 폼 스타일 ===== */
+/* ===== 폼 스타일 (수정됨) ===== */
 .auth-form {
   display: flex;
   flex-direction: column;
-  gap: 1.25rem;
+  gap: 0.75rem; /* 필드 블록 간 기본 간격 */
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
+  gap: 0; /* label / input / message 사이 간격은 margin으로 제어 */
+  margin: 0; /* 다른 CSS에서 준 margin-bottom 제거 */
+  padding: 0; /* 내부 패딩 제거 */
+  min-height: auto; /* 혹시 높이 고정된 게 있다면 초기화 */
 }
 
 .form-label {
@@ -194,6 +171,7 @@
   display: flex;
   align-items: center;
   gap: 0.25rem;
+  margin-bottom: 0.25rem; /* 라벨과 인풋 사이 간격 축소 */
 }
 
 .form-input,
@@ -208,6 +186,7 @@
   transition: all 0.3s ease;
   outline: none;
   font-family: inherit;
+  margin-bottom: 0; /* 인풋 아래 마진 제거 */
 }
 
 .form-input:focus,
@@ -226,24 +205,72 @@
   min-height: 80px;
 }
 
-/* ===== 버튼 스타일 - DEBATE 브랜딩 ===== */
+/* 에러 시 인풋 스타일 */
+.input-error {
+  border-color: var(--error-color) !important;
+  box-shadow: 0 0 0 3px rgba(244, 67, 54, 0.1) !important;
+}
 
-/**
- * DEBATE 브랜드 버튼 기본 스타일
- * 
- * 디자인 컨셉:
- * - 로고의 말풍선 모양을 연상시키는 각진 디자인
- * - 검은색 테두리와 노란색 조합
- * - 굵은 글씨로 강한 인상
- * - 호버 시 입체감 있는 효과
- */
+/* ===== 유효성 검사(이메일/닉네임) 메시지 ===== */
+.validation-message {
+  font-size: 0.75rem; /* 작게 */
+  font-weight: 500;
+  margin-top: 4px; /* 인풋 바로 밑, 살짝만 띄우기 */
+  margin-bottom: 0; /* 그 아래 여백 X */
+  padding: 0 0 0 4px; /* 위/아래 패딩 0, 왼쪽만 살짝 들여쓰기 */
+  line-height: 1.2;
+  text-align: left;
+  width: 100%;
+
+  display: block; /* flex 말고 그냥 블록 한 줄 */
+  animation: slideDown 0.2s ease-out;
+}
+
+.validation-message.success {
+  color: var(--success-color);
+}
+
+.validation-message.error {
+  color: var(--error-color);
+}
+
+.validation-message.loading {
+  color: var(--text-gray);
+}
+
+/* 위에서 쓰는 슬라이드 애니메이션 */
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 상단 글로벌 에러 메시지는 기존 박스 스타일 유지 */
+.validation-message.global-error {
+  background: #ffebee;
+  color: var(--error-color);
+  padding: 0.75rem 1rem;
+  border-radius: 8px;
+  margin-bottom: 1rem;
+  margin-top: 0;
+  text-align: center;
+  justify-content: center;
+  border: 1px solid rgba(244, 67, 54, 0.2);
+}
+
+/* ===== 버튼 스타일 ===== */
 .btn-debate {
   padding: 1rem 2rem;
   font-size: 1.1rem;
-  font-weight: 700; /* 굵은 글씨 */
-  border: 3px solid var(--primary-black); /* 굵은 검은색 테두리 */
+  font-weight: 700;
+  border: 3px solid var(--primary-black);
   cursor: pointer;
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); /* 부드러운 전환 효과 */
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -251,10 +278,9 @@
   text-decoration: none;
   outline: none;
   position: relative;
-  text-transform: uppercase; /* 대문자로 강조 */
-  letter-spacing: 0.05em; /* 자간 조정 */
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
 
-  /* 말풍선 스타일: 각진 모서리 */
   clip-path: polygon(
     0% 15%,
     5% 0%,
@@ -265,149 +291,36 @@
     5% 100%,
     0% 85%
   );
-
-  /* 그림자로 입체감 표현 */
   box-shadow: 4px 4px 0px var(--primary-black), 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 
-/**
- * Primary 버튼 (주 액션 버튼)
- * 
- * 용도:
- * - 로그인 버튼
- * - 회원가입 버튼
- * - 주요 제출 버튼
- * 
- * 색상:
- * - 배경: 노란색 (#FFC107)
- * - 텍스트: 검은색 (#000000)
- * - 테두리: 검은색 (3px)
- */
 .btn-debate-primary {
   background: var(--primary-yellow);
   color: var(--primary-black);
 }
 
-/**
- * Primary 버튼 호버 효과
- * 
- * 효과:
- * 1. 배경색 약간 어두워짐
- * 2. 위로 살짝 이동 (-4px)
- * 3. 그림자 더 진하게
- * 4. 테두리 두께 유지 (3px)
- */
 .btn-debate-primary:hover:not(:disabled) {
-  background: #ffb300; /* 더 어두운 노란색 */
-  transform: translateY(-4px); /* 위로 이동 */
+  background: #ffb300;
+  transform: translateY(-4px);
   box-shadow: 6px 10px 0px var(--primary-black),
-    /* 그림자 강화 */ 0 8px 20px rgba(255, 193, 7, 0.4);
+    0 8px 20px rgba(255, 193, 7, 0.4);
 }
 
-/**
- * Primary 버튼 클릭(Active) 효과
- * 
- * 효과:
- * - 원래 위치로 복귀
- * - 그림자 축소 (눌린 느낌)
- */
 .btn-debate-primary:active:not(:disabled) {
   transform: translateY(0);
   box-shadow: 2px 2px 0px var(--primary-black), 0 2px 8px rgba(0, 0, 0, 0.2);
 }
 
-/**
- * 버튼 비활성화 상태
- * 
- * 조건:
- * - loading 상태일 때
- * - disabled 속성이 true일 때
- * 
- * 효과:
- * - 투명도 50%
- * - 커서를 not-allowed로 변경
- * - 호버 효과 제거
- */
 .btn-debate-primary:disabled {
   opacity: 0.5;
   cursor: not-allowed;
   transform: none;
 }
 
-/**
- * Secondary 버튼 (보조 액션 버튼)
- * 
- * 용도:
- * - "토론 둘러보기" 버튼
- * - 취소 버튼
- * - 보조 액션
- * 
- * 색상:
- * - 배경: 투명
- * - 텍스트: 검은색
- * - 테두리: 검은색 (3px)
- */
-.btn-debate-secondary {
-  background: transparent;
-  color: var(--primary-black);
-  border: 3px solid var(--primary-black);
-}
-
-/**
- * Secondary 버튼 호버 효과
- * 
- * 효과:
- * - 배경: 검은색으로 채워짐
- * - 텍스트: 노란색으로 변경 (반전 효과)
- * - 위로 이동
- */
-.btn-debate-secondary:hover {
-  background: var(--primary-black);
-  color: var(--primary-yellow);
-  transform: translateY(-4px);
-  box-shadow: 6px 10px 0px var(--primary-yellow), 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-/**
- * Secondary 버튼 클릭 효과
- */
-.btn-debate-secondary:active {
-  transform: translateY(0);
-  box-shadow: 2px 2px 0px var(--primary-yellow), 0 2px 8px rgba(0, 0, 0, 0.2);
-}
-
-/**
- * 전체 너비 버튼
- * 
- * 용도:
- * - 로그인/회원가입 폼의 제출 버튼
- * - 모바일에서 터치하기 쉽게
- */
 .btn-debate-full {
   width: 100%;
 }
 
-/**
- * 큰 사이즈 버튼
- * 
- * 용도:
- * - Hero 섹션의 CTA 버튼
- * - 중요한 액션 버튼
- */
-.btn-debate-lg {
-  padding: 1.25rem 2.5rem;
-  font-size: 1.25rem;
-  letter-spacing: 0.08em;
-}
-
-/* ===== 로딩 스피너 ===== */
-
-/**
- * 로딩 중 버튼 내용
- * 
- * 구조:
- * [스피너 아이콘] [로딩 텍스트]
- */
 .loading-content {
   display: flex;
   align-items: center;
@@ -415,60 +328,29 @@
   gap: 0.75rem;
 }
 
-/**
- * 스피너 애니메이션
- * 
- * 디자인:
- * - 검은색 원형 테두리
- * - 한쪽만 노란색으로 표시
- * - 무한 회전 애니메이션
- */
 .spinner {
   width: 20px;
   height: 20px;
-  border: 3px solid rgba(0, 0, 0, 0.2); /* 옅은 검은색 배경 */
-  border-top-color: var(--primary-black); /* 위쪽만 진한 검은색 */
-  border-radius: 50%; /* 원형 */
-  animation: spin 0.8s linear infinite; /* 회전 애니메이션 */
+  border: 3px solid rgba(0, 0, 0, 0.2);
+  border-top-color: var(--primary-black);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
 }
 
-/**
- * 스피너 회전 애니메이션 정의
- * 
- * 동작:
- * - 0도에서 360도까지 회전
- * - 0.8초 동안 일정한 속도로
- * - 무한 반복
- */
 @keyframes spin {
   to {
     transform: rotate(360deg);
   }
 }
 
-/* ===== 에러 메시지 ===== */
-.error-message {
-  background: #ffebee;
-  color: var(--error-color);
-  padding: 1rem;
-  border-radius: 8px;
-  font-size: 0.95rem;
+/* ===== 비밀번호 강도 및 일치 ===== */
+.password-strength,
+.password-match {
+  margin-top: 4px; /* 에러 메시지와 동일한 간격 */
+  padding-left: 4px;
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  border-left: 4px solid var(--error-color);
-}
-
-.error-message svg {
-  flex-shrink: 0;
-}
-
-/* ===== 비밀번호 강도 표시 ===== */
-.password-strength {
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
+  gap: 0.5rem;
 }
 
 .strength-bar {
@@ -488,58 +370,42 @@
 .password-strength.weak .strength-fill {
   background: var(--error-color);
 }
-
 .password-strength.medium .strength-fill {
   background: #ff9800;
 }
-
 .password-strength.strong .strength-fill {
   background: var(--success-color);
 }
 
-.strength-text {
-  font-size: 0.85rem;
+.strength-text,
+.password-match {
+  font-size: 0.75rem;
   font-weight: 600;
-  min-width: 50px;
 }
 
 .password-strength.weak .strength-text {
   color: var(--error-color);
 }
-
 .password-strength.medium .strength-text {
   color: #ff9800;
 }
-
 .password-strength.strong .strength-text {
   color: var(--success-color);
-}
-
-/* ===== 비밀번호 일치 표시 ===== */
-.password-match {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 0.5rem;
-  display: flex;
-  align-items: center;
-  gap: 0.25rem;
 }
 
 .password-match.match {
   color: var(--success-color);
 }
-
 .password-match.mismatch {
   color: var(--error-color);
 }
 
-/* ===== 구분선 ===== */
+/* ===== 구분선 및 링크 ===== */
 .auth-divider {
   position: relative;
   text-align: center;
   margin: 1.5rem 0;
 }
-
 .auth-divider::before {
   content: "";
   position: absolute;
@@ -549,7 +415,6 @@
   height: 1px;
   background: var(--border-color);
 }
-
 .auth-divider span {
   position: relative;
   background: var(--bg-light);
@@ -559,7 +424,6 @@
   font-weight: 500;
 }
 
-/* ===== 링크 ===== */
 .auth-links {
   display: flex;
   align-items: center;
@@ -574,57 +438,9 @@
   font-weight: 600;
   transition: color 0.3s ease;
 }
-
 .link-primary:hover {
   color: #ffb300;
   text-decoration: underline;
-}
-
-.link-secondary {
-  color: var(--text-gray);
-  text-decoration: none;
-  transition: color 0.3s ease;
-}
-
-.link-secondary:hover {
-  color: var(--text-dark);
-  text-decoration: underline;
-}
-
-.link-separator {
-  color: var(--border-color);
-}
-
-/* ===== 반응형 디자인 ===== */
-@media (max-width: 640px) {
-  .auth-page {
-    padding: 1rem;
-  }
-
-  .auth-container {
-    padding: 2rem 1.5rem;
-  }
-
-  .auth-title {
-    font-size: 2.5rem;
-  }
-
-  .auth-subtitle {
-    font-size: 1rem;
-  }
-
-  .form-title {
-    font-size: 1.5rem;
-  }
-
-  .auth-links {
-    flex-direction: column;
-    gap: 0.75rem;
-  }
-
-  .link-separator {
-    display: none;
-  }
 }
 
 /* ===== 다크 모드 지원 ===== */
@@ -637,62 +453,49 @@
     --bg-gray: #2a2a2a;
     --border-color: #404040;
   }
-
   .auth-page {
     background: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
   }
-
   .form-input,
   .form-textarea {
     background: var(--bg-gray);
     color: var(--text-dark);
   }
-
-  .error-message {
+  .validation-message.global-error {
     background: rgba(244, 67, 54, 0.1);
   }
+}
 
-  .btn-secondary {
-    border-color: var(--primary-yellow);
-    color: var(--primary-yellow);
+@media (max-width: 640px) {
+  .auth-page {
+    padding: 1rem;
   }
-
-  .btn-secondary:hover {
-    background: var(--primary-yellow);
-    color: var(--primary-black);
+  .auth-container {
+    padding: 2rem 1.5rem;
+  }
+  .auth-title {
+    font-size: 2.5rem;
   }
 }
-/* [추가] 유효성 검사 메시지 스타일 */
-.validation-message {
-  font-size: 0.85rem;
-  font-weight: 600;
-  margin-top: 0.4rem;
-  animation: fadeIn 0.3s ease-out;
-}
 
-.validation-message.success {
-  color: var(--success-color);
-}
-.validation-message.error {
-  color: var(--error-color);
-}
-.validation-message.loading {
-  color: var(--text-gray);
-}
+/* 인풋 아래에 붙는 작은 에러/성공/로딩 메시지 강제 스타일 */
+.auth-form .form-group .validation-message:not(.global-error) {
+  font-size: 0.75rem !important;
+  font-weight: 500;
+  margin-top: 4px !important; /* 인풋이랑 살짝만 띄우기 */
+  margin-bottom: 0 !important; /* 아래 여백 없애기 */
+  padding: 0 0 0 4px !important; /* 위·아래 패딩 0, 왼쪽만 살짝 들여쓰기 */
 
-/* 에러 시 인풋 테두리 빨간색 */
-.input-error {
-  border-color: var(--error-color) !important;
-  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.1) !important;
-}
+  line-height: 1.2 !important;
+  width: 100%;
+  text-align: left;
 
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(-5px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
+  display: block !important;
+  background: transparent !important;
+  border: none !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+
+  height: auto !important;
+  min-height: 0 !important;
 }

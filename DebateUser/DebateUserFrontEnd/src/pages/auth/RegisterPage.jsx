@@ -38,15 +38,22 @@ const RegisterPage = () => {
    * 형식: 아이디@도메인.최상위도메인
    * 예시: user@example.com
    */
-  const emailPattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  const emailRuleMessage = "올바른 이메일 형식을 입력해주세요.";
+  // 영문/숫자 기반 이메일만 허용 (한글/특수 도메인 차단)
+  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  const emailRuleMessage =
+    "영문 이메일 형식만 가능합니다. 예: user@example.com";
 
   /**
    * 닉네임 유효성 검사 정규식
    * 조건: 2자 이상
    */
-  const nicknamePattern = /^.{2,}$/;
-  const nicknameRuleMessage = "닉네임은 2자 이상 입력해야 합니다.";
+  const nicknamePattern = /^[가-힣a-zA-Z0-9]{2,8}$/;
+  const nicknameRuleMessage =
+    "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다.";
+
+  // 닉네임: 공백 여부, 허용 문자 체크용
+  const nicknameCharPattern = /^[가-힣a-zA-Z0-9]+$/; // 한글/영문/숫자만
+  const nicknameSpacePattern = /\s/; // 공백 있는지 여부
 
   /**
    * 비밀번호 유효성 검사 정규식
@@ -258,20 +265,58 @@ const RegisterPage = () => {
     return () => clearTimeout(timer);
   }, [formData.email]);
 
-  // [추가] 닉네임 중복 확인 (0.5초 딜레이)
   useEffect(() => {
     const timer = setTimeout(async () => {
-      if (!formData.nickname)
-        return setNicknameCheck({ status: "idle", message: "" });
-      if (!nicknamePattern.test(formData.nickname))
-        return setNicknameCheck({
-          status: "error",
-          message: "2자 이상 입력하세요.",
-        });
+      const raw = formData.nickname;
+      const trimmed = raw.trim();
 
+      // 1) 아무것도 안 쓴 경우
+      if (!trimmed) {
+        setNicknameCheck({ status: "idle", message: "" });
+        return;
+      }
+
+      // 2) 공백 포함 (중간 공백 포함 전체)
+      if (nicknameSpacePattern.test(raw)) {
+        setNicknameCheck({
+          status: "error",
+          message: "닉네임에 공백은 사용할 수 없습니다.",
+        });
+        return;
+      }
+
+      // 3) 길이 체크 (2자 미만)
+      if (trimmed.length < 2) {
+        setNicknameCheck({
+          status: "error",
+          message: "닉네임은 2자 이상 입력해주세요.",
+        });
+        return;
+      }
+
+      // 4) 길이 체크 (8자 초과)
+      if (trimmed.length > 8) {
+        setNicknameCheck({
+          status: "error",
+          message: "닉네임은 8자 이내로 입력해주세요.",
+        });
+        return;
+      }
+
+      // 5) 허용하지 않는 문자 (특수문자 등)
+      if (!nicknameCharPattern.test(trimmed)) {
+        setNicknameCheck({
+          status: "error",
+          message: "닉네임은 한글/영문/숫자만 사용할 수 있습니다.",
+        });
+        return;
+      }
+
+      // 6) 여기까지 통과하면 → 서버에 중복 확인 요청
       setNicknameCheck({ status: "loading", message: "확인 중..." });
+
       try {
-        await checkDuplicateAPI("nickname", formData.nickname);
+        await checkDuplicateAPI("nickname", trimmed);
         setNicknameCheck({
           status: "success",
           message: "사용 가능한 닉네임입니다.",
@@ -280,6 +325,7 @@ const RegisterPage = () => {
         setNicknameCheck({ status: "error", message: err.message });
       }
     }, 500);
+
     return () => clearTimeout(timer);
   }, [formData.nickname]);
 
@@ -303,10 +349,31 @@ const RegisterPage = () => {
       return;
     }
 
-    // 2. 닉네임 길이 검증
-    if (!nicknamePattern.test(formData.nickname)) {
+    // 사용자가 입력한 닉네임 원본 (앞/뒤/중간 공백 그대로 있는 상태)
+    const rawNickname = formData.nickname;
+
+    // 앞뒤 공백만 제거한 닉네임 (중간 공백은 그대로 남음)
+    // 예: "  홍 길동  " -> "홍 길동"
+    const trimmedNickname = rawNickname.trim();
+
+    if (
+      // 1) 닉네임 안에 공백(스페이스, 탭, 줄바꿈 등)이 하나라도 있으면 true
+      //    예: "홍 길동", "심 연 의 군주" -> 조건 만족 (에러)
+      nicknameSpacePattern.test(rawNickname) ||
+      // 2) 공백 제거 후 길이가 2자보다 짧으면 에러
+      //    예: "홍" -> 조건 만족 (에러)
+      trimmedNickname.length < 2 ||
+      // 3) 공백 제거 후 길이가 8자를 넘으면 에러
+      //    예: "챗지피티제미나이클로드" -> 조건 만족 (에러)
+      trimmedNickname.length > 8 ||
+      // 4) 허용된 문자(한글/영문/숫자)만으로 이루어지지 않은 경우 에러
+      //    예: "홍길동!", "심연의_군주", "테스트★" -> 조건 만족 (에러)
+      !nicknameCharPattern.test(trimmedNickname)
+    ) {
+      // 위 조건들 중 하나라도 걸리면, 공통 닉네임 규칙 에러 메시지 출력
+      // nicknameRuleMessage 예: "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
       setError(nicknameRuleMessage);
-      return;
+      return; // 에러니까 여기서 함수 종료, 회원가입 진행 안 함
     }
 
     // 3. 비밀번호 일치 확인
@@ -387,7 +454,7 @@ const RegisterPage = () => {
 
         {/* 에러 메시지 표시 영역 (에러가 있을 때만 표시) */}
         {error && (
-          <div className="error-message">
+          <div className="validation-message error global-error">
             {/* 에러 아이콘 (경고 표시) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <circle
@@ -414,53 +481,57 @@ const RegisterPage = () => {
         {/* 회원가입 폼 */}
         {/* ======================================== */}
         <form onSubmit={handleSubmit} className="auth-form">
-          {/* 이메일 입력 필드 */}
-          <label htmlFor="text" className="form-label">
-            이메일
-          </label>
-          <input
-            type="email"
-            id="email"
-            value={formData.email}
-            onChange={(e) =>
-              setFormData({ ...formData, email: e.target.value })
-            }
-            required
-            className={`form-input ${
-              emailCheck.status === "error" ? "input-error" : ""
-            }`}
-            placeholder="example@email.com"
-          />
-          {/* [추가] 메시지 표시 영역 */}
-          {emailCheck.message && (
-            <div className={`validation-message ${emailCheck.status}`}>
-              {emailCheck.message}
-            </div>
-          )}
+          <div className="form-group">
+            {/* 이메일 입력 필드 */}
+            <label htmlFor="text" className="form-label">
+              이메일
+            </label>
+            <input
+              type="email"
+              id="email"
+              value={formData.email}
+              onChange={(e) =>
+                setFormData({ ...formData, email: e.target.value })
+              }
+              required
+              className={`form-input ${
+                emailCheck.status === "error" ? "input-error" : ""
+              }`}
+              placeholder="example@email.com"
+            />
+            {/* [추가] 메시지 표시 영역 */}
+            {emailCheck.message && (
+              <div className={`validation-message ${emailCheck.status}`}>
+                {emailCheck.message}
+              </div>
+            )}
+          </div>
 
-          {/* 닉네임 입력 필드 */}
-          <label htmlFor="text" className="form-label">
-            이름
-          </label>
-          <input
-            type="text"
-            id="nickname"
-            value={formData.nickname}
-            onChange={(e) =>
-              setFormData({ ...formData, nickname: e.target.value })
-            }
-            required
-            className={`form-input ${
-              nicknameCheck.status === "error" ? "input-error" : ""
-            }`}
-            placeholder="2자 이상 입력하세요"
-          />
-          {/* [추가] 메시지 표시 영역 */}
-          {nicknameCheck.message && (
-            <div className={`validation-message ${nicknameCheck.status}`}>
-              {nicknameCheck.message}
-            </div>
-          )}
+          <div className="form-group">
+            {/* 닉네임 입력 필드 */}
+            <label htmlFor="text" className="form-label">
+              이름
+            </label>
+            <input
+              type="text"
+              id="nickname"
+              value={formData.nickname}
+              onChange={(e) =>
+                setFormData({ ...formData, nickname: e.target.value })
+              }
+              required
+              className={`form-input ${
+                nicknameCheck.status === "error" ? "input-error" : ""
+              }`}
+              placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
+            />
+            {/* [추가] 메시지 표시 영역 */}
+            {nicknameCheck.message && (
+              <div className={`validation-message ${nicknameCheck.status}`}>
+                {nicknameCheck.message}
+              </div>
+            )}
+          </div>
 
           {/* 비밀번호 입력 필드 */}
           <div className="form-group">
