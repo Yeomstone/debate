@@ -1,194 +1,369 @@
 /**
- * 인증 컨텍스트 (Authentication Context)
- * 
- * 사용자 인증 상태를 전역적으로 관리하는 Context API입니다.
- * 
+ * AuthContext - 인증 관리 컨텍스트
+ *
+ * 애플리케이션 전역에서 사용자 인증 상태를 관리합니다.
+ * 로그인, 로그아웃, 회원가입, 토큰 관리 등의 기능을 제공합니다.
+ *
  * 주요 기능:
- * - 사용자 로그인/로그아웃 상태 관리
- * - JWT 토큰 관리
- * - 현재 로그인한 사용자 정보 관리
- * - 인증 상태에 따른 자동 사용자 정보 로딩
+ * 1. 사용자 인증 상태 관리
+ * 2. JWT 토큰 관리 (localStorage)
+ * 3. 로그인/로그아웃 처리
+ * 4. 회원가입 처리 (프로필 이미지 포함)
+ * 5. 자동 로그인 (토큰 검증)
+ * 6. Axios 인터셉터 설정
+ *
+ * @component
  */
 
-import { createContext, useContext, useState, useEffect } from 'react'
-import { authService } from '../services/authService'
+import { createContext, useContext, useState, useEffect } from "react";
+import axios from "axios";
 
-// AuthContext 생성
-const AuthContext = createContext(null)
+// ========================================
+// Context 생성
+// ========================================
 
 /**
- * useAuth 훅
- * 
- * AuthContext를 사용하기 위한 커스텀 훅입니다.
- * AuthProvider 외부에서 사용하면 에러를 발생시킵니다.
- * 
- * @returns {Object} 인증 관련 상태 및 함수들
- * @throws {Error} AuthProvider 외부에서 사용 시 에러 발생
+ * AuthContext 생성
+ * 인증 관련 상태와 함수를 제공하는 컨텍스트
  */
-export const useAuth = () => {
-  const context = useContext(AuthContext)
-  if (!context) {
-    throw new Error('useAuth must be used within AuthProvider')
-  }
-  return context
-}
+const AuthContext = createContext(null);
+
+// ========================================
+// API 기본 URL 설정
+// ========================================
+
+const API_BASE_URL = "http://localhost:9001/api";
+
+// Axios 기본 설정
+axios.defaults.baseURL = API_BASE_URL;
+
+// ========================================
+// AuthProvider 컴포넌트
+// ========================================
 
 /**
- * AuthProvider 컴포넌트
- * 
- * 인증 관련 상태와 함수를 제공하는 Provider 컴포넌트입니다.
- * 
+ * AuthProvider - 인증 컨텍스트 제공자
+ *
+ * 애플리케이션의 최상위에 래핑하여 모든 하위 컴포넌트에서
+ * 인증 상태와 함수를 사용할 수 있도록 합니다.
+ *
  * @param {Object} props - 컴포넌트 props
  * @param {React.ReactNode} props.children - 자식 컴포넌트
- * @returns {JSX.Element} AuthContext.Provider
  */
 export const AuthProvider = ({ children }) => {
+  // ========================================
   // 상태 관리
-  const [user, setUser] = useState(null) // 현재 로그인한 사용자 정보
-  const [token, setToken] = useState(localStorage.getItem('token')) // JWT 토큰
-  const [loading, setLoading] = useState(true) // 로딩 상태 (초기 사용자 정보 로딩 중)
+  // ========================================
 
   /**
-   * 토큰 변경 시 실행되는 useEffect
-   * 
-   * 토큰이 있으면:
-   * - localStorage에 저장
-   * - 사용자 정보를 서버에서 가져옴
-   * 
-   * 토큰이 없으면:
-   * - localStorage에서 제거
-   * - 로딩 상태 종료
+   * 사용자 정보 상태
+   * @type {Object|null} user - 로그인된 사용자 정보 (null이면 로그인하지 않음)
    */
+  const [user, setUser] = useState(null);
+
+  /**
+   * 인증 상태
+   * @type {boolean} isAuthenticated - 로그인 여부
+   */
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  /**
+   * 로딩 상태
+   * @type {boolean} loading - 초기 로딩 중 여부 (토큰 검증 중)
+   */
+  const [loading, setLoading] = useState(true);
+
+  // ========================================
+  // Axios 인터셉터 설정
+  // ========================================
+
   useEffect(() => {
-    if (token) {
-      localStorage.setItem('token', token)
-      // 토큰이 있으면 사용자 정보 가져오기
-      fetchCurrentUser()
-    } else {
-      localStorage.removeItem('token')
-      setLoading(false)
-    }
-  }, [token])
-
-  /**
-   * 현재 로그인한 사용자 정보 가져오기
-   * 
-   * 서버에서 현재 사용자의 정보를 조회합니다.
-   * 실패 시 자동으로 로그아웃 처리합니다.
-   */
-  const fetchCurrentUser = async () => {
-    try {
-      const response = await authService.getCurrentUser()
-      /**
-       * ApiResponse 구조: { success: boolean, message: string, data: UserResponse }
-       * success가 false인 경우 에러 처리
-       * success가 true인 경우 data에서 사용자 정보 추출
-       */
-      if (!response.success) {
-        throw new Error(response.message || '사용자 정보를 가져올 수 없습니다.')
+    /**
+     * 요청 인터셉터
+     * 모든 요청에 Authorization 헤더 자동 추가
+     */
+    const requestInterceptor = axios.interceptors.request.use(
+      (config) => {
+        const token = localStorage.getItem("token");
+        if (token) {
+          config.headers.Authorization = `Bearer ${token}`;
+        }
+        return config;
+      },
+      (error) => {
+        return Promise.reject(error);
       }
-      
-      // ApiResponse.data에서 UserResponse 추출
-      const userData = response.data
-      setUser(userData)
-    } catch (error) {
-      console.error('사용자 정보 가져오기 실패:', error)
-      // 에러 발생 시 로그아웃 처리
-      logout()
-    } finally {
-      setLoading(false)
-    }
-  }
+    );
+
+    /**
+     * 응답 인터셉터
+     * 401 에러 시 자동 로그아웃 처리
+     */
+    const responseInterceptor = axios.interceptors.response.use(
+      (response) => response,
+      (error) => {
+        if (error.response?.status === 401) {
+          // 토큰이 만료되었거나 유효하지 않은 경우
+          logout();
+        }
+        return Promise.reject(error);
+      }
+    );
+
+    // 컴포넌트 언마운트 시 인터셉터 제거
+    return () => {
+      axios.interceptors.request.eject(requestInterceptor);
+      axios.interceptors.response.eject(responseInterceptor);
+    };
+  }, []);
+
+  // ========================================
+  // 초기 로딩 시 토큰 검증
+  // ========================================
+
+  useEffect(() => {
+    /**
+     * 저장된 토큰으로 자동 로그인 시도
+     * 페이지 새로고침 시에도 로그인 상태 유지
+     */
+    const initializeAuth = async () => {
+      const token = localStorage.getItem("token");
+
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
+      try {
+        // 토큰 유효성 검증을 위해 사용자 정보 요청
+        const response = await axios.get("/users/me", {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        });
+
+        // 토큰이 유효하면 사용자 정보 설정
+        setUser(response.data);
+        setIsAuthenticated(true);
+      } catch (error) {
+        console.error("토큰 검증 실패:", error);
+        // 토큰이 유효하지 않으면 제거
+        localStorage.removeItem("token");
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    initializeAuth();
+  }, []);
+
+  // ========================================
+  // 로그인 함수
+  // ========================================
 
   /**
-   * 로그인 함수
-   * 
-   * 이메일 또는 아이디와 비밀번호로 로그인합니다.
-   * 
-   * @param {string} email - 이메일
-   * @param {string} password - 비밀번호
-   * @returns {Promise<Object>} 인증 응답 데이터 (token, user 포함)
-   * @throws {Error} 로그인 실패 시 에러 발생
+   * 로그인 처리
+   *
+   * @param {string} email - 사용자 이메일
+   * @param {string} password - 사용자 비밀번호
+   * @returns {Promise<Object>} 로그인된 사용자 정보
+   * @throws {Error} 로그인 실패 시 에러
    */
   const login = async (email, password) => {
-    const response = await authService.login(email, password)
-    /**
-     * ApiResponse 구조: { success: boolean, message: string, data: AuthResponse }
-     * AuthResponse: { token: string, type: string, user: UserResponse }
-     * 
-     * success가 false인 경우 에러 발생
-     * success가 true인 경우 data에서 토큰과 사용자 정보 추출
-     */
-    if (!response.success) {
-      throw new Error(response.message || '로그인에 실패했습니다.')
+    try {
+      // 로그인 API 호출
+      const response = await axios.post("/auth/login", {
+        email,
+        password,
+      });
+
+      const { token, user: userData } = response.data;
+
+      // 토큰 저장
+      localStorage.setItem("token", token);
+
+      // Axios 기본 헤더에 토큰 설정
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // 사용자 정보 상태 업데이트
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return userData;
+    } catch (error) {
+      console.error("로그인 실패:", error);
+      throw error;
     }
-    
-    // ApiResponse.data에서 AuthResponse 추출
-    const authData = response.data
-    if (!authData || !authData.token) {
-      throw new Error('로그인 응답에 토큰이 없습니다.')
-    }
-    
-    setToken(authData.token)
-    setUser(authData.user)
-    return authData
-  }
+  };
+
+  // ========================================
+  // 회원가입 함수 (프로필 이미지 포함)
+  // ========================================
 
   /**
-   * 회원가입 함수
-   * 
-   * 새로운 사용자를 등록하고 자동으로 로그인합니다.
-   * 
-   * @param {Object} registerData - 회원가입 데이터 (email, password, nickname 등)
-   * @returns {Promise<Object>} 인증 응답 데이터 (token, user 포함)
-   * @throws {Error} 회원가입 실패 시 에러 발생
+   * 회원가입 처리
+   * 프로필 이미지를 포함한 회원가입 지원
+   *
+   * @param {FormData|Object} data - 회원가입 데이터
+   *   FormData인 경우: 프로필 이미지 포함 가능
+   *   Object인 경우: { email, password, nickname, bio }
+   * @returns {Promise<Object>} 생성된 사용자 정보
+   * @throws {Error} 회원가입 실패 시 에러
    */
-  const register = async (registerData) => {
-    const response = await authService.register(registerData)
-    /**
-     * ApiResponse 구조: { success: boolean, message: string, data: AuthResponse }
-     * AuthResponse: { token: string, type: string, user: UserResponse }
-     * 
-     * success가 false인 경우 에러 발생
-     * success가 true인 경우 data에서 토큰과 사용자 정보 추출
-     */
-    if (!response.success) {
-      throw new Error(response.message || '회원가입에 실패했습니다.')
+  const register = async (data) => {
+    try {
+      // FormData인지 일반 객체인지 확인
+      const isFormData = data instanceof FormData;
+
+      // API 호출
+      const response = await axios.post(
+        "/auth/register",
+        data,
+        isFormData
+          ? {
+              headers: {
+                "Content-Type": "multipart/form-data",
+              },
+            }
+          : undefined
+      );
+
+      const { token, user: userData } = response.data;
+
+      // 토큰 저장
+      localStorage.setItem("token", token);
+
+      // Axios 기본 헤더에 토큰 설정
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+
+      // 사용자 정보 상태 업데이트
+      setUser(userData);
+      setIsAuthenticated(true);
+
+      return userData;
+    } catch (error) {
+      console.error("회원가입 실패:", error);
+      throw error;
     }
-    
-    // ApiResponse.data에서 AuthResponse 추출
-    const authData = response.data
-    if (!authData || !authData.token) {
-      throw new Error('회원가입 응답에 토큰이 없습니다.')
-    }
-    
-    setToken(authData.token)
-    setUser(authData.user)
-    return authData
-  }
+  };
+
+  // ========================================
+  // 로그아웃 함수
+  // ========================================
 
   /**
-   * 로그아웃 함수
-   * 
-   * 사용자 상태와 토큰을 초기화하고 localStorage에서 토큰을 제거합니다.
+   * 로그아웃 처리
+   * 토큰 제거 및 사용자 정보 초기화
    */
   const logout = () => {
-    setToken(null)
-    setUser(null)
-    localStorage.removeItem('token')
-  }
+    // 토큰 제거
+    localStorage.removeItem("token");
 
-  // Context에 제공할 값
+    // Axios 기본 헤더에서 토큰 제거
+    delete axios.defaults.headers.common["Authorization"];
+
+    // 사용자 정보 초기화
+    setUser(null);
+    setIsAuthenticated(false);
+  };
+
+  // ========================================
+  // 사용자 정보 업데이트 함수
+  // ========================================
+
+  /**
+   * 사용자 정보 업데이트
+   * 프로필 수정 후 Context의 사용자 정보를 갱신할 때 사용
+   *
+   * @param {Object} updatedUser - 업데이트된 사용자 정보
+   */
+  const updateUser = (updatedUser) => {
+    setUser((prevUser) => ({
+      ...prevUser,
+      ...updatedUser,
+    }));
+  };
+
+  // ========================================
+  // 사용자 정보 새로고침 함수
+  // ========================================
+
+  /**
+   * 서버에서 최신 사용자 정보를 가져와 업데이트
+   * 프로필 수정 후 전체 정보를 다시 불러올 때 사용
+   *
+   * @returns {Promise<Object>} 최신 사용자 정보
+   * @throws {Error} 요청 실패 시 에러
+   */
+  const refreshUser = async () => {
+    try {
+      const response = await axios.get("/users/me");
+      setUser(response.data);
+      return response.data;
+    } catch (error) {
+      console.error("사용자 정보 새로고침 실패:", error);
+      throw error;
+    }
+  };
+
+  // ========================================
+  // Context 값 정의
+  // ========================================
+
+  /**
+   * Context를 통해 제공될 값
+   * 모든 하위 컴포넌트에서 useAuth() 훅으로 접근 가능
+   */
   const value = {
-    user, // 현재 사용자 정보
-    token, // JWT 토큰
-    loading, // 로딩 상태
+    // 상태
+    user, // 현재 로그인된 사용자 정보
+    isAuthenticated, // 로그인 여부
+    loading, // 초기 로딩 중 여부
+
+    // 함수
     login, // 로그인 함수
-    register, // 회원가입 함수
+    register, // 회원가입 함수 (프로필 이미지 지원)
     logout, // 로그아웃 함수
-    isAuthenticated: !!token // 인증 여부 (토큰 존재 여부)
+    updateUser, // 사용자 정보 부분 업데이트
+    refreshUser, // 사용자 정보 전체 새로고침
+  };
+
+  // ========================================
+  // 렌더링
+  // ========================================
+
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
+};
+
+// ========================================
+// useAuth 커스텀 훅
+// ========================================
+
+/**
+ * useAuth - 인증 컨텍스트 접근 훅
+ *
+ * AuthContext의 값을 쉽게 사용할 수 있도록 하는 커스텀 훅
+ *
+ * 사용 예시:
+ * ```javascript
+ * const { user, isAuthenticated, login, logout } = useAuth();
+ * ```
+ *
+ * @returns {Object} AuthContext의 값
+ * @throws {Error} AuthProvider 외부에서 사용 시 에러
+ */
+export const useAuth = () => {
+  const context = useContext(AuthContext);
+
+  if (!context) {
+    throw new Error("useAuth는 AuthProvider 내부에서만 사용할 수 있습니다.");
   }
 
-  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>
-}
+  return context;
+};
 
+// ========================================
+// Export
+// ========================================
+
+export default AuthContext;

@@ -5,83 +5,37 @@
  * DEBATE 브랜딩(노란색-검은색)을 적용한 디자인입니다.
  *
  * 주요 기능:
- * 1. 이메일/닉네임/비밀번호 입력 폼
- * 2. 실시간 비밀번호 강도 체크
- * 3. 비밀번호 일치 확인
- * 4. 유효성 검사 (이메일, 닉네임, 비밀번호 패턴)
- * 5. 회원가입 처리 및 에러 핸들링
- * 6. 자기소개 입력 (선택사항)
- * 7. 실제 이미지 로고 사용
+ * 1. 프로필 이미지 업로드 (폼 최상단)
+ * 2. 이메일/닉네임/비밀번호 입력 폼
+ * 3. 실시간 비밀번호 강도 체크
+ * 4. 비밀번호 일치 확인
+ * 5. 유효성 검사 (이메일, 닉네임, 비밀번호 패턴)
+ * 6. 회원가입 처리 및 에러 핸들링
+ * 7. 자기소개 입력 (선택사항)
  *
  * @component
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import "./Auth.css";
+import defaultProfile from "../../assets/default-profile.png";
 
 const RegisterPage = () => {
   // ========================================
   // 훅 초기화
   // ========================================
-  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
-  const { register } = useAuth(); // AuthContext에서 회원가입 함수 가져오기
-
-  // ========================================
-  // 유효성 검사 패턴 및 메시지
-  // ========================================
-
-  /**
-   * 이메일 유효성 검사 정규식
-   * 형식: 아이디@도메인.최상위도메인
-   * 예시: user@example.com
-   */
-  // 영문/숫자 기반 이메일만 허용 (한글/특수 도메인 차단)
-  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
-  const emailRuleMessage =
-    "영문 이메일 형식만 가능합니다. 예: user@example.com";
-
-  /**
-   * 닉네임 유효성 검사 정규식
-   * 조건: 2자 이상
-   */
-  const nicknamePattern = /^[가-힣a-zA-Z0-9]{2,8}$/;
-  const nicknameRuleMessage =
-    "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다.";
-
-  // 닉네임: 공백 여부, 허용 문자 체크용
-  const nicknameCharPattern = /^[가-힣a-zA-Z0-9]+$/; // 한글/영문/숫자만
-  const nicknameSpacePattern = /\s/; // 공백 있는지 여부
-
-  /**
-   * 비밀번호 유효성 검사 정규식
-   * 조건:
-   * - 8자 이상
-   * - 대문자 1개 이상 (?=.*[A-Z])
-   * - 소문자 1개 이상 (?=.*[a-z])
-   * - 숫자 1개 이상 (?=.*\d)
-   * - 특수문자 1개 이상 (?=.*[특수문자])
-   */
-  const passwordPattern =
-    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}|:;'"<>,.?/]).{8,}$/;
-  const passwordRuleMessage =
-    "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.";
+  const navigate = useNavigate();
+  const { register } = useAuth();
+  const fileInputRef = useRef(null); // 파일 입력 참조
 
   // ========================================
   // 상태 관리
   // ========================================
 
-  /**
-   * 폼 데이터 상태
-   * @type {Object}
-   * @property {string} email - 사용자 이메일
-   * @property {string} password - 사용자 비밀번호
-   * @property {string} passwordConfirm - 비밀번호 확인
-   * @property {string} nickname - 사용자 닉네임
-   * @property {string} bio - 자기소개 (선택사항)
-   */
+  // 폼 데이터 상태
   const [formData, setFormData] = useState({
     email: "",
     password: "",
@@ -90,290 +44,277 @@ const RegisterPage = () => {
     bio: "",
   });
 
-  /**
-   * 에러 메시지 상태
-   * @type {string}
-   */
+  // 프로필 이미지 상태
+  const [profileImage, setProfileImage] = useState(null); // 업로드할 파일 객체
+  const [profilePreview, setProfilePreview] = useState(defaultProfile);
+
+  // UI 상태
   const [error, setError] = useState("");
-
-  /**
-   * 로딩 상태 (회원가입 처리 중 여부)
-   * @type {boolean}
-   */
   const [loading, setLoading] = useState(false);
-
-  /**
-   * 비밀번호 강도 점수 (0-5)
-   * 0: 입력 없음
-   * 1: 매우 약함
-   * 2: 약함
-   * 3-4: 보통
-   * 5: 강함
-   * @type {number}
-   */
-  const [passwordStrength, setPasswordStrength] = useState(0);
-
-  // ========================================
-  // 유틸리티 함수
-  // ========================================
-
-  /**
-   * 비밀번호 강도 체크 함수
-   *
-   * 점수 계산 기준:
-   * - 8자 이상: +1점
-   * - 대문자 포함: +1점
-   * - 소문자 포함: +1점
-   * - 숫자 포함: +1점
-   * - 특수문자 포함: +1점
-   *
-   * @param {string} password - 체크할 비밀번호
-   * @returns {number} 강도 점수 (0-5)
-   */
-  const checkPasswordStrength = (password) => {
-    let strength = 0;
-    if (password.length >= 8) strength++; // 길이 체크
-    if (/[A-Z]/.test(password)) strength++; // 대문자 체크
-    if (/[a-z]/.test(password)) strength++; // 소문자 체크
-    if (/\d/.test(password)) strength++; // 숫자 체크
-    if (/[!@#$%^&*()_+\-={}|:;'"<>,.?/]/.test(password)) strength++; // 특수문자 체크
-    return strength;
-  };
-
-  /**
-   * 비밀번호 강도 텍스트 반환 함수
-   *
-   * @returns {string} "약함", "보통", "강함" 또는 빈 문자열
-   */
-  const getPasswordStrengthText = () => {
-    if (passwordStrength === 0) return "";
-    if (passwordStrength <= 2) return "약함";
-    if (passwordStrength <= 4) return "보통";
-    return "강함";
-  };
-
-  /**
-   * 비밀번호 강도 CSS 클래스 반환 함수
-   *
-   * @returns {string} "weak", "medium", "strong" 또는 빈 문자열
-   */
-  const getPasswordStrengthClass = () => {
-    if (passwordStrength === 0) return "";
-    if (passwordStrength <= 2) return "weak";
-    if (passwordStrength <= 4) return "medium";
-    return "strong";
-  };
-
-  // ========================================
-  // 이벤트 핸들러
-  // ========================================
-
-  /**
-   * 비밀번호 변경 핸들러
-   *
-   * 기능:
-   * 1. 입력된 비밀번호로 formData 상태 업데이트
-   * 2. 비밀번호 강도 실시간 계산 및 표시
-   *
-   * @param {Event} e - 입력 이벤트
-   */
-  const handlePasswordChange = (e) => {
-    const newPassword = e.target.value;
-    setFormData({ ...formData, password: newPassword });
-    setPasswordStrength(checkPasswordStrength(newPassword));
-  };
-  // [추가] 중복 확인 상태 (idle, loading, success, error)
-  const [emailCheck, setEmailCheck] = useState({ status: "idle", message: "" });
-  const [nicknameCheck, setNicknameCheck] = useState({
-    status: "idle",
+  const [passwordStrength, setPasswordStrength] = useState({
+    score: 0,
     message: "",
   });
+
+  // 이메일 중복 확인 상태
+  const [emailCheck, setEmailCheck] = useState({
+    status: "",
+    message: "",
+  });
+
+  // 닉네임 중복 확인 상태
+  const [nicknameCheck, setNicknameCheck] = useState({
+    status: "",
+    message: "",
+  });
+
+  // ========================================
+  // 유효성 검사 패턴 및 메시지
+  // ========================================
+
+  const emailPattern = /^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/;
+  const emailRuleMessage =
+    "영문 이메일 형식만 가능합니다. 예: user@example.com";
+
+  const nicknamePattern = /^[가-힣a-zA-Z0-9]{2,8}$/;
+  const nicknameRuleMessage =
+    "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다.";
+  const nicknameCharPattern = /^[가-힣a-zA-Z0-9]+$/;
+  const nicknameSpacePattern = /\s/;
+
+  const passwordPattern =
+    /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}|:;'"<>,.?/]).{8,}$/;
+  const passwordRuleMessage =
+    "비밀번호는 대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.";
+
+  // ========================================
+  // 프로필 이미지 관련 함수
+  // ========================================
+
   /**
-   * 회원가입 폼 제출 핸들러
-   *
-   * 처리 순서:
-   * 1. 폼 기본 제출 동작 방지
-   * 2. 이전 에러 메시지 초기화
-   * 3. 이메일 형식 검증
-   * 4. 닉네임 길이 검증
-   * 5. 비밀번호 일치 확인
-   * 6. 비밀번호 강도 검증
-   * 7. 로딩 상태 활성화
-   * 8. AuthContext의 register 함수 호출
-   * 9. 성공 시 메인 페이지로 이동
-   * 10. 실패 시 에러 메시지 표시
-   *
-   * @param {Event} e - 폼 제출 이벤트
+   * 프로필 이미지 업로드 영역 클릭 핸들러
+   * 숨겨진 파일 입력을 트리거합니다.
    */
-  /**
-   * 실제 API를 호출하여 중복 여부를 확인하는 함수
-   */
-  // 수정된 checkDuplicateAPI 함수
-  const checkDuplicateAPI = async (type, value) => {
-    const endpoint =
-      type === "email" ? "/api/auth/check-email" : "/api/auth/check-nickname";
-    const paramName = type;
-
-    try {
-      await axios.get(`${endpoint}?${paramName}=${value}`);
-      return true;
-    } catch (error) {
-      let message = "";
-
-      if (error.response) {
-        // 서버가 응답을 줬는데 에러인 경우 (예: 409 Conflict - 중복)
-        if (error.response.status === 409) {
-          message =
-            error.response.data?.message ||
-            `이미 사용 중인 ${type === "email" ? "이메일" : "닉네임"}입니다.`;
-        } else {
-          message = "확인 중 오류가 발생했습니다.";
-        }
-      } else if (error.request) {
-        // 요청은 보냈으나 응답을 못 받은 경우 (서버 꺼짐 등)
-        message = "서버와 연결할 수 없습니다.";
-      } else {
-        message = "에러가 발생했습니다.";
-      }
-
-      throw new Error(message);
-    }
+  const handleImageClick = () => {
+    fileInputRef.current?.click();
   };
 
-  // [추가] 이메일 중복 확인 (0.5초 딜레이)
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      if (!formData.email)
-        return setEmailCheck({ status: "idle", message: "" });
-      if (!emailPattern.test(formData.email))
-        return setEmailCheck({
-          status: "error",
-          message: "올바른 형식이 아닙니다.",
-        });
+  /**
+   * 파일 선택 핸들러
+   * 선택된 이미지를 검증하고 미리보기를 생성합니다.
+   */
+  const handleFileChange = (e) => {
+    const file = e.target.files[0];
 
-      setEmailCheck({ status: "loading", message: "확인 중..." });
-      try {
-        await checkDuplicateAPI("email", formData.email);
-        setEmailCheck({
-          status: "success",
-          message: "사용 가능한 이메일입니다.",
-        });
-      } catch (err) {
-        setEmailCheck({ status: "error", message: err.message });
-      }
-    }, 500);
-    return () => clearTimeout(timer);
-  }, [formData.email]);
+    if (!file) return;
 
-  useEffect(() => {
-    const timer = setTimeout(async () => {
-      const raw = formData.nickname;
-      const trimmed = raw.trim();
-
-      // 1) 아무것도 안 쓴 경우
-      if (!trimmed) {
-        setNicknameCheck({ status: "idle", message: "" });
-        return;
-      }
-
-      // 2) 공백 포함 (중간 공백 포함 전체)
-      if (nicknameSpacePattern.test(raw)) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임에 공백은 사용할 수 없습니다.",
-        });
-        return;
-      }
-
-      // 3) 길이 체크 (2자 미만)
-      if (trimmed.length < 2) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 2자 이상 입력해주세요.",
-        });
-        return;
-      }
-
-      // 4) 길이 체크 (8자 초과)
-      if (trimmed.length > 8) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 8자 이내로 입력해주세요.",
-        });
-        return;
-      }
-
-      // 5) 허용하지 않는 문자 (특수문자 등)
-      if (!nicknameCharPattern.test(trimmed)) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 한글/영문/숫자만 사용할 수 있습니다.",
-        });
-        return;
-      }
-
-      // 6) 여기까지 통과하면 → 서버에 중복 확인 요청
-      setNicknameCheck({ status: "loading", message: "확인 중..." });
-
-      try {
-        await checkDuplicateAPI("nickname", trimmed);
-        setNicknameCheck({
-          status: "success",
-          message: "사용 가능한 닉네임입니다.",
-        });
-      } catch (err) {
-        setNicknameCheck({ status: "error", message: err.message });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [formData.nickname]);
-
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 기본 제출 동작 방지
-    setError(""); // 이전 에러 메시지 초기화
-
-    // [추가] 중복 확인 통과 여부 체크
-    if (emailCheck.status !== "success" || nicknameCheck.status !== "success") {
-      setError("이메일과 닉네임을 확인해주세요.");
+    // 파일 타입 검증 (이미지만 허용)
+    if (!file.type.startsWith("image/")) {
+      setError("이미지 파일만 업로드 가능합니다.");
       return;
     }
 
-    // ========================================
-    // 유효성 검사
-    // ========================================
+    // 파일 크기 검증 (5MB 제한)
+    const maxSize = 5 * 1024 * 1024; // 5MB
+    if (file.size > maxSize) {
+      setError("이미지 크기는 5MB 이하여야 합니다.");
+      return;
+    }
 
-    // 1. 이메일 형식 검증
+    // 파일 객체 저장
+    setProfileImage(file);
+
+    // 미리보기 생성
+    const reader = new FileReader();
+    reader.onloadend = () => {
+      setProfilePreview(reader.result);
+    };
+    reader.readAsDataURL(file);
+
+    // 에러 메시지 초기화
+    setError("");
+  };
+
+  /**
+   * 프로필 이미지 제거 핸들러
+   * 기본 이미지로 되돌립니다.
+   */
+  const handleRemoveImage = (e) => {
+    e.stopPropagation(); // 클릭 이벤트 전파 방지
+    setProfileImage(null);
+    // 상단에서 import한 변수(defaultProfile)를 사용
+    setProfilePreview(defaultProfile);
+
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+  // ========================================
+  // 이메일 중복 확인
+  // ========================================
+  useEffect(() => {
+    const checkEmail = async () => {
+      if (!formData.email) {
+        setEmailCheck({ status: "", message: "" });
+        return;
+      }
+
+      if (!emailPattern.test(formData.email)) {
+        setEmailCheck({ status: "error", message: emailRuleMessage });
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:9001/api/users/check/email?email=${formData.email}`
+        );
+
+        if (response.data.available) {
+          setEmailCheck({
+            status: "success",
+            message: "사용 가능한 이메일입니다.",
+          });
+        } else {
+          setEmailCheck({
+            status: "error",
+            message: "이미 사용 중인 이메일입니다.",
+          });
+        }
+      } catch (error) {
+        console.error("이메일 확인 오류:", error);
+        setEmailCheck({
+          status: "error",
+          message: "이메일 확인 중 오류가 발생했습니다.",
+        });
+      }
+    };
+
+    const debounceTimer = setTimeout(checkEmail, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [formData.email]);
+
+  // ========================================
+  // 닉네임 중복 확인
+  // ========================================
+  useEffect(() => {
+    const checkNickname = async () => {
+      const trimmedNickname = formData.nickname.trim();
+
+      if (!trimmedNickname) {
+        setNicknameCheck({ status: "", message: "" });
+        return;
+      }
+
+      if (nicknameSpacePattern.test(trimmedNickname)) {
+        setNicknameCheck({ status: "error", message: nicknameRuleMessage });
+        return;
+      }
+
+      if (!nicknameCharPattern.test(trimmedNickname)) {
+        setNicknameCheck({ status: "error", message: nicknameRuleMessage });
+        return;
+      }
+
+      if (!nicknamePattern.test(trimmedNickname)) {
+        setNicknameCheck({ status: "error", message: nicknameRuleMessage });
+        return;
+      }
+
+      try {
+        const response = await axios.get(
+          `http://localhost:9001/api/users/check/nickname?nickname=${trimmedNickname}`
+        );
+
+        if (response.data.available) {
+          setNicknameCheck({
+            status: "success",
+            message: "사용 가능한 닉네임입니다.",
+          });
+        } else {
+          setNicknameCheck({
+            status: "error",
+            message: "이미 사용 중인 닉네임입니다.",
+          });
+        }
+      } catch (error) {
+        console.error("닉네임 확인 오류:", error);
+        setNicknameCheck({
+          status: "error",
+          message: "닉네임 확인 중 오류가 발생했습니다.",
+        });
+      }
+    };
+
+    const debounceTimer = setTimeout(checkNickname, 500);
+    return () => clearTimeout(debounceTimer);
+  }, [formData.nickname]);
+
+  // ========================================
+  // 비밀번호 강도 체크
+  // ========================================
+  useEffect(() => {
+    const checkPasswordStrength = () => {
+      const password = formData.password;
+      if (!password) {
+        setPasswordStrength({ score: 0, message: "" });
+        return;
+      }
+
+      let score = 0;
+      let message = "";
+
+      if (password.length >= 8) score++;
+      if (/[a-z]/.test(password)) score++;
+      if (/[A-Z]/.test(password)) score++;
+      if (/\d/.test(password)) score++;
+      if (/[!@#$%^&*()_+\-={}|:;'"<>,.?/]/.test(password)) score++;
+
+      if (score <= 2) {
+        message = "약함";
+      } else if (score === 3 || score === 4) {
+        message = "보통";
+      } else {
+        message = "강함";
+      }
+
+      setPasswordStrength({ score, message });
+    };
+
+    checkPasswordStrength();
+  }, [formData.password]);
+
+  // ========================================
+  // 폼 제출 핸들러
+  // ========================================
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+
+    // 1. 이메일 검증
     if (!emailPattern.test(formData.email)) {
       setError(emailRuleMessage);
       return;
     }
 
-    // 사용자가 입력한 닉네임 원본 (앞/뒤/중간 공백 그대로 있는 상태)
-    const rawNickname = formData.nickname;
+    if (emailCheck.status !== "success") {
+      setError("이메일 중복 확인이 필요합니다.");
+      return;
+    }
 
-    // 앞뒤 공백만 제거한 닉네임 (중간 공백은 그대로 남음)
-    // 예: "  홍 길동  " -> "홍 길동"
-    const trimmedNickname = rawNickname.trim();
+    // 2. 닉네임 검증
+    const trimmedNickname = formData.nickname.trim();
 
     if (
-      // 1) 닉네임 안에 공백(스페이스, 탭, 줄바꿈 등)이 하나라도 있으면 true
-      //    예: "홍 길동", "심 연 의 군주" -> 조건 만족 (에러)
-      nicknameSpacePattern.test(rawNickname) ||
-      // 2) 공백 제거 후 길이가 2자보다 짧으면 에러
-      //    예: "홍" -> 조건 만족 (에러)
-      trimmedNickname.length < 2 ||
-      // 3) 공백 제거 후 길이가 8자를 넘으면 에러
-      //    예: "챗지피티제미나이클로드" -> 조건 만족 (에러)
-      trimmedNickname.length > 8 ||
-      // 4) 허용된 문자(한글/영문/숫자)만으로 이루어지지 않은 경우 에러
-      //    예: "홍길동!", "심연의_군주", "테스트★" -> 조건 만족 (에러)
+      nicknameSpacePattern.test(trimmedNickname) ||
       !nicknameCharPattern.test(trimmedNickname)
     ) {
-      // 위 조건들 중 하나라도 걸리면, 공통 닉네임 규칙 에러 메시지 출력
-      // nicknameRuleMessage 예: "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
       setError(nicknameRuleMessage);
-      return; // 에러니까 여기서 함수 종료, 회원가입 진행 안 함
+      return;
+    }
+
+    if (nicknameCheck.status !== "success") {
+      setError("닉네임 중복 확인이 필요합니다.");
+      return;
     }
 
     // 3. 비밀번호 일치 확인
@@ -388,28 +329,29 @@ const RegisterPage = () => {
       return;
     }
 
-    // ========================================
-    // 회원가입 처리
-    // ========================================
-
-    setLoading(true); // 로딩 상태 활성화
+    setLoading(true);
 
     try {
-      // AuthContext의 register 함수 호출 (API 요청)
-      await register({
-        email: formData.email,
-        password: formData.password,
-        nickname: formData.nickname,
-        bio: formData.bio || undefined, // 빈 문자열이면 undefined로 전송
-      });
+      // FormData 생성 (프로필 이미지 포함)
+      const submitData = new FormData();
+      submitData.append("email", formData.email);
+      submitData.append("password", formData.password);
+      submitData.append("nickname", formData.nickname);
+      if (formData.bio) {
+        submitData.append("bio", formData.bio);
+      }
+      if (profileImage) {
+        submitData.append("profileImage", profileImage);
+      }
 
-      // 회원가입 성공 시 메인 페이지로 리다이렉트
+      // 회원가입 API 호출
+      await register(submitData);
+
+      // 성공 시 메인 페이지로 이동
       navigate("/");
     } catch (error) {
-      // 에러 메시지 추출 및 표시
       setError(error.response?.data?.message || "회원가입에 실패했습니다.");
     } finally {
-      // 성공/실패 여부와 관계없이 로딩 상태 비활성화
       setLoading(false);
     }
   };
@@ -420,42 +362,26 @@ const RegisterPage = () => {
 
   return (
     <div className="auth-page">
-      {/* ======================================== */}
-      {/* 로고 섹션 - 브랜드 아이덴티티 표시 */}
-      {/* ======================================== */}
+      {/* 로고 섹션 */}
       <div className="auth-logo-section">
-        {/* DEBATE 로고 이미지 */}
         <div className="debate-logo">
-          {/* 
-            로고 이미지 파일 경로:
-            - 실제 경로: src/assets/debate-logo.png
-            - Vite가 자동으로 처리하여 최적화된 URL로 변환
-          */}
           <img
             src="/src/assets/debate-onlylogo.png"
             alt="DEBATE Logo"
             className="logo-image"
           />
         </div>
-
-        {/* 브랜드 타이틀 */}
         <h1 className="auth-title">DEBATE</h1>
-
-        {/* 부제목 */}
         <p className="auth-subtitle">토론에 참여하고 의견을 나누세요</p>
       </div>
 
-      {/* ======================================== */}
-      {/* 회원가입 폼 컨테이너 */}
-      {/* ======================================== */}
+      {/* 회원가입 폼 */}
       <div className="auth-container">
-        {/* 폼 제목 */}
         <h2 className="form-title">회원가입</h2>
 
-        {/* 에러 메시지 표시 영역 (에러가 있을 때만 표시) */}
+        {/* 전역 에러 메시지 */}
         {error && (
           <div className="validation-message error global-error">
-            {/* 에러 아이콘 (경고 표시) */}
             <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
               <circle
                 cx="10"
@@ -472,18 +398,72 @@ const RegisterPage = () => {
               />
               <circle cx="10" cy="14" r="1" fill="currentColor" />
             </svg>
-            {/* 에러 메시지 텍스트 */}
             {error}
           </div>
         )}
 
-        {/* ======================================== */}
-        {/* 회원가입 폼 */}
-        {/* ======================================== */}
         <form onSubmit={handleSubmit} className="auth-form">
+          {/* ======================================== */}
+          {/* 프로필 이미지 업로드 (폼 최상단) */}
+          {/* ======================================== */}
+          <div className="form-group profile-image-section">
+            <label className="form-label">프로필 이미지</label>
+
+            <div className="profile-image-container">
+              {/* 프로필 이미지 미리보기 */}
+              <div className="profile-image-preview" onClick={handleImageClick}>
+                <img
+                  src={profilePreview}
+                  alt="프로필 미리보기"
+                  className="profile-preview-img"
+                />
+                <div className="profile-image-overlay">
+                  <svg
+                    width="24"
+                    height="24"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth="2"
+                      d="M12 4v16m8-8H4"
+                    />
+                  </svg>
+                  <span>이미지 선택</span>
+                </div>
+              </div>
+
+              {/* 숨겨진 파일 입력 */}
+              <input
+                ref={fileInputRef}
+                type="file"
+                accept="image/*"
+                onChange={handleFileChange}
+                className="profile-image-input"
+                style={{ display: "none" }}
+              />
+
+              {/* 이미지 제거 버튼 */}
+              {profileImage && (
+                <button
+                  type="button"
+                  className="btn-remove-image"
+                  onClick={handleRemoveImage}
+                >
+                  이미지 제거
+                </button>
+              )}
+            </div>
+
+            <p className="form-help-text">JPG, PNG, GIF 형식 (최대 5MB)</p>
+          </div>
+
+          {/* 이메일 입력 */}
           <div className="form-group">
-            {/* 이메일 입력 필드 */}
-            <label htmlFor="text" className="form-label">
+            <label htmlFor="email" className="form-label">
               이메일
             </label>
             <input
@@ -495,22 +475,26 @@ const RegisterPage = () => {
               }
               required
               className={`form-input ${
-                emailCheck.status === "error" ? "input-error" : ""
+                emailCheck.status === "error"
+                  ? "error"
+                  : emailCheck.status === "success"
+                  ? "success"
+                  : ""
               }`}
-              placeholder="example@email.com"
+              placeholder="email@example.com"
             />
-            {/* [추가] 메시지 표시 영역 */}
             {emailCheck.message && (
               <div className={`validation-message ${emailCheck.status}`}>
+                {emailCheck.status === "success" ? "✓" : "✗"}{" "}
                 {emailCheck.message}
               </div>
             )}
           </div>
 
+          {/* 닉네임 입력 */}
           <div className="form-group">
-            {/* 닉네임 입력 필드 */}
-            <label htmlFor="text" className="form-label">
-              이름
+            <label htmlFor="nickname" className="form-label">
+              닉네임
             </label>
             <input
               type="text"
@@ -521,54 +505,58 @@ const RegisterPage = () => {
               }
               required
               className={`form-input ${
-                nicknameCheck.status === "error" ? "input-error" : ""
+                nicknameCheck.status === "error"
+                  ? "error"
+                  : nicknameCheck.status === "success"
+                  ? "success"
+                  : ""
               }`}
-              placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
+              placeholder="닉네임 (2~8자)"
             />
-            {/* [추가] 메시지 표시 영역 */}
             {nicknameCheck.message && (
               <div className={`validation-message ${nicknameCheck.status}`}>
+                {nicknameCheck.status === "success" ? "✓" : "✗"}{" "}
                 {nicknameCheck.message}
               </div>
             )}
           </div>
 
-          {/* 비밀번호 입력 필드 */}
+          {/* 비밀번호 입력 */}
           <div className="form-group">
             <label htmlFor="password" className="form-label">
-              비밀번호 *
+              비밀번호
             </label>
             <input
               type="password"
               id="password"
               value={formData.password}
-              onChange={handlePasswordChange}
+              onChange={(e) =>
+                setFormData({ ...formData, password: e.target.value })
+              }
               required
               className="form-input"
-              placeholder="대소문자, 숫자, 특수문자 포함 8자 이상"
+              placeholder="8자 이상, 대소문자/숫자/특수문자 포함"
             />
-            {/* 비밀번호 강도 표시 (비밀번호 입력 시) */}
             {formData.password && (
-              <div
-                className={`password-strength ${getPasswordStrengthClass()}`}
-              >
-                <div className="strength-bar">
+              <div className="password-strength">
+                <div className="strength-bar-container">
                   <div
-                    className="strength-fill"
-                    style={{ width: `${(passwordStrength / 5) * 100}%` }}
+                    className={`strength-bar strength-${passwordStrength.score}`}
                   ></div>
                 </div>
-                <span className="strength-text">
-                  {getPasswordStrengthText()}
+                <span
+                  className={`strength-text strength-${passwordStrength.score}`}
+                >
+                  {passwordStrength.message}
                 </span>
               </div>
             )}
           </div>
 
-          {/* 비밀번호 확인 입력 필드 */}
+          {/* 비밀번호 확인 */}
           <div className="form-group">
             <label htmlFor="passwordConfirm" className="form-label">
-              비밀번호 확인 *
+              비밀번호 확인
             </label>
             <input
               type="password"
@@ -581,10 +569,9 @@ const RegisterPage = () => {
               className="form-input"
               placeholder="비밀번호를 다시 입력하세요"
             />
-            {/* 비밀번호 일치 여부 표시 (비밀번호 확인 입력 시) */}
             {formData.passwordConfirm && (
               <div
-                className={`password-match ${
+                className={`validation-message ${
                   formData.password === formData.passwordConfirm
                     ? "match"
                     : "mismatch"
@@ -599,7 +586,7 @@ const RegisterPage = () => {
             )}
           </div>
 
-          {/* 자기소개 입력 필드 (선택사항) */}
+          {/* 자기소개 */}
           <div className="form-group">
             <label htmlFor="bio" className="form-label">
               자기소개 (선택)
@@ -616,40 +603,30 @@ const RegisterPage = () => {
             />
           </div>
 
-          {/* ======================================== */}
           {/* 회원가입 버튼 */}
-          {/* 로딩 중일 때 비활성화되고 스피너 표시 */}
-          {/* ======================================== */}
           <button
             type="submit"
             className="btn-debate btn-debate-primary"
             disabled={loading}
           >
             {loading ? (
-              // 로딩 중일 때: 스피너와 "가입 중..." 텍스트 표시
               <span className="loading-content">
                 <span className="spinner"></span>
                 <span>가입 중...</span>
               </span>
             ) : (
-              // 평상시: "회원가입" 텍스트만 표시
               "회원가입"
             )}
           </button>
         </form>
 
-        {/* ======================================== */}
         {/* 구분선 */}
-        {/* ======================================== */}
         <div className="auth-divider">
           <span>이미 계정이 있으신가요?</span>
         </div>
 
-        {/* ======================================== */}
-        {/* 추가 링크 (로그인) */}
-        {/* ======================================== */}
+        {/* 로그인 링크 */}
         <div className="auth-links">
-          {/* 로그인 페이지로 이동하는 링크 */}
           <Link to="/auth/login" className="link-primary">
             로그인하기
           </Link>
@@ -659,13 +636,4 @@ const RegisterPage = () => {
   );
 };
 
-/**
- * 회원가입 페이지 컴포넌트 export
- *
- * 사용 위치:
- * - App.jsx 또는 라우터 설정 파일
- *
- * 사용 예시:
- * <Route path="/auth/register" element={<RegisterPage />} />
- */
 export default RegisterPage;

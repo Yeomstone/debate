@@ -499,3 +499,149 @@
   height: auto !important;
   min-height: 0 !important;
 }
+/* ========================================
+   프로필 이미지 업로드 섹션 스타일
+   ======================================== */
+
+/* 프로필 이미지 섹션 전체 컨테이너 */
+.profile-image-section {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+/* 프로필 이미지 컨테이너 */
+.profile-image-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+/* 프로필 이미지 미리보기 영역 */
+.profile-image-preview {
+  position: relative;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  overflow: hidden;
+  cursor: pointer;
+  border: 3px solid #333;
+  transition: all 0.3s ease;
+}
+
+.profile-image-preview:hover {
+  border-color: #ffd700;
+  transform: scale(1.05);
+}
+
+/* 프로필 미리보기 이미지 */
+.profile-preview-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* 프로필 이미지 오버레이 (호버 시 표시) */
+.profile-image-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+  color: #ffd700;
+}
+
+.profile-image-preview:hover .profile-image-overlay {
+  opacity: 1;
+}
+
+.profile-image-overlay svg {
+  width: 32px;
+  height: 32px;
+}
+
+.profile-image-overlay span {
+  font-size: 14px;
+  font-weight: 500;
+}
+
+/* 숨겨진 파일 입력 */
+.profile-image-input {
+  display: none;
+}
+
+/* 이미지 제거 버튼 */
+.btn-remove-image {
+  padding: 8px 16px;
+  background-color: transparent;
+  color: #888;
+  border: 1px solid #444;
+  border-radius: 6px;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.btn-remove-image:hover {
+  background-color: #222;
+  border-color: #ffd700;
+  color: #ffd700;
+}
+
+/* 도움말 텍스트 */
+.form-help-text {
+  margin-top: 8px;
+  font-size: 13px;
+  color: #888;
+}
+
+/* ========================================
+   반응형 디자인
+   ======================================== */
+
+/* 태블릿 (768px 이하) */
+@media (max-width: 768px) {
+  .profile-image-preview {
+    width: 100px;
+    height: 100px;
+  }
+
+  .profile-image-overlay svg {
+    width: 28px;
+    height: 28px;
+  }
+
+  .profile-image-overlay span {
+    font-size: 13px;
+  }
+
+  .btn-remove-image {
+    font-size: 13px;
+    padding: 6px 12px;
+  }
+}
+
+/* 모바일 (480px 이하) */
+@media (max-width: 480px) {
+  .profile-image-preview {
+    width: 90px;
+    height: 90px;
+  }
+
+  .profile-image-overlay svg {
+    width: 24px;
+    height: 24px;
+  }
+
+  .profile-image-overlay span {
+    font-size: 12px;
+  }
+}
