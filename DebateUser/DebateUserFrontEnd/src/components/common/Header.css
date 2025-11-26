@@ -401,6 +401,12 @@
 /* 네비게이션 아이콘 */
 .nav-icon {
   flex-shrink: 0; /* 아이콘 크기 고정 */
+  margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
+}
+.nav-item span {
+  display: inline-block;
+  line-height: 1; /* 글자 박스 높이 줄이기 */
+  transform: translateY(-4px); /* 🔹 필요하면 -2px, -3px로 조금씩 조정 */
 }
 
 /* ===== 사이드바 푸터 ===== */
@@ -430,9 +436,42 @@
   .logo-text {
     display: none;
   }
+
+  /* 로그인 / 회원가입 버튼 묶음 */
   .auth-buttons {
-    display: none;
+    display: flex;
+    gap: 6px; /* 버튼 사이 간격 조금만 넓게 */
+    align-items: center; /* 헤더 안에서 수직 가운데 */
   }
+
+  /* 버튼 자체 크기/정렬 (모바일) */
+  .auth-buttons .btn {
+    height: 32px; /* 다크모드 아이콘(40px)보다 약간 작은 정도 */
+    padding: 0 14px; /* 세로는 0, 가로만 여유 */
+    font-size: 0.85rem;
+    line-height: 1;
+    white-space: nowrap;
+
+    display: flex; /* 텍스트 수직·수평 중앙정렬 */
+    align-items: center;
+    justify-content: center;
+  }
+
+  /* 색깔은 둘 다 같은 노란 버튼 + 글자 검정 */
+  .auth-buttons .btn-primary,
+  .auth-buttons .btn-secondary {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: #000 !important;
+    border: none;
+    box-shadow: none;
+  }
+
+  .auth-buttons .btn-primary:hover,
+  .auth-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    color: #000;
+  }
+
   .sidebar {
     width: 280px;
     left: -280px;

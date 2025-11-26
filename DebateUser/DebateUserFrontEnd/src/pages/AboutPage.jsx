@@ -1,0 +1,109 @@
+// 예: src/pages/AboutPage.jsx
+
+const AboutPage = () => {
+  return (
+    <main
+      style={{
+        maxWidth: "900px",
+        margin: "80px auto 40px",
+        padding: "0 16px",
+        lineHeight: 1.6,
+      }}
+    >
+      {/* 메인 타이틀 */}
+      <h1>DEBATE 소개</h1>
+
+      {/* 메인 카피 */}
+      <p style={{ marginTop: "8px", fontWeight: "bold", fontSize: "1.1rem" }}>
+        “세상을 바꾸는 건 목소리의 크기가 아니라, 논리의 깊이입니다.”
+      </p>
+
+      {/* 한 줄 개요 */}
+      <p style={{ marginTop: "16px" }}>
+        DEBATE는 다양한 카테고리의 이슈를 놓고, 찬성과 반대, 그리고 그 사이의
+        수많은 관점을 깊이 있게 나누는 토론 플랫폼입니다. 단순한 싸움이나 감정
+        배출이 아니라,
+        <strong> 논리와 근거를 바탕으로 서로의 생각을 확장하는 경험</strong>을
+        지향합니다.
+      </p>
+
+      {/* 소개 본문 */}
+      <section style={{ marginTop: "32px" }}>
+        <h2>DEBATE는 어떤 곳인가요?</h2>
+        <p style={{ marginTop: "12px" }}>
+          DEBATE는 다름을 인정하고, 치열하게 소통하는 지성인들의 광장입니다.
+          우리는 건강한 충돌이 더 나은 결론을 만든다고 믿습니다.
+        </p>
+        <p style={{ marginTop: "8px" }}>
+          단순히 찬성과 반대로 나뉘는 이분법적인 싸움이 아닌, 서로의 관점을
+          날카롭게 파고들며 생각의 지평을 넓히는 경험을 제공합니다.
+        </p>
+        <p style={{ marginTop: "8px" }}>
+          지금, <strong>당신의 논리</strong>로 세상을 설득해 보세요.
+        </p>
+      </section>
+
+      {/* 주요 기능 섹션 */}
+      <section style={{ marginTop: "40px" }}>
+        <h2>주요 기능</h2>
+        <ul style={{ marginTop: "12px", paddingLeft: "20px" }}>
+          <li>
+            <strong>카테고리별 토론</strong> — 정치, 스포츠(축구/야구/농구),
+            영화, 게임, 경제, 문화, 과학, 랜덤 등 다양한 주제에서 토론을 진행할
+            수 있습니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>찬성 / 반대 / 중립 입장 선택</strong> — 토론을 시작할 때
+            자신의 입장을 설정하고, 서로 다른 관점을 비교하며 생각을 확장할 수
+            있습니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>리치 에디터 &amp; 이미지 업로드</strong> — 글꼴, 색상, 링크,
+            표, 이미지(5MB 제한) 등을 활용해 논리와 근거를 보기 좋게 정리할 수
+            있습니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>댓글 &amp; 대댓글</strong> — 글뿐만 아니라 댓글과 대댓글을
+            통해 입장을 보완하고, 세부 쟁점을 깊게 파고들 수 있습니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>좋아요 기반 랭킹 시스템</strong> — 게시글과 댓글에 받은
+            좋아요를 기반으로 주간/월간 TOP 유저를 선정하고, 상위권 유저에게
+            특별 표시를 부여합니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>대시보드 &amp; 핫이슈</strong> — 조회수와 참여율을 기반으로
+            한 HOT 이슈 TOP 5, 활성 토론 수, 투표율 등 다양한 통계를 한눈에
+            확인할 수 있습니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>검색 &amp; 필터</strong> — 제목, 작성자, 통합 검색과 함께
+            카테고리·날짜 필터를 제공하여 원하는 이슈를 빠르게 찾을 수 있습니다.
+          </li>
+        </ul>
+      </section>
+
+      {/* 서비스 철학 */}
+      <section style={{ marginTop: "40px" }}>
+        <h2>DEBATE가 지향하는 토론 문화</h2>
+        <ul style={{ marginTop: "12px", paddingLeft: "20px" }}>
+          <li>
+            <strong>사람이 아닌, 주장과 논리를 겨루는 공간</strong> — 인신공격이
+            아닌, 근거 있는 반박을 통해 서로를 설득하는 문화를 추구합니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>팩트와 근거를 중시</strong> — 확인되지 않은 소문 대신 출처가
+            분명한 정보와 논리를 바탕으로 토론하는 것을 권장합니다.
+          </li>
+          <li style={{ marginTop: "6px" }}>
+            <strong>다양한 관점 존중</strong> — 나와 다른 의견은 틀린 것이
+            아니라 다른 관점일 뿐이며, 그 차이를 이해하는 과정 자체가 토론의
+            핵심이라고 믿습니다.
+          </li>
+        </ul>
+      </section>
+    </main>
+  );
+};
+
+export default AboutPage;

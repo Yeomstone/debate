@@ -361,7 +361,7 @@ const DebateCreatePage = () => {
               </p>
             </div>
           </div>
-          // DebateCreatePage.jsx - 컴팩트한 날짜 섹션
+
           {/* 토론 기간 설정 섹션 - 컴팩트 버전 */}
           <div className="form-section">
             <h2>토론 기간 설정</h2>
