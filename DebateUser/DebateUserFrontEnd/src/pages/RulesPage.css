@@ -1,0 +1,133 @@
+/* RulesPage.css */
+
+/* 1. 컨테이너 (페이지 전체) */
+.rules-page {
+  max-width: 900px;
+  margin: 80px auto 40px;
+  padding: 0 16px;
+  line-height: 1.6;
+  color: var(--text-primary);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+  animation: fadeIn 0.6s ease-out;
+}
+
+/* 2. 헤더 섹션 */
+.rules-page h1 {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: #ffc107; /* 브랜드 컬러 */
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+  text-align: center;
+}
+
+/* 3. 인용구 (AboutPage와 비슷하지만 조금 더 차분하게) */
+.rules-page .rules-quote {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #ffc107;
+  text-align: center;
+  margin-bottom: 2rem;
+  padding: 1.5rem;
+  background-color: rgba(255, 193, 7, 0.05);
+  border-radius: 8px;
+  border-left: 4px solid #ffc107;
+}
+
+/* 4. 도입부 텍스트 */
+.rules-page .rules-intro p {
+  margin-bottom: 1rem;
+  color: var(--text-secondary);
+}
+
+.rules-page strong {
+  color: var(--text-primary);
+  font-weight: 700;
+}
+
+/* 5. 구분선 */
+.rules-page .rules-divider {
+  border: 0;
+  height: 1px;
+  background: var(--border-color);
+  margin: 2rem 0 3rem;
+}
+
+/* 6. 규칙 섹션 (카드 스타일 적용) */
+.rules-page .rules-section {
+  background-color: var(--bg-secondary); /* 카드 배경 */
+  padding: 2rem;
+  border-radius: 12px;
+  margin-bottom: 2rem;
+  box-shadow: var(--shadow);
+  border: 1px solid var(--border-color);
+}
+
+/* 섹션 제목 */
+.rules-page .rules-section h2 {
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid #ffc107;
+  display: inline-block;
+}
+
+/* 서브 제목 (5-1, 5-2 등) */
+.rules-page .rules-section h3 {
+  font-size: 1.2rem;
+  color: var(--text-secondary);
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* 섹션 설명 텍스트 */
+.rules-page .rules-section .section-desc {
+  color: var(--text-secondary);
+  margin-bottom: 1rem;
+}
+
+/* 7. 리스트 스타일링 (ol, ul) */
+.rules-page ol {
+  padding-left: 1.2rem;
+  margin-top: 0.5rem;
+}
+
+.rules-page ul {
+  list-style: disc;
+  padding-left: 1.5rem;
+  margin-top: 0.5rem;
+  color: var(--text-secondary);
+}
+
+.rules-page li {
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+/* 리스트 내부의 strong 강조 */
+.rules-page li strong {
+  color: #ffc107; /* 중요 키워드는 노란색 */
+}
+
+/* 8. 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 9. 반응형 (모바일) */
+@media (max-width: 600px) {
+  .rules-page .rules-section {
+    padding: 1.5rem;
+  }
+  .rules-page h1 {
+    font-size: 1.8rem;
+  }
+}
