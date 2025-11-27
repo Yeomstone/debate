@@ -27,7 +27,10 @@ const RegisterPage = () => {
   // 훅 초기화
   // ========================================
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
-  const { register } = useAuth(); // AuthContext에서 회원가입 함수 가져오기
+  const { register } = useAuth(); // AuthContext에서 회원가입 함수 가져오기4
+
+  // [수정 1] 최대 글자 수 상수 정의
+  const MAX_BIO_LENGTH = 200; // 자기소개 최대 글자 수 제한
 
   // ========================================
   // 유효성 검사 패턴 및 메시지
@@ -181,6 +184,16 @@ const RegisterPage = () => {
     const newPassword = e.target.value;
     setFormData({ ...formData, password: newPassword });
     setPasswordStrength(checkPasswordStrength(newPassword));
+  };
+
+  // [수정 2] 자기소개 변경 핸들러 추가 (글자 수 제한 로직 포함)
+  const handleBioChange = (e) => {
+    const val = e.target.value;
+
+    // 입력된 글자 수가 최대 허용치(200자) 이하일 때만 상태 업데이트
+    if (val.length <= MAX_BIO_LENGTH) {
+      setFormData({ ...formData, bio: val });
+    }
   };
   // [추가] 중복 확인 상태 (idle, loading, success, error)
   const [emailCheck, setEmailCheck] = useState({ status: "idle", message: "" });
@@ -604,16 +617,24 @@ const RegisterPage = () => {
             <label htmlFor="bio" className="form-label">
               자기소개 (선택)
             </label>
+
+            {/* [수정 3] textarea 속성 변경 및 글자 수 카운터 추가 */}
             <textarea
               id="bio"
               value={formData.bio}
-              onChange={(e) =>
-                setFormData({ ...formData, bio: e.target.value })
-              }
+              onChange={handleBioChange} // 위에서 만든 핸들러 연결
               className="form-textarea"
-              placeholder="자신을 소개해주세요"
+              // placeholder에 최대 글자 수 안내
+              placeholder={`자신을 소개해주세요 (최대 ${MAX_BIO_LENGTH}자)`}
               rows="3"
             />
+
+            {/* 글자 수 카운터 표시 (CSS 클래스는 Auth.css에 이미 있음) */}
+            <div className="textarea-footer">
+              <span className="character-count">
+                {formData.bio.length} / {MAX_BIO_LENGTH}자
+              </span>
+            </div>
           </div>
 
           {/* ======================================== */}
