@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 /**
@@ -28,6 +29,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class DebateOpinion {
     /**
      * 의견 ID (PK)
@@ -43,6 +45,7 @@ public class DebateOpinion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "debate_id", nullable = false, foreignKey = @ForeignKey(name = "fk_opinion_debate"))
     @Comment("토론 ID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private Debate debate;
 
     /**
@@ -51,6 +54,7 @@ public class DebateOpinion {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false, foreignKey = @ForeignKey(name = "fk_opinion_user"))
     @Comment("사용자 ID")
+    @com.fasterxml.jackson.annotation.JsonIgnore
     private User user;
 
     /**

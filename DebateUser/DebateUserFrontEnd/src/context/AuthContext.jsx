@@ -17,7 +17,7 @@
 
 import { createContext, useContext, useState, useEffect } from "react";
 import axios from "axios";
-
+import { authService } from "../services/authService";
 // ========================================
 // Context 생성
 // ========================================
@@ -135,20 +135,21 @@ export const AuthProvider = ({ children }) => {
       }
 
       try {
-        // 토큰 유효성 검증을 위해 사용자 정보 요청
-        const response = await axios.get("/users/me", {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        });
+        // ✅ authService 사용 및 데이터 추출 경로 수정
+        const response = await authService.getCurrentUser();
 
-        // 토큰이 유효하면 사용자 정보 설정
-        setUser(response.data);
-        setIsAuthenticated(true);
+        // 응답이 성공이고 데이터가 있는지 확인
+        if (response && response.success && response.data) {
+          setUser(response.data); // ✅ 알맹이(사용자 정보)만 저장
+          setIsAuthenticated(true);
+        } else {
+          throw new Error("사용자 정보 로드 실패");
+        }
       } catch (error) {
         console.error("토큰 검증 실패:", error);
-        // 토큰이 유효하지 않으면 제거
         localStorage.removeItem("token");
+        setUser(null);
+        setIsAuthenticated(false);
       } finally {
         setLoading(false);
       }
@@ -171,25 +172,22 @@ export const AuthProvider = ({ children }) => {
    */
   const login = async (email, password) => {
     try {
-      // 로그인 API 호출
-      const response = await axios.post("/auth/login", {
-        email,
-        password,
-      });
+      // ✅ authService 사용
+      const response = await authService.login(email, password);
 
-      const { token, user: userData } = response.data;
+      // ✅ success 확인 및 data 내부에서 token 추출
+      if (response.success && response.data) {
+        const { token, user: userData } = response.data; // ✅ data 안에서 꺼냄
 
-      // 토큰 저장
-      localStorage.setItem("token", token);
+        localStorage.setItem("token", token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      // Axios 기본 헤더에 토큰 설정
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      // 사용자 정보 상태 업데이트
-      setUser(userData);
-      setIsAuthenticated(true);
-
-      return userData;
+        setUser(userData);
+        setIsAuthenticated(true);
+        return userData;
+      } else {
+        throw new Error(response.message || "로그인 실패");
+      }
     } catch (error) {
       console.error("로그인 실패:", error);
       throw error;
@@ -212,35 +210,21 @@ export const AuthProvider = ({ children }) => {
    */
   const register = async (data) => {
     try {
-      // FormData인지 일반 객체인지 확인
-      const isFormData = data instanceof FormData;
+      // ✅ authService가 FormData 처리까지 알아서 함
+      const response = await authService.register(data);
 
-      // API 호출
-      const response = await axios.post(
-        "/auth/register",
-        data,
-        isFormData
-          ? {
-              headers: {
-                "Content-Type": "multipart/form-data",
-              },
-            }
-          : undefined
-      );
+      if (response.success && response.data) {
+        const { token, user: userData } = response.data; // ✅ data 안에서 꺼냄
 
-      const { token, user: userData } = response.data;
+        localStorage.setItem("token", token);
+        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
 
-      // 토큰 저장
-      localStorage.setItem("token", token);
-
-      // Axios 기본 헤더에 토큰 설정
-      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-
-      // 사용자 정보 상태 업데이트
-      setUser(userData);
-      setIsAuthenticated(true);
-
-      return userData;
+        setUser(userData);
+        setIsAuthenticated(true);
+        return userData;
+      } else {
+        throw new Error(response.message || "회원가입 실패");
+      }
     } catch (error) {
       console.error("회원가입 실패:", error);
       throw error;
@@ -297,15 +281,17 @@ export const AuthProvider = ({ children }) => {
    */
   const refreshUser = async () => {
     try {
-      const response = await axios.get("/users/me");
-      setUser(response.data);
-      return response.data;
+      const response = await authService.getCurrentUser();
+
+      if (response.success && response.data) {
+        setUser(response.data); // ✅ 알맹이만 저장
+        return response.data;
+      }
     } catch (error) {
       console.error("사용자 정보 새로고침 실패:", error);
       throw error;
     }
   };
-
   // ========================================
   // Context 값 정의
   // ========================================

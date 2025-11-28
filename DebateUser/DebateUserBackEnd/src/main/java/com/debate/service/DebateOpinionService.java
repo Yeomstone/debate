@@ -37,18 +37,31 @@ public class DebateOpinionService {
         User user = new User();
         user.setId(userId);
 
-        if (debateOpinionRepository.existsByDebateAndUser(debate, user)) {
-            throw new BadRequestException("이미 입장을 선택했습니다");
-        }
+        // 이미 입장을 선택했는지 확인
+        debateOpinionRepository.findByDebateAndUser(debate, user).ifPresentOrElse(
+            existingOpinion -> {
+                // 이미 존재하면 입장 변경
+                existingOpinion.setSide(request.getSide());
+                if (request.getContent() != null) {
+                    existingOpinion.setContent(request.getContent());
+                }
+                debateOpinionRepository.save(existingOpinion);
+            },
+            () -> {
+                // 없으면 새로 생성
+                DebateOpinion opinion = DebateOpinion.builder()
+                        .debate(debate)
+                        .user(user)
+                        .side(request.getSide())
+                        .content(request.getContent())
+                        .build();
+                debateOpinionRepository.save(opinion);
+            }
+        );
 
-        DebateOpinion opinion = DebateOpinion.builder()
-                .debate(debate)
-                .user(user)
-                .side(request.getSide())
-                .content(request.getContent())
-                .build();
-
-        return debateOpinionRepository.save(opinion);
+        // 변경된/생성된 의견 반환
+        return debateOpinionRepository.findByDebateAndUser(debate, user)
+                .orElseThrow(() -> new ResourceNotFoundException("의견 저장 실패"));
     }
 
     public List<DebateOpinion> getOpinionsByDebate(Long debateId) {

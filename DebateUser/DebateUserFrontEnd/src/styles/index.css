@@ -27,12 +27,12 @@
 :root {
   /*
    * 메인 색상 (Primary Colors)
-   * 신뢰 - 깊은 블루 (Trust & Stability)
-   * 토론 플랫폼의 신뢰감과 안정성을 표현
+   * 활력 - 옐로우 (Vitality & Energy)
+   * 로고 컨셉에 맞춘 옐로우 컬러
    */
-  --primary-color: #1e40af;
-  --primary-dark: #1e3a8a;
-  --primary-light: #3b82f6;
+  --primary-color: #FFC107;
+  --primary-dark: #FFB300;
+  --primary-light: #FFCA28;
 
   /*
    * 보조 색상 (Secondary Colors)
@@ -167,7 +167,7 @@ body {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: #000; /* Yellow 배경에는 검은 글씨가 가독성이 좋음 */
 }
 
 .btn-primary:hover {

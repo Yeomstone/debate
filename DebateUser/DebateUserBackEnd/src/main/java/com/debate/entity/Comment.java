@@ -89,5 +89,12 @@ public class Comment {
     @Column(name = "updated_at", nullable = false)
     @org.hibernate.annotations.Comment("수정 일시")
     private LocalDateTime updatedAt;
+
+    /**
+     * 대댓글 수 (가상 컬럼)
+     * 정렬을 위해 사용
+     */
+    @org.hibernate.annotations.Formula("(select count(*) from comments c where c.parent_id = id)")
+    private int replyCount;
 }
 
