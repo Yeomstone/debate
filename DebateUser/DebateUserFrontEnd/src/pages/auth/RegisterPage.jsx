@@ -21,6 +21,7 @@ import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import "./Auth.css";
+import api from "../../services/api"; // api 인스턴스 import
 
 const RegisterPage = () => {
   // ========================================
@@ -224,7 +225,7 @@ const RegisterPage = () => {
   // 수정된 checkDuplicateAPI 함수
   const checkDuplicateAPI = async (type, value) => {
     const endpoint =
-      type === "email" ? "/api/auth/check-email" : "/api/auth/check-nickname";
+      type === "email" ? "/auth/check-email" : "/auth/check-nickname";
     const paramName = type;
 
     try {
