@@ -4,12 +4,13 @@
 
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
-import ReactQuill from "react-quill";
+import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import { debateService } from "../services/debateService";
 import { categoryService } from "../services/categoryService";
 import { fileUploadService } from "../services/fileUploadService";
 import ImageUploadModal from "../components/common/ImageUploadModal";
+import { registerQuillModules } from "../utils/quillConfig";
 import "./DebateCreatePage.css";
 
 const DebateCreatePage = () => {
@@ -29,6 +30,8 @@ const DebateCreatePage = () => {
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
   useEffect(() => {
+    // Quill 커스텀 모듈(이미지 리사이즈 등) 등록
+    registerQuillModules();
     fetchCategories();
   }, []);
 
@@ -64,38 +67,80 @@ const DebateCreatePage = () => {
           image: function () {
             setIsImageModalOpen(true);
           },
+          link: function (value) {
+            const quill = quillRef.current?.getEditor() || this.quill;
+            if (value) {
+              const href = window.prompt("링크 URL을 입력하세요:");
+              if (href) {
+                let url = href;
+                if (
+                  !href.startsWith("http://") &&
+                  !href.startsWith("https://")
+                ) {
+                  url = "https://" + href;
+                }
+                const range = quill.getSelection(true);
+                if (range) {
+                  quill.formatText(
+                    range.index,
+                    range.length,
+                    "link",
+                    url,
+                    "user"
+                  );
+                }
+              }
+            } else {
+              quill.format("link", false);
+            }
+          },
         },
+      },
+      imageResize: {
+        parchment: Quill.import("parchment"),
+        modules: ["Resize", "DisplaySize", "Toolbar"],
       },
     }),
     []
   );
 
-  const quillFormats = [
-    "header",
-    "bold",
-    "italic",
-    "underline",
-    "strike",
-    "list",
-    "bullet",
-    "align",
-    "color",
-    "background",
-    "link",
-    "image",
-    "blockquote",
-    "code-block",
-  ];
+  const quillFormats = useMemo(
+    () => [
+      "header",
+      "bold",
+      "italic",
+      "underline",
+      "strike",
+      "list",
+      "bullet",
+      "align",
+      "color",
+      "background",
+      "link",
+      "image",
+      "blockquote",
+      "code-block",
+    ],
+    []
+  );
 
-  const handleImageUpload = async (file) => {
+  const handleImageFileSelect = async (file) => {
     try {
       const imageUrl = await fileUploadService.uploadImage(file);
-      const quill = quillRef.current.getEditor();
-      const range = quill.getSelection();
-      if (range) {
-        quill.insertEmbed(range.index, "image", imageUrl);
+      let finalImageUrl = imageUrl;
+      if (
+        imageUrl &&
+        !imageUrl.startsWith("http://") &&
+        !imageUrl.startsWith("https://") &&
+        !imageUrl.startsWith("data:")
+      ) {
+        finalImageUrl = `${window.location.origin}${imageUrl}`;
       }
-      setIsImageModalOpen(false);
+      const quill = quillRef.current?.getEditor();
+      if (quill) {
+        const range = quill.getSelection(true);
+        quill.insertEmbed(range.index, "image", finalImageUrl, "user");
+      }
     } catch (error) {
       console.error("이미지 업로드 실패:", error);
       alert("이미지 업로드에 실패했습니다.");
@@ -103,12 +148,11 @@ const DebateCreatePage = () => {
   };
 
   const handleImageUrlInsert = (url) => {
-    const quill = quillRef.current.getEditor();
-    const range = quill.getSelection();
-    if (range) {
-      quill.insertEmbed(range.index, "image", url);
+    const quill = quillRef.current?.getEditor();
+    if (quill) {
+      const range = quill.getSelection(true);
+      quill.insertEmbed(range.index, "image", url, "user");
     }
-    setIsImageModalOpen(false);
   };
 
   const handleSubmit = async (e) => {
@@ -309,13 +353,12 @@ const DebateCreatePage = () => {
         </form>
 
         {/* 이미지 업로드 모달 */}
-        {isImageModalOpen && (
-          <ImageUploadModal
-            onClose={() => setIsImageModalOpen(false)}
-            onUpload={handleImageUpload}
-            onUrlInsert={handleImageUrlInsert}
-          />
-        )}
+        <ImageUploadModal
+          isOpen={isImageModalOpen}
+          onClose={() => setIsImageModalOpen(false)}
+          onUrlSubmit={handleImageUrlInsert}
+          onFileSelect={handleImageFileSelect}
+        />
       </div>
 
       {/* 로딩 오버레이 */}
