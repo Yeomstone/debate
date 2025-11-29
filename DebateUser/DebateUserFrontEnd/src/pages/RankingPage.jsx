@@ -1,9 +1,13 @@
 import React, { useState, useEffect } from "react";
 import RankingPodium from "./RankingPodium";
 import { getUserRanking } from "../services/userService";
-import "./RankingPodium.css"; // Re-use the CSS or create a new one if needed
+import { useTheme } from "../context/ThemeContext";
+import "./RankingPage.css";
+import "./RankingPodium.css";
 
 const RankingPage = () => {
+  const { theme } = useTheme();
+  const isDarkMode = theme === 'dark';
   const [topUsers, setTopUsers] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -46,7 +50,7 @@ const RankingPage = () => {
   }
 
   return (
-    <div className="ranking-page">
+    <div className={`ranking-page ${isDarkMode ? 'dark-mode' : ''}`}>
       <div className="ranking-filters">
         <div className="filter-group">
           <button className={`filter-btn ${period === 'daily' ? 'active' : ''}`} onClick={() => setPeriod('daily')}>일별</button>

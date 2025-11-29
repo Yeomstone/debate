@@ -432,13 +432,24 @@ const RegisterPage = () => {
     setLoading(true); // 로딩 상태 활성화
 
     try {
-      // AuthContext의 register 함수 호출 (API 요청)
-      await register({
-        email: formData.email,
-        password: formData.password,
-        nickname: formData.nickname,
-        bio: formData.bio || undefined, // 빈 문자열이면 undefined로 전송
-      });
+      // FormData 생성 (multipart/form-data 형식으로 전송)
+      const formDataToSend = new FormData();
+      formDataToSend.append("email", formData.email);
+      formDataToSend.append("password", formData.password);
+      formDataToSend.append("nickname", formData.nickname);
+      
+      // bio가 있을 경우에만 추가
+      if (formData.bio) {
+        formDataToSend.append("bio", formData.bio);
+      }
+      
+      // 프로필 이미지가 있을 경우에만 추가
+      if (profileImage) {
+        formDataToSend.append("profileImage", profileImage);
+      }
+
+      // AuthContext의 register 함수 호출 (FormData 전송)
+      await register(formDataToSend);
 
       // 회원가입 성공 시 메인 페이지로 리다이렉트
       navigate("/");
