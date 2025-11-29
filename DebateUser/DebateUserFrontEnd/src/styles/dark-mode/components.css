@@ -95,6 +95,13 @@
   color: var(--text-secondary, #d1d5db);
 }
 
+/* 날짜 선택 아이콘 반전 (datetime-local) */
+[data-theme="dark"] input[type="datetime-local"]::-webkit-calendar-picker-indicator {
+  filter: invert(1) brightness(1.8);
+  opacity: 1;
+  cursor: pointer;
+}
+
 /* ============================================
    네비게이션
    ============================================ */
