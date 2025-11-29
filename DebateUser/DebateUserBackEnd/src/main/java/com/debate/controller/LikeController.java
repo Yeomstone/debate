@@ -28,6 +28,8 @@ public class LikeController {
     @GetMapping("/debate/{debateId}")
     public ResponseEntity<ApiResponse<Boolean>> isLiked(@PathVariable Long debateId) {
         Long userId = securityUtil.getCurrentUserId();
+        System.out.println("isLiked Check - DebateID: " + debateId + ", UserID: " + userId);
+        
         // [수정] 비로그인 사용자(토큰 만료 등)는 401 에러 대신 false 반환
         // 이를 통해 상세 페이지 진입 시 강제 로그아웃을 방지합니다.
         if (userId == null) {
@@ -35,6 +37,7 @@ public class LikeController {
         }
 
         boolean isLiked = likeService.isLiked(debateId, userId);
+        System.out.println("isLiked Result: " + isLiked);
         return ResponseEntity.ok(ApiResponse.success(isLiked));
     }
 }

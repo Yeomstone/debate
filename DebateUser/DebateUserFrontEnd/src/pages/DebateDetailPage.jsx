@@ -60,6 +60,21 @@ const DebateDetailPage = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // [추가] 인증 상태 변경 시 좋아요 상태 확인
+  useEffect(() => {
+    if (isAuthenticated && id) {
+      const checkLikeStatus = async () => {
+        try {
+          const liked = await likeService.isLiked(id);
+          setIsLiked(liked.data || liked);
+        } catch (err) {
+          console.error("좋아요 상태 확인 실패", err);
+        }
+      };
+      checkLikeStatus();
+    }
+  }, [isAuthenticated, id]);
+
   const fetchData = async () => {
     try {
       if (!debate) setLoading(true);
