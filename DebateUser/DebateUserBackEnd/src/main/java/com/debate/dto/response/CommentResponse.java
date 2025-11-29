@@ -24,6 +24,8 @@ public class CommentResponse {
     private List<CommentResponse> replies;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
+    private int likeCount;
+    private boolean liked;
 
     public static CommentResponse from(Comment comment) {
         return CommentResponse.builder()
@@ -36,7 +38,7 @@ public class CommentResponse {
                 .isHidden(comment.getIsHidden())
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
+                .likeCount(comment.getLikeCount())
                 .build();
     }
 }
-

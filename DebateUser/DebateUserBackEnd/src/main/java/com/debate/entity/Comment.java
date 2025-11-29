@@ -96,5 +96,11 @@ public class Comment {
      */
     @org.hibernate.annotations.Formula("(select count(*) from comments c where c.parent_id = id)")
     private int replyCount;
+
+    /**
+     * 좋아요 수 (가상 컬럼)
+     */
+    @org.hibernate.annotations.Formula("(select count(*) from comment_likes cl where cl.comment_id = id)")
+    private int likeCount;
 }
 

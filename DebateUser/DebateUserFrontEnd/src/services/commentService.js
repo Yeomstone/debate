@@ -59,5 +59,18 @@ export const commentService = {
     const response = await api.delete(`/comments/${id}`)
     return response.data
   },
+
+  /**
+   * 댓글 좋아요 토글
+   * 
+   * 댓글에 좋아요를 누르거나 취소합니다.
+   * 
+   * @param {number} id - 댓글 ID
+   * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
+   */
+  async toggleLike(id) {
+    const response = await api.post(`/comments/${id}/like`)
+    return response.data
+  },
 }
 

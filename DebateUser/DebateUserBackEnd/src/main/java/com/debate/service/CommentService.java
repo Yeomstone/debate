@@ -23,14 +23,15 @@ import java.util.stream.Collectors;
 public class CommentService {
     private final CommentRepository commentRepository;
     private final DebateRepository debateRepository;
+    private final com.debate.repository.CommentLikeRepository commentLikeRepository;
+    private final com.debate.repository.UserRepository userRepository;
 
     @Transactional
     public CommentResponse createComment(CreateCommentRequest request, Long userId) {
         Debate debate = debateRepository.findById(request.getDebateId())
                 .orElseThrow(() -> new ResourceNotFoundException("토론을 찾을 수 없습니다"));
 
-        User user = new User();
-        user.setId(userId);
+        User user = userRepository.getReferenceById(userId);
 
         Comment parent = null;
         if (request.getParentId() != null) {
@@ -54,7 +55,7 @@ public class CommentService {
         return CommentResponse.from(comment);
     }
 
-    public Page<CommentResponse> getCommentsByDebate(Long debateId, Pageable pageable) {
+    public Page<CommentResponse> getCommentsByDebate(Long debateId, Pageable pageable, Long userId) {
         Debate debate = debateRepository.findById(debateId)
                 .orElseThrow(() -> new ResourceNotFoundException("토론을 찾을 수 없습니다"));
 
@@ -62,9 +63,21 @@ public class CommentService {
 
         return comments.map(comment -> {
             CommentResponse response = CommentResponse.from(comment);
+            
+            // 현재 사용자가 좋아요를 눌렀는지 확인
+            if (userId != null) {
+                response.setLiked(commentLikeRepository.existsByCommentIdAndUserId(comment.getId(), userId));
+            }
+
             List<Comment> replies = commentRepository.findByParent(comment);
             response.setReplies(replies.stream()
-                    .map(CommentResponse::from)
+                    .map(reply -> {
+                        CommentResponse replyResponse = CommentResponse.from(reply);
+                        if (userId != null) {
+                            replyResponse.setLiked(commentLikeRepository.existsByCommentIdAndUserId(reply.getId(), userId));
+                        }
+                        return replyResponse;
+                    })
                     .collect(Collectors.toList()));
             return response;
         });
@@ -80,6 +93,25 @@ public class CommentService {
         }
 
         commentRepository.delete(comment);
+    }
+
+    @Transactional
+    public void toggleLike(Long commentId, Long userId) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("댓글을 찾을 수 없습니다"));
+
+        if (commentLikeRepository.existsByCommentIdAndUserId(commentId, userId)) {
+            commentLikeRepository.deleteByCommentIdAndUserId(commentId, userId);
+        } else {
+            User user = userRepository.getReferenceById(userId);
+            
+            com.debate.entity.CommentLike like = com.debate.entity.CommentLike.builder()
+                    .comment(comment)
+                    .user(user)
+                    .build();
+            
+            commentLikeRepository.save(like);
+        }
     }
 }
 
