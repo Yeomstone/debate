@@ -1,0 +1,467 @@
+/**
+ * LoginPageAnimated.css
+ * - 선글라스/마크 제거로 더욱 깔끔해진 디자인
+ * - 다크모드 시 눈빛(Glow) 효과 강조
+ */
+
+:root {
+  --primary-yellow: #ffc107;
+  --primary-yellow-glow: rgba(255, 193, 7, 0.8);
+  --dark-bg: #121212;
+  --light-bg: #ffffff;
+}
+
+/* 전체 배경 */
+.login-wrapper {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  transition: background 0.6s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+}
+
+.login-wrapper.light-mode {
+  background: #f0f2f5;
+}
+.login-wrapper.dark-mode {
+  background: radial-gradient(circle at 50% 30%, #2a2a2a 0%, #000000 100%);
+}
+
+/* 메인 컨테이너 */
+.login-container {
+  display: flex;
+  width: 100%;
+  max-width: 1100px;
+  height: 700px;
+  background: var(--light-bg);
+  border-radius: 28px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  transition: all 0.6s ease;
+}
+
+.dark-mode .login-container {
+  background: #1a1a1a;
+  box-shadow: 0 30px 80px rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+}
+
+/* === 왼쪽: 캐릭터 섹션 === */
+.character-section {
+  flex: 1.3;
+  position: relative;
+  background: var(--primary-yellow);
+  padding: 60px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  overflow: hidden;
+  transition: all 0.6s ease;
+}
+
+.dark-mode .character-section {
+  background: linear-gradient(180deg, #222 0%, #0d0d0d 100%);
+  border-right: 1px solid #333;
+}
+
+/* 브랜드 텍스트 */
+.brand-header {
+  z-index: 20;
+  position: relative;
+}
+.main-title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  margin: 0;
+  color: #000;
+  letter-spacing: -2px;
+  line-height: 1;
+  transition: color 0.5s;
+}
+.main-subtitle {
+  font-size: 1.2rem;
+  font-weight: 600;
+  color: rgba(0, 0, 0, 0.7);
+  margin-top: 10px;
+  letter-spacing: 1px;
+  transition: color 0.5s;
+}
+
+.dark-mode .main-title {
+  color: var(--primary-yellow);
+  text-shadow: 0 0 20px var(--primary-yellow-glow);
+}
+.dark-mode .main-subtitle {
+  color: #888;
+}
+
+/* 캐릭터 래퍼 */
+.logo-characters {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  position: relative;
+  margin-top: -20px;
+  z-index: 10;
+}
+
+/* 개별 캐릭터 */
+.debater-char {
+  width: 260px;
+  height: 300px;
+  filter: drop-shadow(0 10px 20px rgba(0, 0, 0, 0.1));
+  transition: all 0.5s ease;
+  position: relative;
+}
+
+.left-char {
+  animation: hover 5s ease-in-out infinite;
+}
+.right-char {
+  animation: hover 5s ease-in-out infinite 0.7s;
+}
+
+@keyframes hover {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-15px);
+  }
+}
+
+.char-svg {
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+/* === 몸체 스타일 === */
+.char-body {
+  transition: all 0.5s ease;
+  stroke-width: 8px;
+  stroke-linejoin: round;
+}
+
+.light-mode .char-body {
+  fill: #fff;
+  stroke: #fff;
+  filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05));
+}
+
+.dark-mode .char-body {
+  fill: #222; /* 어두운 수트 */
+  stroke: var(--primary-yellow); /* 네온 테두리 */
+  stroke-width: 4px;
+  filter: drop-shadow(0 0 8px rgba(255, 193, 7, 0.2));
+}
+
+/* === 눈 스타일 (핵심 변경) === */
+.char-eye-white {
+  transition: all 0.3s;
+}
+.char-pupil {
+  transition: transform 0.1s, fill 0.3s;
+}
+
+/* 라이트모드: 평범한 눈 */
+.light-mode .char-eye-white {
+  fill: #fff;
+}
+.light-mode .char-pupil {
+  fill: #000;
+}
+
+/* 다크모드: 빛나는 눈 (선글라스 제거됨) */
+.dark-mode .char-eye-white {
+  fill: #ffc107; /* 눈 전체가 노란빛 */
+  filter: drop-shadow(0 0 8px var(--primary-yellow-glow));
+}
+.dark-mode .char-pupil {
+  fill: #000; /* 동공은 검정 */
+  opacity: 0.8;
+}
+
+/* 감은 눈 */
+.closed-eye {
+  opacity: 0;
+  stroke: #333;
+  transition: opacity 0.3s;
+}
+.dark-mode .closed-eye {
+  stroke: var(--primary-yellow);
+}
+
+/* === 다크모드 아이템 애니메이션 === */
+
+/* 1. 모자 */
+.mafia-hat {
+  opacity: 0;
+  transform: translateY(-200px) rotate(-20deg);
+  transition: all 0.8s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* 2. 망토 */
+.mafia-cape-back {
+  opacity: 0;
+  fill: #1a1a1a;
+  transition: opacity 0.5s ease 0.4s;
+  animation: capeWave 3s ease-in-out infinite;
+}
+@keyframes capeWave {
+  0%,
+  100% {
+    d: path("M20,160 Q-10,240 40,240 L160,240 Q190,240 160,160 Z");
+  }
+  50% {
+    d: path("M15,160 Q-15,235 45,245 L165,235 Q195,235 160,160 Z");
+  }
+}
+
+/* 다크모드 활성화 */
+.dark-mode .mafia-hat {
+  opacity: 1;
+  transform: translateY(0) rotate(0deg);
+}
+.dark-mode .right-char .mafia-hat {
+  transform: translateY(0) rotate(5deg);
+}
+.dark-mode .mafia-cape-back {
+  opacity: 1;
+}
+
+/* 비밀번호 입력 모드 */
+.password-active .char-eye-white,
+.password-active .char-pupil {
+  opacity: 0;
+}
+.password-active .closed-eye {
+  opacity: 1;
+}
+
+/* === 폼 섹션 스타일 (기존 유지) === */
+.form-section {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 60px;
+  background: var(--light-bg);
+  transition: background 0.6s ease;
+}
+.dark-mode .form-section {
+  background: #1a1a1a;
+}
+
+.form-wrapper {
+  width: 100%;
+  max-width: 420px;
+}
+.form-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  margin-bottom: 5px;
+  color: #111;
+}
+.form-subtitle {
+  font-size: 1rem;
+  color: #666;
+  margin-bottom: 40px;
+}
+.dark-mode .form-title {
+  color: #fff;
+}
+.dark-mode .form-subtitle {
+  color: #aaa;
+}
+
+.input-group {
+  margin-bottom: 24px;
+}
+.input-label {
+  display: block;
+  font-size: 0.95rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: #333;
+}
+.dark-mode .input-label {
+  color: #ccc;
+}
+
+.text-input {
+  width: 100%;
+  height: 56px;
+  padding: 0 20px;
+  font-size: 1rem;
+  border: 2px solid #e0e0e0;
+  border-radius: 14px;
+  background: #fcfcfc;
+  transition: all 0.3s;
+}
+.text-input:focus {
+  border-color: var(--primary-yellow);
+  background: #fff;
+  box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.1);
+  outline: none;
+}
+.dark-mode .text-input {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #fff;
+}
+.dark-mode .text-input:focus {
+  border-color: var(--primary-yellow);
+  background: #333;
+  box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+}
+
+.form-options {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 30px;
+}
+.checkbox-label {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  font-size: 0.95rem;
+  color: #555;
+  font-weight: 500;
+}
+.dark-mode .checkbox-label {
+  color: #aaa;
+}
+.checkbox-label input {
+  display: none;
+}
+.checkbox-custom {
+  width: 22px;
+  height: 22px;
+  border: 2px solid #ddd;
+  border-radius: 6px;
+  margin-right: 10px;
+  position: relative;
+  transition: all 0.2s;
+}
+.dark-mode .checkbox-custom {
+  border-color: #555;
+  background: #2a2a2a;
+}
+.checkbox-label input:checked + .checkbox-custom {
+  background: var(--primary-yellow);
+  border-color: var(--primary-yellow);
+}
+.checkbox-label input:checked + .checkbox-custom::after {
+  content: "";
+  position: absolute;
+  left: 7px;
+  top: 3px;
+  width: 5px;
+  height: 10px;
+  border: solid #000;
+  border-width: 0 2px 2px 0;
+  transform: rotate(45deg);
+}
+
+.link-forgot {
+  color: #555;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+.link-forgot:hover {
+  color: var(--primary-yellow);
+  text-decoration: underline;
+}
+.dark-mode .link-forgot {
+  color: #bbb;
+}
+.dark-mode .link-forgot:hover {
+  color: var(--primary-yellow);
+}
+
+.submit-btn {
+  width: 100%;
+  height: 60px;
+  background: var(--primary-yellow);
+  border: none;
+  border-radius: 14px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.2s, box-shadow 0.2s;
+  box-shadow: 0 8px 20px -5px rgba(255, 193, 7, 0.4);
+}
+.submit-btn:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 12px 25px -5px rgba(255, 193, 7, 0.6);
+}
+.submit-btn:active {
+  transform: scale(0.98);
+}
+
+.signup-link-wrapper {
+  text-align: center;
+  font-size: 1rem;
+  color: #666;
+}
+.dark-mode .signup-link-wrapper {
+  color: #999;
+}
+.link-signup {
+  color: var(--primary-yellow);
+  font-weight: 800;
+  text-decoration: none;
+  margin-left: 8px;
+}
+.link-signup:hover {
+  text-decoration: underline;
+}
+
+.divider {
+  display: flex;
+  align-items: center;
+  margin: 30px 0;
+  color: #aaa;
+  font-size: 0.9rem;
+}
+.divider::before,
+.divider::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: #eee;
+}
+.divider span {
+  padding: 0 15px;
+}
+.dark-mode .divider::before,
+.dark-mode .divider::after {
+  background: #333;
+}
+
+@media (max-width: 968px) {
+  .login-container {
+    flex-direction: column;
+    height: auto;
+    border-radius: 20px;
+  }
+  .character-section {
+    min-height: 380px;
+    padding: 40px;
+  }
+  .debater-char {
+    width: 180px;
+    height: 210px;
+  }
+  .form-section {
+    padding: 50px 30px;
+  }
+}

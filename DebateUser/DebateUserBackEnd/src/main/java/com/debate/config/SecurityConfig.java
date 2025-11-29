@@ -81,13 +81,13 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.DELETE, "/api/comments/**").authenticated() // 댓글 삭제는 인증 필요 (DELETE)
                         .requestMatchers(HttpMethod.GET, "/api/opinions/**").permitAll()  // 의견 조회 API는 모두 허용 (GET)
                         .requestMatchers(HttpMethod.POST, "/api/opinions").authenticated() // 의견 작성은 인증 필요 (POST)
+                        // [수정] 좋아요 조회 API 허용 (상세 페이지 진입 시 로그아웃 방지)
+                        .requestMatchers(HttpMethod.GET, "/api/likes/debate/**").permitAll()
                         .requestMatchers("/files/**").permitAll()         // 업로드된 파일 접근 허용
                         .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()  // Swagger UI 허용
                         .requestMatchers("/api-docs/**", "/v3/api-docs/**").permitAll()     // API 문서 허용
-                        // Actuator 엔드포인트: 개발 환경에서는 허용, 프로덕션에서는 인증 필요하도록 설정 가능
-                        .requestMatchers("/actuator/health", "/actuator/info", "/actuator/loggers/**").permitAll()  // 개발용: 인증 없이 접근 가능 (loggers 하위 경로 포함)
-                        // 프로덕션에서는 아래 주석을 해제하고 위의 permitAll()을 제거하세요:
-                        // .requestMatchers("/actuator/health", "/actuator/info", "/actuator/loggers/**").authenticated()  // 프로덕션용: 인증 필요
+                        // Actuator 엔드포인트: 개발 환경에서는 허용
+                        .requestMatchers("/actuator/health", "/actuator/info", "/actuator/loggers/**").permitAll()
                         .anyRequest().authenticated()                       // 그 외 모든 요청은 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터를 인증 필터 전에 추가
@@ -97,24 +97,13 @@ public class SecurityConfig {
 
     /**
      * CORS (Cross-Origin Resource Sharing) 설정
-     * 수정됨: 다양한 포트 허용을 위해 AllowedOriginPatterns 사용
      */
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
 
-        // [수정] 특정 포트(9002)만 허용하던 것을 모든 패턴 허용으로 변경하거나, 필요한 포트를 모두 추가
-        // configuration.setAllowedOrigins(List.of("http://localhost:9002")); // 기존 코드
-
         // 방법 1: 모든 Origin 패턴 허용 (개발 단계에서 추천)
         configuration.setAllowedOriginPatterns(List.of("*"));
-
-        // 방법 2: 명시적으로 허용할 프론트엔드 주소 목록 (보안상 더 안전)
-        // configuration.setAllowedOrigins(List.of(
-        //     "http://localhost:3000",
-        //     "http://localhost:5173",
-        //     "http://localhost:9002"
-        // ));
 
         // 허용할 HTTP 메서드
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));

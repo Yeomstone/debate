@@ -1,440 +1,614 @@
-/**
- * DebateDetailPage 컴포넌트
- * 
- * 토론 상세 페이지입니다.
- * 
- * 주요 기능:
- * - 토론 상세 정보 표시
- * - 댓글 목록 및 작성
- * - 찬성/반대 의견 작성 및 통계 표시
- * - 좋아요 기능
- * - 토론 수정/삭제 (작성자만 가능)
- */
+import { useState, useEffect, useRef } from "react";
+import { useParams, useNavigate, useLocation, Link } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { debateService } from "../services/debateService";
+import { commentService } from "../services/commentService";
+import { opinionService } from "../services/opinionService";
+import { likeService } from "../services/likeService";
+import { reportService } from "../services/reportService";
+import { format } from "date-fns";
+import "./DebateDetailPage.css";
 
-import { useState, useEffect } from 'react'
-import { useParams, useNavigate, Link, useLocation } from 'react-router-dom'
-import { useAuth } from '../context/AuthContext'
-import { debateService } from '../services/debateService'
-import { commentService } from '../services/commentService'
-import { opinionService } from '../services/opinionService'
-import { likeService } from '../services/likeService'
-import { format } from 'date-fns'
-import './DebateDetailPage.css'
-
-/**
- * DebateDetailPage 컴포넌트
- * 
- * @returns {JSX.Element} 토론 상세 페이지 컴포넌트
- */
 const DebateDetailPage = () => {
-  // 훅 사용
-  const { id } = useParams() // URL 파라미터에서 토론 ID 가져오기
-  const navigate = useNavigate() // 페이지 네비게이션
-  const location = useLocation() // 현재 위치 정보 (필터 조건 전달용)
-  const { user, isAuthenticated } = useAuth() // 인증 정보
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const { user, isAuthenticated } = useAuth();
 
-  // 상태 관리
-  const [debate, setDebate] = useState(null) // 토론 정보
-  const [comments, setComments] = useState([]) // 댓글 목록
-  const [opinions, setOpinions] = useState([]) // 의견 목록 (찬성/반대)
-  const [isLiked, setIsLiked] = useState(false) // 좋아요 여부
-  const [loading, setLoading] = useState(true) // 로딩 상태
-  const [error, setError] = useState(null) // 에러 상태
-  const [commentContent, setCommentContent] = useState('') // 댓글 작성 내용
-  const [selectedSide, setSelectedSide] = useState(null) // 선택한 입장 (찬성/반대)
-  const [opinionContent, setOpinionContent] = useState('') // 의견 작성 내용
+  // 데이터 상태
+  const [debate, setDebate] = useState(null);
+  const [comments, setComments] = useState([]);
+  const [opinions, setOpinions] = useState([]);
+  const [isLiked, setIsLiked] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
-  /**
-   * 토론 ID 변경 시 데이터 로딩
-   */
+  // [추가] 페이징 및 정렬 상태
+  const [page, setPage] = useState(0);
+  const [totalPages, setTotalPages] = useState(0);
+  const [sort, setSort] = useState("latest"); // latest, oldest, replies
+
+  // 입력 상태
+  const [commentContent, setCommentContent] = useState("");
+  const [replyContent, setReplyContent] = useState("");
+  const [replyingTo, setReplyingTo] = useState(null);
+
+  // UI 상태 (메뉴)
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const menuRef = useRef(null);
+
+  // 초기 로딩
   useEffect(() => {
-    setError(null) // 에러 상태 초기화
-    fetchData()
-  }, [id])
+    fetchData();
+  }, [id]);
 
-  /**
-   * 데이터 가져오기
-   * 
-   * 토론 정보, 댓글 목록, 의견 목록을 병렬로 가져옵니다.
-   * 로그인한 경우 좋아요 여부도 확인합니다.
-   */
+  // [추가] 페이지나 정렬 변경 시 댓글 다시 로드
+  useEffect(() => {
+    if (debate) {
+      fetchComments();
+    }
+  }, [page, sort]);
+
+  // 외부 클릭 시 메뉴 닫기
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (menuRef.current && !menuRef.current.contains(event.target)) {
+        setIsMenuOpen(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   const fetchData = async () => {
     try {
-      setLoading(true)
-      setError(null) // 에러 상태 초기화
-      
-      // 토론 정보, 댓글 목록, 의견 목록을 병렬로 가져오기
-      const [debateResponse, commentsResponse, opinionsResponse] = await Promise.all([
+      if (!debate) setLoading(true);
+      setError(null);
+
+      const [debateRes, opinionsRes] = await Promise.all([
         debateService.getDebateById(id),
-        commentService.getCommentsByDebate(id),
         opinionService.getOpinionsByDebate(id),
-      ])
+      ]);
 
-      // ApiResponse 구조에서 data 추출
-      setDebate(debateResponse.data || debateResponse)
-      setComments((commentsResponse.data || commentsResponse)?.content || [])
-      setOpinions((opinionsResponse.data || opinionsResponse) || [])
+      setDebate(debateRes.data || debateRes);
+      setOpinions(opinionsRes.data || opinionsRes || []);
 
-      // 로그인한 경우 좋아요 여부 확인
+      // 댓글은 별도 함수로 호출 (페이징/정렬 적용)
+      await fetchComments();
+
       if (isAuthenticated) {
         try {
-          const liked = await likeService.isLiked(id)
-          setIsLiked(liked.data || liked)
-        } catch (likeError) {
-          // 좋아요 여부 확인 실패는 무시 (비로그인 사용자일 수 있음)
-          console.warn('좋아요 여부 확인 실패:', likeError)
-        }
+          const liked = await likeService.isLiked(id);
+          setIsLiked(liked.data || liked);
+        } catch {}
       }
-    } catch (error) {
-      console.error('데이터 로딩 실패:', error)
-      // 에러 메시지 설정
-      const errorMessage = error.response?.data?.message || error.message || '토론을 불러오는 중 오류가 발생했습니다.'
-      setError(errorMessage)
-      setDebate(null) // 토론 정보 초기화
+    } catch (err) {
+      console.error(err);
+      setError(err.response?.data?.message || "오류가 발생했습니다.");
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
-  }
+  };
 
-  /**
-   * 좋아요 토글 처리
-   * 
-   * 비로그인 사용자는 로그인 페이지로 이동하고,
-   * 로그인한 사용자는 좋아요를 추가/제거합니다.
-   */
-  const handleLike = async () => {
-    if (!isAuthenticated) {
-      navigate('/auth/login')
-      return
+  // [추가] 댓글 목록 조회 (페이징/정렬)
+  const fetchComments = async () => {
+    try {
+      // 정렬 기준 변환 (프론트 -> 백엔드 Pageable sort)
+      let sortParam = "createdAt,desc"; // 기본: 최신순
+      if (sort === "oldest") sortParam = "createdAt,asc";
+      else if (sort === "replies") sortParam = "replyCount,desc";
+
+      const response = await commentService.getCommentsByDebate(id, page, 7, sortParam); // 7개씩
+      const data = response.data || response;
+      
+      setComments(data.content || []);
+      setTotalPages(data.totalPages || 0);
+    } catch (err) {
+      console.error("댓글 로딩 실패:", err);
     }
+  };
+
+  // 좋아요 (Optimistic UI 적용)
+  const handleLike = async () => {
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
+
+    const prevIsLiked = isLiked;
+    const prevLikeCount = debate.likeCount;
+
+    setIsLiked(!prevIsLiked);
+    setDebate((prev) => ({
+      ...prev,
+      likeCount: prevIsLiked ? prev.likeCount - 1 : prev.likeCount + 1,
+    }));
 
     try {
-      await likeService.toggleLike(id)
-      setIsLiked(!isLiked)
-      // 좋아요 수 업데이트를 위해 데이터 다시 가져오기
-      fetchData()
-    } catch (error) {
-      console.error('좋아요 처리 실패:', error)
+      await likeService.toggleLike(id);
+    } catch (err) {
+      console.error(err);
+      setIsLiked(prevIsLiked);
+      setDebate((prev) => ({
+        ...prev,
+        likeCount: prevLikeCount,
+      }));
+      alert("좋아요 처리에 실패했습니다.");
     }
-  }
+  };
 
-  /**
-   * 댓글 작성 처리
-   * 
-   * 비로그인 사용자는 로그인 페이지로 이동하고,
-   * 로그인한 사용자는 댓글을 작성합니다.
-   * 
-   * @param {Event} e - 폼 제출 이벤트
-   */
-  const handleCreateComment = async (e) => {
-    e.preventDefault()
-    if (!isAuthenticated) {
-      navigate('/auth/login')
-      return
+  // 삭제
+  const handleDelete = async () => {
+    if (!window.confirm("정말 삭제하시겠습니까?")) return;
+    try {
+      await debateService.deleteDebate(id);
+      navigate("/debate");
+    } catch (err) {
+      alert(err.response?.data?.message || "삭제 실패");
     }
+  };
+
+  // 신고
+  const handleReport = async () => {
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
+    const reason = prompt("신고 사유를 입력해주세요:");
+    if (!reason) return;
+    try {
+      await reportService.createReport({
+        targetType: "DEBATE",
+        targetId: parseInt(id),
+        reason,
+        description: `게시글 신고: ${debate.title}`,
+      });
+      alert("신고가 접수되었습니다.");
+    } catch (err) {
+      alert("신고 실패");
+    }
+  };
+
+  // 댓글 등록 (Optimistic UI 적용)
+  const handleCreateComment = async (e) => {
+    e.preventDefault();
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
+    if (!commentContent.trim()) return;
+
+    const newComment = {
+      id: Date.now(),
+      debateId: parseInt(id),
+      content: commentContent,
+      nickname: user.nickname,
+      createdAt: new Date().toISOString(),
+      parentId: null,
+      replies: [], // 새 댓글은 대댓글 없음
+    };
+
+    // 낙관적 업데이트: 최신순일 때만 맨 앞에 추가, 아니면 그냥 리로드
+    if (sort === "latest") {
+      setComments((prev) => [newComment, ...prev]);
+    }
+    setCommentContent("");
 
     try {
       await commentService.createComment({
         debateId: parseInt(id),
-        content: commentContent,
+        content: newComment.content,
+      });
+      fetchComments(); // ID 동기화 및 정렬 적용 위해 리로드
+    } catch (err) {
+      if (sort === "latest") {
+        setComments((prev) => prev.filter((c) => c.id !== newComment.id));
+      }
+      alert("댓글 등록 실패");
+    }
+  };
+
+  // 대댓글 등록
+  const handleCreateReply = async (parentId) => {
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
+    if (!replyContent.trim()) return;
+
+    const newReply = {
+      id: Date.now(),
+      debateId: parseInt(id),
+      content: replyContent,
+      nickname: user.nickname,
+      createdAt: new Date().toISOString(),
+      parentId: parentId,
+    };
+
+    // 낙관적 업데이트
+    setComments((prev) =>
+      prev.map((comment) => {
+        if (comment.id === parentId) {
+          return {
+            ...comment,
+            replies: [...(comment.replies || []), newReply],
+          };
+        }
+        return comment;
       })
-      setCommentContent('')
-      // 댓글 목록 업데이트를 위해 데이터 다시 가져오기
-      fetchData()
-    } catch (error) {
-      console.error('댓글 작성 실패:', error)
-    }
-  }
+    );
+    setReplyContent("");
+    setReplyingTo(null);
 
-  /**
-   * 의견 작성 처리 (찬성/반대)
-   * 
-   * 비로그인 사용자는 로그인 페이지로 이동하고,
-   * 로그인한 사용자는 토론에 대한 의견(찬성 또는 반대)을 작성합니다.
-   * 
-   * @param {string} side - 의견 방향 ('FOR' 또는 'AGAINST')
-   */
+    try {
+      await commentService.createComment({
+        debateId: parseInt(id),
+        content: newReply.content,
+        parentId: parentId,
+      });
+      fetchComments(); // 리로드
+    } catch (err) {
+      setComments((prev) =>
+        prev.map((comment) => {
+          if (comment.id === parentId) {
+            return {
+              ...comment,
+              replies: (comment.replies || []).filter(
+                (r) => r.id !== newReply.id
+              ),
+            };
+          }
+          return comment;
+        })
+      );
+      alert("답글 등록 실패");
+    }
+  };
+
+  // 투표 참여
   const handleCreateOpinion = async (side) => {
-    if (!isAuthenticated) {
-      navigate('/auth/login')
-      return
-    }
-
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
     try {
       await opinionService.createOpinion({
         debateId: parseInt(id),
         side,
-        content: opinionContent || null,
-      })
-      setSelectedSide(null)
-      setOpinionContent('')
-      // 의견 목록 업데이트를 위해 데이터 다시 가져오기
-      fetchData()
-    } catch (error) {
-      console.error('입장 선택 실패:', error)
+        content: null,
+      });
+      fetchData();
+    } catch (err) {
+      alert(err.response?.data?.message || "투표 실패");
     }
-  }
+  };
 
-  /**
-   * 토론 삭제 처리
-   * 
-   * 작성자만 삭제할 수 있으며, 토론이 시작되기 전(SCHEDULED 상태)에만 삭제 가능합니다.
-   */
-  const handleDelete = async () => {
-    if (!window.confirm('정말 삭제하시겠습니까?')) return
-
-    try {
-      await debateService.deleteDebate(id)
-      // 삭제 성공 시 토론 목록 페이지로 이동
-      navigate('/debate')
-    } catch (error) {
-      console.error('삭제 실패:', error)
-    }
-  }
-
-  /**
-   * 목록으로 돌아가기
-   * 이전 목록의 필터 조건을 유지하여 목록 페이지로 이동합니다.
-   */
+  // 목록으로
   const handleBackToList = () => {
-    // location.state에서 필터 조건 가져오기
-    const filterState = location.state || {}
-    
-    // 필터 조건을 state로 전달하여 목록 페이지로 이동
-    navigate('/debate', { 
-      state: {
-        categoryId: filterState.categoryId || '',
-        status: filterState.status || '',
-        sort: filterState.sort || 'latest',
-        keyword: filterState.keyword || ''
-      }
-    })
-  }
+    const state = location.state || {};
+    navigate("/debate", { state });
+  };
 
-  if (loading) {
-    return <div className="container">로딩 중...</div>
-  }
+  // 댓글 렌더링 헬퍼
+  const renderComments = () => {
+    if (comments.length === 0) {
+      return <div className="no-comments">첫 번째 댓글을 남겨보세요!</div>;
+    }
 
-  if (error || !debate) {
-    return (
-      <div className="container">
-        <div className="error-message" style={{ padding: '2rem', textAlign: 'center' }}>
-          <h2>토론을 찾을 수 없습니다</h2>
-          <p>{error || '요청하신 토론이 존재하지 않거나 삭제되었습니다.'}</p>
-          <button 
-            onClick={handleBackToList}
-            className="btn btn-primary"
-            style={{ marginTop: '1rem' }}
-          >
-            목록으로 돌아가기
-          </button>
+    return comments.map((comment) => {
+      const replies = comment.replies || [];
+
+      return (
+        <div key={comment.id} className="comment-block">
+          {/* 부모 댓글 */}
+          <div className="comment-row root">
+            <div className="comment-avatar">{comment.nickname?.charAt(0)}</div>
+            <div className="comment-main">
+              <div className="comment-header">
+                <span className="name">{comment.nickname}</span>
+                <span className="time">
+                  {format(new Date(comment.createdAt), "MM.dd HH:mm")}
+                </span>
+              </div>
+              <p className="comment-text">{comment.content}</p>
+              <button
+                className="reply-btn"
+                onClick={() =>
+                  setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                }
+              >
+                답글 달기
+              </button>
+            </div>
+          </div>
+
+          {/* 자식 댓글 (답글) */}
+          {replies.length > 0 && (
+            <div className="replies-container">
+              {replies.map((reply) => (
+                <div key={reply.id} className="comment-row reply">
+                  <div className="reply-line"></div>
+                  <div className="comment-avatar small">
+                    {reply.nickname?.charAt(0)}
+                  </div>
+                  <div className="comment-main">
+                    <div className="comment-header">
+                      <span className="name">{reply.nickname}</span>
+                      <span className="time">
+                        {format(new Date(reply.createdAt), "MM.dd HH:mm")}
+                      </span>
+                    </div>
+                    <p className="comment-text">{reply.content}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+
+          {/* 답글 입력 폼 */}
+          {replyingTo === comment.id && (
+            <div className="reply-form-container">
+              <div className="reply-line"></div>
+              <div className="reply-form">
+                <input
+                  type="text"
+                  placeholder="답글을 입력하세요..."
+                  value={replyContent}
+                  onChange={(e) => setReplyContent(e.target.value)}
+                  autoFocus
+                />
+                <button onClick={() => handleCreateReply(comment.id)}>
+                  등록
+                </button>
+              </div>
+            </div>
+          )}
         </div>
+      );
+    });
+  };
+
+  if (loading && !debate)
+    return (
+      <div className="loading-container">
+        <div className="spinner"></div>
       </div>
-    )
-  }
+    );
+  if (error || !debate) return <div className="error-msg">{error}</div>;
 
-  const isOwner = user && debate && user.id === debate.userId
-  const canEdit = isOwner && debate.status === 'SCHEDULED'
-  const canVote = debate.status === 'ACTIVE' && isAuthenticated
+  const isOwner = user && String(user.id) === String(debate.userId);
+  const canEdit = isOwner && debate.status === "SCHEDULED";
 
-  const forCount = opinions.filter((o) => o.side === 'FOR').length
-  const againstCount = opinions.filter((o) => o.side === 'AGAINST').length
-  const totalCount = forCount + againstCount
-  const forPercent = totalCount > 0 ? Math.round((forCount / totalCount) * 100) : 0
-  const againstPercent = totalCount > 0 ? Math.round((againstCount / totalCount) * 100) : 0
+  // 투표 집계
+  const forCount = opinions.filter((o) => o.side === "FOR").length;
+  const againstCount = opinions.filter((o) => o.side === "AGAINST").length;
+  const totalCount = forCount + againstCount;
+  const forPercent =
+    totalCount > 0 ? Math.round((forCount / totalCount) * 100) : 0;
+  const againstPercent =
+    totalCount > 0 ? Math.round((againstCount / totalCount) * 100) : 0;
 
   return (
     <div className="debate-detail-page">
+      <div className="animated-bg"></div>
+
       <div className="container">
-        {/* 토론 상세 정보 */}
-        <article className="debate-detail">
-          <div className="debate-detail-header">
-            <div className="debate-meta-top">
-              {debate.categoryName && (
-                <span className="category-badge">{debate.categoryName}</span>
-              )}
-              <span className={`status-badge status-${debate.status?.toLowerCase()}`}>
-                {debate.status === 'ACTIVE' ? '진행중' : debate.status === 'SCHEDULED' ? '예정' : '종료'}
+        <article className="debate-article">
+          <div className="article-top-bar">
+            <div className="top-left">
+              <span className="badge category-badge">
+                {debate.categoryName}
               </span>
-              <span className="period-badge">
-                {format(new Date(debate.startDate), 'yyyy-MM-dd')} ~{' '}
-                {format(new Date(debate.endDate), 'yyyy-MM-dd')}
+              <span
+                className={`badge status-badge ${debate.status?.toLowerCase()}`}
+              >
+                {debate.status === "ACTIVE"
+                  ? "진행중"
+                  : debate.status === "ENDED"
+                  ? "종료됨"
+                  : "예정"}
               </span>
             </div>
-            <h1 className="debate-detail-title">{debate.title}</h1>
-            <div className="debate-author-info">
-              <div className="author-avatar">👤</div>
-              <div className="author-details">
-                <Link to={`/users/${debate.userId}`} className="author-name">
-                  {debate.nickname || '알 수 없음'}
-                </Link>
-                <span className="author-date">
-                  {format(new Date(debate.createdAt), 'yyyy-MM-dd HH:mm')}
-                </span>
-              </div>
-              {isOwner && (
-                <div className="debate-actions">
-                  {canEdit && (
-                    <>
-                      <Link to={`/debate/${id}/edit`} className="btn-icon">
-                        ✏️ 수정
-                      </Link>
-                      <button onClick={handleDelete} className="btn-icon">
-                        🗑️ 삭제
+
+            <div className="top-right" ref={menuRef}>
+              {isOwner ? (
+                <div className="menu-wrapper">
+                  <button
+                    className="icon-btn"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    ⋮
+                  </button>
+                  {isMenuOpen && (
+                    <div className="dropdown-menu">
+                      <button
+                        onClick={() =>
+                          canEdit && navigate(`/debate/${id}/edit`)
+                        }
+                        disabled={!canEdit}
+                        className={!canEdit ? "disabled" : ""}
+                      >
+                        수정하기
                       </button>
-                    </>
+                      <button onClick={handleDelete} className="delete-btn">
+                        삭제하기
+                      </button>
+                    </div>
                   )}
                 </div>
+              ) : (
+                <button onClick={handleReport} className="report-text-btn">
+                  🚨 신고
+                </button>
               )}
             </div>
           </div>
 
-          <div 
-            className="debate-detail-content"
+          <h1 className="article-title">{debate.title}</h1>
+
+          <div className="article-meta">
+            <div className="meta-left">
+              <span className="author-name">{debate.nickname}</span>
+              <span className="separator">·</span>
+              <span className="date">
+                {format(new Date(debate.createdAt), "yyyy.MM.dd")}
+              </span>
+            </div>
+            <div className="meta-right">
+              <span>조회 {debate.viewCount?.toLocaleString()}</span>
+              <span>댓글 {debate.commentCount?.toLocaleString()}</span>
+            </div>
+          </div>
+
+          <div
+            className="article-content ql-editor"
             dangerouslySetInnerHTML={{ __html: debate.content }}
           />
 
-          <div className="debate-stats-detail">
-            <div className="stat-item">
-              <span className="stat-label">조회수</span>
-              <span className="stat-value">{debate.viewCount || 0}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">좋아요</span>
-              <span className="stat-value">{debate.likeCount || 0}</span>
-            </div>
-            <div className="stat-item">
-              <span className="stat-label">댓글</span>
-              <span className="stat-value">{debate.commentCount || 0}</span>
-            </div>
-          </div>
-
-          <div className="debate-interactions">
+          <div className="article-footer">
             <button
+              className={`like-btn ${isLiked ? "active" : ""}`}
               onClick={handleLike}
-              className={`btn ${isLiked ? 'btn-primary' : 'btn-outline'}`}
             >
-              👍 좋아요 ({debate.likeCount || 0})
+              👍 좋아요 {debate.likeCount}
             </button>
-            <button
-              onClick={handleBackToList}
-              className="btn btn-outline back-to-list-btn"
-            >
-              ← 목록으로
+            <button className="list-btn" onClick={handleBackToList}>
+              목록으로
             </button>
           </div>
         </article>
 
-        {/* 투표 섹션 */}
-        {canVote && (
+        {debate.status === "ACTIVE" && (
           <section className="vote-section">
-            <h2>당신의 입장을 선택하세요</h2>
-            <div className="vote-options">
-              <div className="vote-option vote-for-option">
-                <h3>찬성</h3>
-                <p>AI는 인간의 일자리를 대체할 것입니다.</p>
-                <button
-                  className="btn btn-primary"
-                  style={{ width: '100%' }}
-                  onClick={() => handleCreateOpinion('FOR')}
-                >
-                  찬성 선택
-                </button>
-                <div className="vote-result">
-                  <div className="vote-bar">
-                    <div
-                      className="vote-bar-fill vote-for"
-                      style={{ width: `${forPercent}%` }}
+            <div className="vote-header">
+              <h3>투표 현황</h3>
+              <p>당신의 의견을 선택해주세요</p>
+            </div>
+            
+            <div className="vote-container">
+              {/* 찬성 측 */}
+              <div className="vote-card for">
+                <div className="card-bg"></div>
+                <div className="card-content">
+                  <span className="side-label">AGREE</span>
+                  <h4 className="side-title">찬성</h4>
+                  <div className="vote-stats">
+                    <span className="percent">{forPercent}%</span>
+                    <span className="count">{forCount}명</span>
+                  </div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-fill" 
+                      style={{ "--percent": `${forPercent}%` }}
                     ></div>
                   </div>
-                  <p className="vote-percentage">
-                    {forPercent}% ({forCount}명)
-                  </p>
+                  <button
+                    className="vote-action-btn"
+                    onClick={() => handleCreateOpinion("FOR")}
+                  >
+                    찬성 투표
+                  </button>
                 </div>
               </div>
-              <div className="vote-option vote-against-option">
-                <h3>반대</h3>
-                <p>AI는 새로운 일자리를 창출할 것입니다.</p>
-                <button
-                  className="btn btn-danger"
-                  style={{ width: '100%' }}
-                  onClick={() => handleCreateOpinion('AGAINST')}
-                >
-                  반대 선택
-                </button>
-                <div className="vote-result">
-                  <div className="vote-bar">
-                    <div
-                      className="vote-bar-fill vote-against"
-                      style={{ width: `${againstPercent}%` }}
+
+              {/* VS 배지 */}
+              <div className="vs-badge">
+                <span>VS</span>
+              </div>
+
+              {/* 반대 측 */}
+              <div className="vote-card against">
+                <div className="card-bg"></div>
+                <div className="card-content">
+                  <span className="side-label">DISAGREE</span>
+                  <h4 className="side-title">반대</h4>
+                  <div className="vote-stats">
+                    <span className="percent">{againstPercent}%</span>
+                    <span className="count">{againstCount}명</span>
+                  </div>
+                  <div className="progress-container">
+                    <div 
+                      className="progress-fill" 
+                      style={{ "--percent": `${againstPercent}%` }}
                     ></div>
                   </div>
-                  <p className="vote-percentage">
-                    {againstPercent}% ({againstCount}명)
-                  </p>
+                  <button
+                    className="vote-action-btn"
+                    onClick={() => handleCreateOpinion("AGAINST")}
+                  >
+                    반대 투표
+                  </button>
                 </div>
               </div>
             </div>
           </section>
         )}
 
-        {/* 댓글 섹션 */}
-        <section className="comments-section">
-          <div className="comments-header">
-            <h2>댓글 ({debate.commentCount || 0})</h2>
+        <section className="comment-section">
+          <div className="comment-header-row">
+            <h3 className="section-header">
+              댓글 <span className="count">{debate.commentCount}</span>
+            </h3>
+            
+            {/* [추가] 정렬 탭 */}
+            <div className="sort-tabs">
+              <button 
+                className={sort === "latest" ? "active" : ""} 
+                onClick={() => setSort("latest")}
+              >
+                최신순
+              </button>
+              <button 
+                className={sort === "oldest" ? "active" : ""} 
+                onClick={() => setSort("oldest")}
+              >
+                오래된순
+              </button>
+              <button 
+                className={sort === "replies" ? "active" : ""} 
+                onClick={() => setSort("replies")}
+              >
+                답글순
+              </button>
+            </div>
           </div>
 
-          {isAuthenticated && (
-            <form onSubmit={handleCreateComment} className="comment-form">
-              <textarea
-                className="form-textarea"
-                placeholder="댓글을 입력하세요..."
-                value={commentContent}
-                onChange={(e) => setCommentContent(e.target.value)}
-                required
-              />
-              <div className="comment-form-actions">
-                <button type="submit" className="btn btn-primary">
-                  등록
-                </button>
+          <form className="comment-input-area" onSubmit={handleCreateComment}>
+            <textarea
+              placeholder={
+                isAuthenticated ? "의견을 남겨주세요." : "로그인이 필요합니다."
+              }
+              value={commentContent}
+              onChange={(e) => setCommentContent(e.target.value)}
+              disabled={!isAuthenticated}
+            />
+            <button
+              type="submit"
+              disabled={!isAuthenticated || !commentContent.trim()}
+            >
+              등록
+            </button>
+          </form>
+
+          <div className="comment-list">
+            {renderComments()}
+          </div>
+
+          {/* [추가] 페이지네이션 */}
+          {totalPages > 1 && (
+            <div className="pagination">
+              <button 
+                disabled={page === 0} 
+                onClick={() => setPage(p => Math.max(0, p - 1))}
+              >
+                &lt;
+              </button>
+              {[...Array(totalPages)].map((_, i) => (
                 <button
-                  type="button"
-                  onClick={() => setCommentContent('')}
-                  className="btn btn-outline"
+                  key={i}
+                  className={page === i ? "active" : ""}
+                  onClick={() => setPage(i)}
                 >
-                  취소
+                  {i + 1}
                 </button>
-              </div>
-            </form>
+              ))}
+              <button 
+                disabled={page === totalPages - 1} 
+                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
+              >
+                &gt;
+              </button>
+            </div>
           )}
-
-          <div className="comments-list">
-            {comments.map((comment) => (
-              <div key={comment.id} className="comment-item">
-                <div className="comment-header">
-                  <div className="comment-author">
-                    <div className="author-avatar-small">👤</div>
-                    <div>
-                      <Link to={`/users/${comment.userId}`} className="comment-author-name">
-                        {comment.nickname || '알 수 없음'}
-                      </Link>
-                      <span className="comment-date">
-                        {format(new Date(comment.createdAt), 'yyyy-MM-dd HH:mm')}
-                      </span>
-                    </div>
-                  </div>
-                </div>
-                <div className="comment-content">
-                  <p>{comment.content}</p>
-                </div>
-              </div>
-            ))}
-          </div>
         </section>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default DebateDetailPage
-
+export default DebateDetailPage;

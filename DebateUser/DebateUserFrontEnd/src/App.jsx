@@ -31,6 +31,8 @@ import CategoryDetailPage from "./pages/CategoryDetailPage";
 import SearchPage from "./pages/SearchPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import RankingPage from "./pages/RankingPage";
+import AboutPage from "./pages/AboutPage";
+import RulesPage from "./pages/RulesPage";
 /**
  * App 컴포넌트
  *
@@ -57,6 +59,9 @@ function App() {
             <Routes>
               {/* 공개 라우트 */}
               <Route path="/" element={<HomePage />} /> {/* 메인 페이지 */}
+              <Route path="/about" element={<AboutPage />} />{" "}
+              <Route path="/rules" element={<RulesPage />} />{" "}
+              {/* 소개 페이지 */}
               <Route path="/debate" element={<DebateListPage />} />{" "}
               {/* 토론 목록 페이지 */}
               <Route path="/debate/:id" element={<DebateDetailPage />} />{" "}

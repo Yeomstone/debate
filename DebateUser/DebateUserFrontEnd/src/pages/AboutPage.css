@@ -1,0 +1,128 @@
+/* 1. 전체 기본 설정 */
+.about-page {
+  color: var(--text-primary);
+  font-family: "Pretendard", -apple-system, BlinkMacSystemFont, sans-serif;
+  animation: fadeIn 0.8s ease-out;
+  line-height: 1.6;
+  max-width: 900px;
+  margin: 80px auto 40px;
+  padding: 0 16px;
+}
+
+/* 2. 메인 타이틀 */
+.about-page h1 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #ffc107; /* brand color */
+  border-bottom: 2px solid #333;
+  padding-bottom: 1rem;
+  margin-bottom: 2rem;
+  letter-spacing: -0.02em;
+}
+
+/* 3. 인용구 강조 (h1 바로 다음 p 태그) */
+.about-page h1 + p {
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  color: #ffc107;
+  font-size: 1.3rem !important;
+  font-weight: bold;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+  margin-top: 2rem !important;
+  margin-bottom: 2rem;
+}
+
+/* 4. 본문 텍스트 */
+.about-page p {
+  color: var(--text-secondary);
+  line-height: 1.7;
+  font-size: 1.05rem;
+  margin-bottom: 1rem;
+}
+
+.about-page strong {
+  color: var(--text-primary);
+  background: linear-gradient(
+    to top,
+    rgba(255, 193, 7, 0.3) 40%,
+    transparent 40%
+  );
+  padding: 0 4px;
+}
+
+/* 5. 섹션 제목 */
+.about-page section {
+  margin-top: 3rem;
+}
+
+.about-page section h2 {
+  font-size: 1.8rem;
+  color: var(--text-primary);
+  margin-bottom: 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+.about-page section h2::before {
+  content: "";
+  display: block;
+  width: 6px;
+  height: 24px;
+  background-color: #ffc107;
+  margin-right: 12px;
+  border-radius: 2px;
+}
+
+/* 6. 리스트 카드 스타일 */
+.about-page section ul {
+  list-style: none;
+  padding: 0;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+  margin-top: 1rem;
+}
+
+@media (min-width: 768px) {
+  .about-page section ul {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+
+.about-page section ul li {
+  background-color: var(--bg-secondary);
+  padding: 1.5rem;
+  border-radius: 12px;
+  border: 1px solid var(--border-color);
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s, border-color 0.2s;
+}
+
+.about-page section ul li:hover {
+  transform: translateY(-5px);
+  border-color: var(--secondary-color);
+}
+
+.about-page section ul li strong {
+  display: block;
+  font-size: 1.15rem;
+  color: var(--secondary-color);
+  background: none;
+  padding: 0;
+  margin-bottom: 8px;
+}
+
+/* 애니메이션 */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

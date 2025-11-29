@@ -7,6 +7,7 @@ import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.time.LocalDateTime;
 
 /**
@@ -26,6 +27,7 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 @EntityListeners(AuditingEntityListener.class)
+@JsonIgnoreProperties({"hibernateLazyInitializer", "handler"})
 public class User {
     /**
      * 사용자 ID (PK)

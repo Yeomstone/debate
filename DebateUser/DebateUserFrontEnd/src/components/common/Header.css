@@ -215,11 +215,12 @@
   gap: 8px;
 }
 
+/* 공통 버튼 스타일 */
 .btn {
-  padding: 8px 16px;
+  padding: 6px 14px; /* 버튼 전체 조금 작게 */
   border: none;
   border-radius: 8px;
-  font-size: 0.9rem;
+  font-size: 0.85rem; /* 글자도 살짝 줄이기 */
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
@@ -229,29 +230,19 @@
   justify-content: center;
 }
 
-.btn-sm {
-  padding: 6px 12px;
-  font-size: 0.85rem;
-}
-
-.btn-primary {
+/* 노란 CTA 버튼 (로그인/회원가입 둘 다 사용) */
+.btn-primary,
+.btn-secondary {
   background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
   color: #000;
+  border: none;
 }
 
-.btn-primary:hover {
+/* hover 효과 통일 (둘 다 똑같이) */
+.btn-primary:hover,
+.btn-secondary:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
-}
-
-.btn-secondary {
-  background-color: transparent;
-  color: var(--text-primary);
-  border: 1px solid var(--border-color);
-}
-
-.btn-secondary:hover {
-  background-color: var(--hover-bg);
 }
 
 /* ===== 사이드바 오버레이 ===== */
@@ -264,6 +255,13 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1100;
   animation: fadeIn 0.3s ease;
+}
+
+/* 헤더 로그인/회원가입 버튼 크기 + 글자색 (PC용) */
+.auth-buttons .btn {
+  padding: 4px 10px; /* 🔹 세로·가로 여백 더 줄이기 */
+  font-size: 0.8rem; /* 🔹 글자 크기도 더 줄이기 */
+  color: #000 !important; /* 🔹 글자는 계속 검정 */
 }
 
 @keyframes fadeIn {
@@ -401,6 +399,12 @@
 /* 네비게이션 아이콘 */
 .nav-icon {
   flex-shrink: 0; /* 아이콘 크기 고정 */
+  margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
+}
+.nav-item span {
+  display: inline-block;
+  line-height: 1; /* 글자 박스 높이 줄이기 */
+  transform: translateY(-4px); /* 🔹 필요하면 -2px, -3px로 조금씩 조정 */
 }
 
 /* ===== 사이드바 푸터 ===== */
@@ -430,9 +434,42 @@
   .logo-text {
     display: none;
   }
+
+  /* 로그인 / 회원가입 버튼 묶음 (모바일) */
   .auth-buttons {
-    display: none;
+    display: flex;
+    gap: 6px;
+    align-items: center;
   }
+
+  /* 모바일에서 헤더 버튼 크기 */
+  .auth-buttons .btn {
+    height: 28px; /* 32 → 28로 살짝 줄임 */
+    padding: 0 10px; /* 가로 여백 줄이기 */
+    font-size: 0.75rem; /* 모바일은 PC보다 조금 더 작게 */
+    line-height: 1;
+    white-space: nowrap;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #000 !important;
+  }
+
+  /* 색깔은 둘 다 같은 노란 버튼 + 글자 검정 */
+  .auth-buttons .btn-primary,
+  .auth-buttons .btn-secondary {
+    background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+    color: #000 !important;
+    border: none;
+    box-shadow: none;
+  }
+
+  .auth-buttons .btn-primary:hover,
+  .auth-buttons .btn-secondary:hover {
+    background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+    color: #000 !important;
+  }
+
   .sidebar {
     width: 280px;
     left: -280px;

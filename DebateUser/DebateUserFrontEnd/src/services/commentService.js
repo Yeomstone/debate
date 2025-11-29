@@ -23,9 +23,9 @@ export const commentService = {
    * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
    * @returns {Object} response.data - Page<CommentResponse> (페이징된 댓글 목록)
    */
-  async getCommentsByDebate(debateId, page = 0, size = 20) {
+  async getCommentsByDebate(debateId, page = 0, size = 20, sort = 'createdAt,desc') {
     const response = await api.get(`/comments/debate/${debateId}`, {
-      params: { page, size },
+      params: { page, size, sort },
     })
     return response.data
   },

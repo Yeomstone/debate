@@ -19,7 +19,7 @@ import org.springframework.http.HttpStatus; // [필요시 import 추가]
  */
 @Tag(name = "인증 API", description = "회원가입, 로그인 등 인증 관련 API")
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/auth") //검색요청 받는 주소
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;  // 인증 비즈니스 로직 서비스

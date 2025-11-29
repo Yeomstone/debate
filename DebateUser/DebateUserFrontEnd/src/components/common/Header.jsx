@@ -285,7 +285,7 @@ const Header = () => {
                         onClick={closeProfileMenu}
                         className="dropdown-item"
                       >
-                        계정 수정
+                        계정 설정
                       </Link>
 
                       {/* [수정] logout 클래스 제거 -> 다른 메뉴와 완전 동일해짐 */}

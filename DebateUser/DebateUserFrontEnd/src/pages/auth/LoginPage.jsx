@@ -1,264 +1,298 @@
-/**
- * LoginPage - 로그인 페이지 컴포넌트
- *
- * 사용자가 이메일과 비밀번호를 입력하여 로그인할 수 있는 페이지입니다.
- * DEBATE 브랜딩(노란색-검은색)을 적용한 디자인입니다.
- *
- * 주요 기능:
- * 1. 이메일/비밀번호 입력 폼
- * 2. 로그인 처리 및 에러 핸들링
- * 3. 로딩 상태 표시
- * 4. 회원가입/비밀번호 찾기 링크
- * 5. 실제 이미지 로고 사용
- *
- * @component
- */
-
-import { useState } from "react";
+import React, { useState, useEffect, useRef } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
-import "./Auth.css";
+import { useTheme } from "../../context/ThemeContext";
+import "./LoginPageAnimated.css";
 
 const LoginPage = () => {
-  // ========================================
-  // 훅 초기화
-  // ========================================
-  const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
-  const { login } = useAuth(); // AuthContext에서 로그인 함수 가져오기
+  const navigate = useNavigate();
+  const { login, isAuthenticated } = useAuth();
+  const { theme } = useTheme();
+  const isDarkMode = theme === "dark";
 
-  // ========================================
-  // 상태 관리
-  // ========================================
+  const emailInputRef = useRef(null);
+  const passwordInputRef = useRef(null);
+  const characterAreaRef = useRef(null);
 
-  /**
-   * 폼 데이터 상태
-   * @type {Object}
-   * @property {string} email - 사용자 이메일
-   * @property {string} password - 사용자 비밀번호
-   */
-  const [formData, setFormData] = useState({
-    email: "",
-    password: "",
-  });
-
-  /**
-   * 에러 메시지 상태
-   * @type {string}
-   */
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [error, setError] = useState("");
-
-  /**
-   * 로딩 상태 (로그인 처리 중 여부)
-   * @type {boolean}
-   */
   const [loading, setLoading] = useState(false);
+  const [rememberMe, setRememberMe] = useState(false);
 
-  // ========================================
-  // 이벤트 핸들러
-  // ========================================
+  // 인터랙션 상태
+  const [isPasswordFocus, setIsPasswordFocus] = useState(false);
+  const [pupilPos, setPupilPos] = useState({ x: 0, y: 0 });
 
-  /**
-   * 로그인 폼 제출 핸들러
-   *
-   * 처리 순서:
-   * 1. 폼 기본 제출 동작 방지
-   * 2. 이전 에러 메시지 초기화
-   * 3. 로딩 상태 활성화
-   * 4. AuthContext의 login 함수 호출
-   * 5. 성공 시 메인 페이지로 이동
-   * 6. 실패 시 에러 메시지 표시
-   *
-   * @param {Event} e - 폼 제출 이벤트
-   */
-  const handleSubmit = async (e) => {
-    e.preventDefault(); // 폼 기본 제출 동작 방지 (페이지 리로드 방지)
-    setError(""); // 이전 에러 메시지 초기화
-    setLoading(true); // 로딩 상태 활성화 (버튼 비활성화 및 스피너 표시)
-
-    try {
-      // AuthContext의 login 함수 호출 (API 요청)
-      await login(formData.email, formData.password);
-
-      // 로그인 성공 시 메인 페이지로 리다이렉트
+  useEffect(() => {
+    if (isAuthenticated) {
       navigate("/");
-    } catch (error) {
-      // 에러 메시지 추출 (우선순위: API 응답 > 에러 메시지 > 기본 메시지)
-      const errorMessage =
-        error.response?.data?.message || // 백엔드 API 에러 메시지
-        error.message || // JavaScript 에러 메시지
-        "로그인에 실패했습니다."; // 기본 에러 메시지
+    }
+  }, [isAuthenticated, navigate]);
 
-      setError(errorMessage); // 에러 메시지 상태 업데이트
-      console.error("로그인 에러:", error); // 콘솔에 에러 로그 출력
+  // 마우스 추적 (눈동자)
+  useEffect(() => {
+    const handleMouseMove = (e) => {
+      if (isPasswordFocus || !characterAreaRef.current) return;
+
+      const rect = characterAreaRef.current.getBoundingClientRect();
+      const centerX = rect.left + rect.width / 2;
+      const centerY = rect.top + rect.height / 2;
+
+      const moveX = (e.clientX - centerX) / 35;
+      const moveY = (e.clientY - centerY) / 35;
+
+      setPupilPos({
+        x: Math.max(-5, Math.min(5, moveX)),
+        y: Math.max(-3, Math.min(3, moveY)),
+      });
+    };
+
+    window.addEventListener("mousemove", handleMouseMove);
+    return () => window.removeEventListener("mousemove", handleMouseMove);
+  }, [isPasswordFocus]);
+
+  const handleEmailFocus = () => {
+    setIsPasswordFocus(false);
+    setError("");
+  };
+
+  const handlePasswordFocus = () => {
+    setIsPasswordFocus(true);
+    setError("");
+  };
+
+  const handleBlur = () => {
+    setIsPasswordFocus(false);
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    setError("");
+    setLoading(true);
+    try {
+      await login(email, password);
+      navigate("/");
+    } catch (err) {
+      setError(
+        err.response?.data?.message ||
+          "이메일 또는 비밀번호가 올바르지 않습니다."
+      );
     } finally {
-      // 성공/실패 여부와 관계없이 로딩 상태 비활성화
       setLoading(false);
     }
   };
 
-  // ========================================
-  // 렌더링
-  // ========================================
+  // 눈동자 스타일
+  const pupilStyle = {
+    transform: `translate(${pupilPos.x}px, ${pupilPos.y}px)`,
+  };
 
   return (
-    <div className="auth-page">
-      {/* ======================================== */}
-      {/* 로고 섹션 - 브랜드 아이덴티티 표시 */}
-      {/* ======================================== */}
-      <div className="auth-logo-section">
-        {/* DEBATE 로고 이미지 */}
-        <div className="debate-logo">
-          {/* 
-            로고 이미지 파일 경로:
-            - 실제 경로: src/assets/debate-logo.png
-            - Vite가 자동으로 처리하여 최적화된 URL로 변환
-          */}
-          <img
-            src="/src/assets/debate-onlylogo.png"
-            alt="DEBATE Logo"
-            className="logo-image"
-          />
-        </div>
-
-        {/* 브랜드 타이틀 */}
-        <h1 className="auth-title">DEBATE</h1>
-
-        {/* 부제목 */}
-        <p className="auth-subtitle">다양한 의견이 만나는 토론의 장</p>
-      </div>
-
-      {/* ======================================== */}
-      {/* 로그인 폼 컨테이너 */}
-      {/* ======================================== */}
-      <div className="auth-container">
-        {/* 폼 제목 */}
-        <h2 className="form-title">로그인</h2>
-
-        {/* 에러 메시지 표시 영역 (에러가 있을 때만 표시) */}
-        {error && (
-          <div className="error-message">
-            {/* 에러 아이콘 (경고 표시) */}
-            <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-              <circle
-                cx="10"
-                cy="10"
-                r="9"
-                stroke="currentColor"
-                strokeWidth="2"
-              />
-              <path
-                d="M10 6V11"
-                stroke="currentColor"
-                strokeWidth="2"
-                strokeLinecap="round"
-              />
-              <circle cx="10" cy="14" r="1" fill="currentColor" />
-            </svg>
-            {/* 에러 메시지 텍스트 */}
-            {error}
-          </div>
-        )}
-
-        {/* ======================================== */}
-        {/* 로그인 폼 */}
-        {/* ======================================== */}
-        <form onSubmit={handleSubmit} className="auth-form">
-          {/* 이메일 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="email" className="form-label">
-              이메일
-            </label>
-            <input
-              type="email"
-              id="email"
-              value={formData.email}
-              onChange={(e) =>
-                // 이메일 입력 시 formData 상태 업데이트
-                setFormData({ ...formData, email: e.target.value })
-              }
-              required // HTML5 필수 입력 검증
-              className="form-input"
-              placeholder="example@email.com"
-            />
+    <div className={`login-wrapper ${isDarkMode ? "dark-mode" : "light-mode"}`}>
+      <div className="login-container">
+        {/* 왼쪽: 캐릭터 섹션 */}
+        <div className="character-section" ref={characterAreaRef}>
+          <div className="brand-header">
+            <h1 className="main-title">DEBATE</h1>
+            <p className="main-subtitle">
+              다양한 주제로 여러분의 의견을 나눠보세요.
+            </p>
           </div>
 
-          {/* 비밀번호 입력 필드 */}
-          <div className="form-group">
-            <label htmlFor="password" className="form-label">
-              비밀번호
-            </label>
-            <input
-              type="password"
-              id="password"
-              value={formData.password}
-              onChange={(e) =>
-                // 비밀번호 입력 시 formData 상태 업데이트
-                setFormData({ ...formData, password: e.target.value })
-              }
-              required // HTML5 필수 입력 검증
-              className="form-input"
-              placeholder="비밀번호를 입력하세요"
-            />
-          </div>
-
-          {/* ======================================== */}
-          {/* 로그인 버튼 */}
-          {/* 로딩 중일 때 비활성화되고 스피너 표시 */}
-          {/* ======================================== */}
-          <button
-            type="submit"
-            className="btn-debate btn-debate-primary"
-            disabled={loading}
+          <div
+            className={`logo-characters ${
+              isPasswordFocus ? "password-active" : ""
+            }`}
           >
-            {loading ? (
-              // 로딩 중일 때: 스피너와 "로그인 중..." 텍스트 표시
-              <span className="loading-content">
-                <span className="spinner"></span>
-                <span>로그인 중...</span>
-              </span>
-            ) : (
-              // 평상시: "로그인" 텍스트만 표시
-              "로그인"
-            )}
-          </button>
-        </form>
+            {/* ===== 왼쪽 캐릭터 (Left Debater) ===== */}
+            <div className="debater-char left-char">
+              <svg viewBox="0 0 200 240" className="char-svg">
+                {/* [다크모드 아이템] 망토 (뒤) */}
+                <path
+                  className="mafia-cape-back"
+                  d="M20,160 Q-10,240 40,240 L160,240 Q190,240 160,160 Z"
+                />
 
-        {/* ======================================== */}
-        {/* 구분선 */}
-        {/* ======================================== */}
-        <div className="auth-divider">
-          <span>또는</span>
+                {/* 몸체 */}
+                <path
+                  className="char-body"
+                  d="M40,60 L140,60 Q170,60 170,90 L130,160 Q120,180 90,180 L40,180 Q10,180 10,150 L10,90 Q10,60 40,60 Z"
+                />
+
+                {/* 눈 영역 (다크모드에서 빛남) */}
+                <g className="eye-group" transform="translate(60, 100)">
+                  <circle className="char-eye-white" cx="0" cy="0" r="14" />
+                  <circle
+                    className="char-pupil"
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    style={pupilStyle}
+                  />
+                </g>
+
+                {/* 감은 눈 (비밀번호 모드) */}
+                <path
+                  className="closed-eye"
+                  d="M45,105 Q60,95 75,105"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+
+                {/* [다크모드 아이템] 페도라 모자 */}
+                <g className="mafia-hat">
+                  <ellipse cx="100" cy="65" rx="70" ry="20" fill="#121212" />
+                  <path
+                    d="M50,65 Q50,10 100,10 Q150,10 150,65"
+                    fill="#121212"
+                  />
+                  <path
+                    d="M52,55 Q100,65 148,55 L148,65 Q100,75 52,65 Z"
+                    fill="#FFC107"
+                  />
+                </g>
+              </svg>
+            </div>
+
+            {/* ===== 오른쪽 캐릭터 (Right Debater) ===== */}
+            <div className="debater-char right-char">
+              <svg viewBox="0 0 200 240" className="char-svg">
+                {/* [다크모드 아이템] 망토 (뒤) */}
+                <path
+                  className="mafia-cape-back"
+                  d="M180,160 Q210,240 160,240 L40,240 Q10,240 40,160 Z"
+                />
+
+                {/* 몸체 */}
+                <path
+                  className="char-body"
+                  d="M160,60 L60,60 Q30,60 30,90 L70,160 Q80,180 110,180 L160,180 Q190,180 190,150 L190,90 Q190,60 160,60 Z"
+                />
+
+                {/* 눈 영역 */}
+                <g className="eye-group" transform="translate(140, 100)">
+                  <circle className="char-eye-white" cx="0" cy="0" r="14" />
+                  <circle
+                    className="char-pupil"
+                    cx="0"
+                    cy="0"
+                    r="6"
+                    style={pupilStyle}
+                  />
+                </g>
+
+                {/* 감은 눈 */}
+                <path
+                  className="closed-eye"
+                  d="M125,105 Q140,95 155,105"
+                  strokeWidth="4"
+                  strokeLinecap="round"
+                  fill="none"
+                />
+
+                {/* [다크모드 아이템] 페도라 모자 */}
+                <g className="mafia-hat" transform="rotate(5, 100, 50)">
+                  <ellipse cx="100" cy="65" rx="70" ry="20" fill="#121212" />
+                  <path
+                    d="M50,65 Q50,10 100,10 Q150,10 150,65"
+                    fill="#121212"
+                  />
+                  <path
+                    d="M52,55 Q100,65 148,55 L148,65 Q100,75 52,65 Z"
+                    fill="#FFC107"
+                  />
+                </g>
+              </svg>
+            </div>
+          </div>
         </div>
 
-        {/* ======================================== */}
-        {/* 추가 링크 (회원가입, 비밀번호 찾기) */}
-        {/* ======================================== */}
-        <div className="auth-links">
-          {/* 회원가입 페이지로 이동하는 링크 */}
-          <Link to="/auth/register" className="link-primary">
-            회원가입
-          </Link>
+        {/* 오른쪽: 폼 섹션 */}
+        <div className="form-section">
+          <div className="form-wrapper">
+            <h2 className="form-title">로그인</h2>
+            <p className="form-subtitle">이메일과 비밀번호를 입력하세요.</p>
 
-          {/* 시각적 구분자 */}
-          <span className="link-separator">•</span>
+            {error && (
+              <div className="error-box">
+                <span>⚠️ {error}</span>
+              </div>
+            )}
 
-          {/* 비밀번호 찾기 페이지로 이동하는 링크 */}
-          <Link to="/auth/forgot-password" className="link-secondary">
-            비밀번호 찾기
-          </Link>
+            <form onSubmit={handleSubmit} className="login-form">
+              <div className="input-group">
+                <label htmlFor="email" className="input-label">
+                  이메일
+                </label>
+                <input
+                  ref={emailInputRef}
+                  type="email"
+                  id="email"
+                  className="text-input"
+                  placeholder="email@example.com"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  onFocus={handleEmailFocus}
+                  onBlur={handleBlur}
+                  required
+                />
+              </div>
+
+              <div className="input-group">
+                <label htmlFor="password" className="input-label">
+                  비밀번호
+                </label>
+                <input
+                  ref={passwordInputRef}
+                  type="password"
+                  id="password"
+                  className="text-input"
+                  placeholder="••••••••"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  onFocus={handlePasswordFocus}
+                  onBlur={handleBlur}
+                  required
+                />
+              </div>
+
+              <div className="form-options">
+                <label className="checkbox-label">
+                  <input
+                    type="checkbox"
+                    checked={rememberMe}
+                    onChange={(e) => setRememberMe(e.target.checked)}
+                  />
+                  <span className="checkbox-custom"></span>
+                  로그인 유지
+                </label>
+                <Link to="/auth/forgot-password" class="link-forgot">
+                  비밀번호 찾기
+                </Link>
+              </div>
+
+              <button type="submit" className="submit-btn" disabled={loading}>
+                {loading ? "로그인 중..." : "로그인"}
+              </button>
+            </form>
+
+            <div className="divider">
+              <span>또는</span>
+            </div>
+
+            <div className="signup-link-wrapper">
+              계정이 없으신가요?{" "}
+              <Link to="/auth/register" className="link-signup">
+                회원가입
+              </Link>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   );
 };
 
-/**
- * 로그인 페이지 컴포넌트 export
- *
- * 사용 위치:
- * - App.jsx 또는 라우터 설정 파일
- *
- * 사용 예시:
- * <Route path="/auth/login" element={<LoginPage />} />
- */
 export default LoginPage;
