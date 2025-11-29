@@ -15,7 +15,7 @@
  * - 사이드바 메뉴로 네비게이션 개선
  */
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
@@ -35,6 +35,25 @@ const Header = () => {
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수
   const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight; // 추가!
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 열림/닫힘 상태
+
+  const emailRef = useRef();
+
+  useEffect(() => {
+    if (!emailRef.current) return;
+
+    const element = emailRef.current;
+    const parentWidth = element.parentElement.offsetWidth;
+
+    // 초기 글자 크기(px)
+    let fontSize = 12;
+    element.style.fontSize = fontSize + "px";
+
+    // 글자가 영역(부모 width)보다 크면 폰트 줄임
+    while (element.scrollWidth > parentWidth && fontSize > 8) {
+      fontSize--;
+      element.style.fontSize = fontSize + "px";
+    }
+  }, [user?.email]);
 
   // ===== 프로필 드롭다운 상태 =====
   // 프로필(아바타)을 눌렀을 때 드롭다운 메뉴 열림/닫힘을 관리
@@ -265,7 +284,10 @@ const Header = () => {
 
                         <div className="dropdown-profile-info">
                           <p className="profile-name">{user?.nickname}</p>
-                          {/* 이메일 제거 */}
+                          {/* 🚀 이메일 추가 */}
+                          <p className="profile-email" ref={emailRef}>
+                            {user?.email}
+                          </p>
                         </div>
                       </div>
 
