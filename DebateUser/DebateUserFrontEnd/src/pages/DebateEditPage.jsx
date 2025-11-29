@@ -48,6 +48,17 @@ const DebateEditPage = () => {
   const [submitting, setSubmitting] = useState(false) // 제출 중 상태
   const [isImageModalOpen, setIsImageModalOpen] = useState(false) // 이미지 업로드 모달 상태
 
+  const handleDateInputClick = (e) => {
+    // 지원 브라우저(Chrome 등)에서 input 클릭 시 달력 피커 열기
+    if (typeof e.target.showPicker === 'function') {
+      try {
+        e.target.showPicker()
+      } catch (err) {
+        // 사용자 제스처로 인식되지 않는 경우 등 에러는 무시하고 기본 동작에 맡긴다.
+      }
+    }
+  }
+
   /**
    * 컴포넌트 마운트 시 카테고리 목록 및 토론 정보 로딩
    */
@@ -337,6 +348,7 @@ const DebateEditPage = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, startDate: e.target.value })
                 }
+                onClick={handleDateInputClick}
                 required
                 className="form-input"
               />
@@ -350,6 +362,7 @@ const DebateEditPage = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, endDate: e.target.value })
                 }
+                onClick={handleDateInputClick}
                 required
                 className="form-input"
               />

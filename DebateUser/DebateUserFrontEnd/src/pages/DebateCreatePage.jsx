@@ -29,6 +29,18 @@ const DebateCreatePage = () => {
   const [loading, setLoading] = useState(false);
   const [isImageModalOpen, setIsImageModalOpen] = useState(false);
 
+  const handleDateInputClick = (e) => {
+    // 지원 브라우저(Chrome 등)에서 input 클릭 시 달력 피커 열기
+    if (typeof e.target.showPicker === "function") {
+      try {
+        e.target.showPicker();
+      } catch (err) {
+        // 브라우저가 사용자 제스처가 아니라고 판단하는 경우 에러를 무시
+        // 기본 동작(아이콘 클릭 등)에만 맡긴다.
+      }
+    }
+  };
+
   useEffect(() => {
     // Quill 커스텀 모듈(이미지 리사이즈 등) 등록
     registerQuillModules();
@@ -315,6 +327,7 @@ const DebateCreatePage = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, startDate: e.target.value })
                 }
+                onClick={handleDateInputClick}
                 className="field-input"
                 required
               />
@@ -330,6 +343,7 @@ const DebateCreatePage = () => {
                 onChange={(e) =>
                   setFormData({ ...formData, endDate: e.target.value })
                 }
+                onClick={handleDateInputClick}
                 className="field-input"
                 required
               />
