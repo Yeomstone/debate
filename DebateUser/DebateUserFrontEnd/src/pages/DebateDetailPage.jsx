@@ -184,6 +184,12 @@ const DebateDetailPage = () => {
       setComments((prev) => [newComment, ...prev]);
     }
     setCommentContent("");
+    
+    // [수정] 댓글 수 즉시 업데이트
+    setDebate(prev => ({
+      ...prev,
+      commentCount: (prev.commentCount || 0) + 1
+    }));
 
     try {
       await commentService.createComment({
@@ -195,6 +201,11 @@ const DebateDetailPage = () => {
       if (sort === "latest") {
         setComments((prev) => prev.filter((c) => c.id !== newComment.id));
       }
+      // 실패 시 댓글 수 롤백
+      setDebate(prev => ({
+        ...prev,
+        commentCount: Math.max(0, (prev.commentCount || 0) - 1)
+      }));
       alert("댓글 등록 실패");
     }
   };
@@ -253,6 +264,40 @@ const DebateDetailPage = () => {
     }
   };
 
+  // [추가] 댓글 좋아요
+  const handleCommentLike = async (commentId) => {
+    if (!isAuthenticated) return alert("로그인이 필요합니다.");
+
+    // 낙관적 업데이트
+    const updateLike = (list) => {
+      return list.map((c) => {
+        if (c.id === commentId) {
+          const wasLiked = c.liked; // [수정] isLiked -> liked
+          return {
+            ...c,
+            liked: !wasLiked, // [수정] isLiked -> liked
+            likeCount: wasLiked ? c.likeCount - 1 : c.likeCount + 1,
+          };
+        }
+        if (c.replies && c.replies.length > 0) {
+          return { ...c, replies: updateLike(c.replies) };
+        }
+        return c;
+      });
+    };
+
+    setComments((prev) => updateLike(prev));
+
+    try {
+      await commentService.toggleLike(commentId);
+    } catch (err) {
+      console.error(err);
+      // 실패 시 롤백 (다시 토글)
+      setComments((prev) => updateLike(prev));
+      alert("좋아요 처리에 실패했습니다.");
+    }
+  };
+
   // 투표 참여
   const handleCreateOpinion = async (side) => {
     if (!isAuthenticated) return alert("로그인이 필요합니다.");
@@ -296,14 +341,22 @@ const DebateDetailPage = () => {
                 </span>
               </div>
               <p className="comment-text">{comment.content}</p>
-              <button
-                className="reply-btn"
-                onClick={() =>
-                  setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                }
-              >
-                답글 달기
-              </button>
+              <div className="comment-actions">
+                <button
+                  className={`comment-like-btn ${comment.liked ? "active" : ""}`}
+                  onClick={() => handleCommentLike(comment.id)}
+                >
+                  {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
+                </button>
+                <button
+                  className="reply-btn"
+                  onClick={() =>
+                    setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                  }
+                >
+                  답글 달기
+                </button>
+              </div>
             </div>
           </div>
 
@@ -324,6 +377,16 @@ const DebateDetailPage = () => {
                       </span>
                     </div>
                     <p className="comment-text">{reply.content}</p>
+                    <div className="comment-actions">
+                      <button
+                        className={`comment-like-btn ${
+                          reply.liked ? "active" : ""
+                        }`}
+                        onClick={() => handleCommentLike(reply.id)}
+                      >
+                        {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
+                      </button>
+                    </div>
                   </div>
                 </div>
               ))}

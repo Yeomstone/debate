@@ -685,10 +685,10 @@
   flex: 1;
   border: 1px solid var(--border-color);
   border-radius: 8px;
-  padding: 1rem;
+  padding: 0.8rem;
   resize: none;
-  height: 80px;
-  font-size: 1rem;
+  height: 50px; /* 높이 축소 */
+  font-size: 0.95rem;
   background: var(--bg-secondary);
   color: var(--text-primary);
   transition: border-color 0.2s;
@@ -700,15 +700,17 @@
 }
 
 .comment-input-area button {
-  padding: 0 1.5rem;
+  padding: 0 1.2rem;
   background: var(--primary-color);
-  color: #000; /* Yellow 배경에는 검은 글씨 */
+  color: #000;
   border: none;
   border-radius: 8px;
   font-weight: 700;
+  font-size: 0.95rem;
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
+  height: 50px; /* 텍스트 영역과 높이 맞춤 */
 }
 
 .comment-input-area button:disabled {
@@ -1211,4 +1213,34 @@
   .reply-form {
     margin-left: 1.5rem;
   }
+}
+
+/* 댓글 좋아요 버튼 */
+.comment-like-btn {
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.comment-like-btn:hover {
+  background-color: var(--bg-tertiary);
+}
+
+.comment-like-btn.active {
+  color: var(--danger-color);
+}
+
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }

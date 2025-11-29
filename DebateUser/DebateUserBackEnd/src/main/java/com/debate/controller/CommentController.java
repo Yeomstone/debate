@@ -36,7 +36,14 @@ public class CommentController {
     public ResponseEntity<ApiResponse<Page<CommentResponse>>> getCommentsByDebate(
             @PathVariable Long debateId,
             @PageableDefault(size = 20) Pageable pageable) {
-        Page<CommentResponse> response = commentService.getCommentsByDebate(debateId, pageable);
+        Long userId = null;
+        try {
+            userId = securityUtil.getCurrentUserId();
+        } catch (Exception e) {
+            // 비로그인 사용자도 댓글 조회 가능
+        }
+        
+        Page<CommentResponse> response = commentService.getCommentsByDebate(debateId, pageable, userId);
         return ResponseEntity.ok(ApiResponse.success(response));
     }
 
@@ -49,6 +56,17 @@ public class CommentController {
         
         commentService.deleteComment(id, userId);
         return ResponseEntity.ok(ApiResponse.success("댓글이 삭제되었습니다", null));
+    }
+
+    @PostMapping("/{id}/like")
+    public ResponseEntity<ApiResponse<Object>> toggleLike(@PathVariable Long id) {
+        Long userId = securityUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(401).body(ApiResponse.error("인증이 필요합니다"));
+        }
+
+        commentService.toggleLike(id, userId);
+        return ResponseEntity.ok(ApiResponse.success("좋아요 처리가 완료되었습니다", null));
     }
 }
 
