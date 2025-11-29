@@ -30,9 +30,9 @@ import CategoryListPage from "./pages/CategoryListPage";
 import CategoryDetailPage from "./pages/CategoryDetailPage";
 import SearchPage from "./pages/SearchPage";
 import ProtectedRoute from "./components/common/ProtectedRoute";
-import RankingPage from "./pages/RankingPage";
 import AboutPage from "./pages/AboutPage";
 import RulesPage from "./pages/RulesPage";
+import RankingPage from "./pages/RankingPage";
 /**
  * App 컴포넌트
  *
@@ -65,6 +65,8 @@ function App() {
               <Route path="/debate" element={<DebateListPage />} />{" "}
               {/* 토론 목록 페이지 */}
               <Route path="/debate/:id" element={<DebateDetailPage />} />{" "}
+              {/* 랭킹 페이지 */}
+              <Route path="/ranking" element={<RankingPage />} />{" "}
               {/* 토론 상세 페이지 */}
               <Route path="/auth/login" element={<LoginPage />} />{" "}
               {/* 로그인 페이지 */}
@@ -81,7 +83,7 @@ function App() {
               {/* 카테고리별 토론 페이지 */}
               <Route path="/search" element={<SearchPage />} />{" "}
               {/* 검색 페이지 */}
-              <Route path="/ranking" element={<RankingPage />} />{" "}
+
               {/* 보호된 라우트: 로그인 필요 */}
               <Route
                 path="/debate/create"

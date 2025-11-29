@@ -1,134 +1,85 @@
-import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-import * as userService from "../services/userService";
-import "./RankingPage.css";
+import React, { useState, useEffect } from "react";
+import RankingPodium from "./RankingPodium";
+import { getUserRanking } from "../services/userService";
+import "./RankingPodium.css"; // Re-use the CSS or create a new one if needed
 
-function RankingPage() {
-  const [ranking, setRanking] = useState([]);
+const RankingPage = () => {
+  const [topUsers, setTopUsers] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState("");
+  const [error, setError] = useState(null);
+  const [period, setPeriod] = useState('all');
+  const [criteria, setCriteria] = useState('likes');
 
   useEffect(() => {
-    loadRanking();
-  }, []);
-
-  const loadRanking = async () => {
-    try {
+    const fetchRanking = async () => {
       setLoading(true);
-      setError("");
-
-      console.log("랭킹 조회 시작...");
-      const response = await userService.getUserRanking(10);
-      console.log("전체 응답:", response);
-
-      // 여러 응답 구조 처리
-      let rankingData = [];
-      if (response?.data?.data) {
-        rankingData = response.data.data;
-      } else if (response?.data) {
-        rankingData = response.data;
-      } else if (Array.isArray(response)) {
-        rankingData = response;
+      try {
+        const data = await getUserRanking(10, period, criteria);
+        const users = Array.isArray(data) ? data : data.content || [];
+        setTopUsers(users);
+      } catch (err) {
+        console.error("랭킹 데이터 로딩 실패:", err);
+        setError("랭킹 정보를 불러오는데 실패했습니다.");
+      } finally {
+        setLoading(false);
       }
+    };
 
-      console.log("파싱된 랭킹 데이터:", rankingData);
-      setRanking(rankingData);
-    } catch (err) {
-      console.error("랭킹 조회 실패:", err);
-      console.error("에러 상세:", err.response?.data);
-      setError(
-        err.response?.data?.message || "랭킹을 불러오는데 실패했습니다."
-      );
-    } finally {
-      setLoading(false);
+    fetchRanking();
+  }, [period, criteria]);
+
+  const getCriteriaLabel = (c) => {
+    switch(c) {
+      case 'likes': return '좋아요';
+      case 'votes': return '투표율';
+      case 'comments': return '댓글 좋아요';
+      default: return '점수';
     }
   };
 
   if (loading) {
-    return (
-      <div className="ranking-page">
-        <div className="container">
-          <div className="loading">
-            <div className="spinner"></div>
-            <p>랭킹을 불러오는 중...</p>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="ranking-page-loading">랭킹 불러오는 중...</div>;
   }
 
   if (error) {
-    return (
-      <div className="ranking-page">
-        <div className="container">
-          <div className="error">
-            <p>{error}</p>
-            <button onClick={loadRanking} className="retry-btn">
-              다시 시도
-            </button>
-          </div>
-        </div>
-      </div>
-    );
+    return <div className="ranking-page-error">{error}</div>;
   }
 
   return (
     <div className="ranking-page">
-      <div className="container">
-        <h1 className="page-title">🏆 사용자 랭킹</h1>
-        <p className="page-desc">받은 좋아요가 많은 사용자 순위</p>
-
-        {!ranking || ranking.length === 0 ? (
-          <div className="empty">
-            <span className="empty-icon">📊</span>
-            <p>아직 랭킹 데이터가 없습니다.</p>
-            <p className="empty-hint">토론을 작성하고 좋아요를 받아보세요!</p>
-          </div>
-        ) : (
-          <div className="ranking-list">
-            {ranking.map((user, index) => (
-              <Link
-                key={user.userId}
-                to={`/users/${user.userId}`}
-                className={`rank-item rank-${index + 1}`}
-              >
-                <div className="rank-number">
-                  {index === 0 && "🥇"}
-                  {index === 1 && "🥈"}
-                  {index === 2 && "🥉"}
-                  {index > 2 && `${index + 1}위`}
-                </div>
-
-                <div className="user-avatar">
-                  {user.profileImage ? (
-                    <img src={user.profileImage} alt={user.nickname} />
-                  ) : (
-                    <div className="avatar-text">
-                      {user.nickname?.charAt(0).toUpperCase() || "?"}
-                    </div>
-                  )}
-                </div>
-
-                <div className="user-info">
-                  <div className="nickname">
-                    {user.nickname || "알 수 없음"}
-                  </div>
-                  <div className="stats">토론 {user.debateCount || 0}개</div>
-                </div>
-
-                <div className="likes">
-                  <div className="likes-count">
-                    {(user.totalLikes || 0).toLocaleString()}
-                  </div>
-                  <div className="likes-label">좋아요</div>
-                </div>
-              </Link>
-            ))}
-          </div>
-        )}
+      <div className="ranking-filters">
+        <div className="filter-group">
+          <button className={`filter-btn ${period === 'daily' ? 'active' : ''}`} onClick={() => setPeriod('daily')}>일별</button>
+          <button className={`filter-btn ${period === 'monthly' ? 'active' : ''}`} onClick={() => setPeriod('monthly')}>월별</button>
+          <button className={`filter-btn ${period === 'yearly' ? 'active' : ''}`} onClick={() => setPeriod('yearly')}>연도별</button>
+          <button className={`filter-btn ${period === 'all' ? 'active' : ''}`} onClick={() => setPeriod('all')}>전체</button>
+        </div>
+        <div className="filter-group">
+          <button className={`filter-btn ${criteria === 'likes' ? 'active' : ''}`} onClick={() => setCriteria('likes')}>좋아요순</button>
+          <button className={`filter-btn ${criteria === 'votes' ? 'active' : ''}`} onClick={() => setCriteria('votes')}>투표율순</button>
+          <button className={`filter-btn ${criteria === 'comments' ? 'active' : ''}`} onClick={() => setCriteria('comments')}>댓글 좋아요순</button>
+        </div>
       </div>
+
+      <RankingPodium topUsers={topUsers} criteria={criteria} />
+      
+      {/* 4위부터 리스트로 보여줄 수도 있음. 일단은 Podium만 렌더링 */}
+      {topUsers.length > 3 && (
+        <div className="ranking-list">
+          <h3>Top 4 - 10</h3>
+          <ul className="ranking-list-items">
+            {topUsers.slice(3).map((user, index) => (
+              <li key={user.id || index} className="ranking-list-item">
+                <span className="rank-number">{index + 4}</span>
+                <span className="user-nickname">{user.nickname}</span>
+                <span className="user-score">{getCriteriaLabel(criteria)} {user.totalLikes || 0}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
     </div>
   );
-}
+};
 
 export default RankingPage;

@@ -1,0 +1,466 @@
+/**
+ * RankingPodium.css - 랭킹 시스템 시상 단상 스타일시트
+ */
+
+/* ===== 컨테이너 ===== */
+.ranking-podium-container {
+  position: relative;
+  padding: 40px 20px 80px;
+  background-color: #FFC107; /* Yellow background like reference */
+  border-radius: 20px;
+  overflow: visible; /* Allow 3D elements to stick out */
+  min-height: 600px;
+  margin-bottom: 50px;
+}
+
+/* ===== 타이틀 영역 ===== */
+.ranking-podium-container .podium-title {
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+  z-index: 2;
+}
+
+.ranking-podium-container .podium-title h2 {
+  font-size: 2.5rem;
+  font-weight: 800;
+  margin-bottom: 10px;
+  color: #000;
+  text-shadow: 2px 2px 0px #fff;
+}
+
+.ranking-podium-container .podium-subtitle {
+  font-size: 1.1rem;
+  color: #000;
+  font-weight: 700;
+}
+
+/* ===== 필터 스타일 ===== */
+.ranking-filters {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 40px;
+  position: relative;
+  z-index: 10;
+}
+
+.filter-group {
+  display: flex;
+  gap: 10px;
+  background: rgba(255, 255, 255, 0.2);
+  padding: 5px;
+  border-radius: 30px;
+}
+
+.filter-btn {
+  padding: 8px 20px;
+  border: none;
+  border-radius: 25px;
+  background: transparent;
+  color: #000;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.filter-btn:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
+.filter-btn.active {
+  background: #000;
+  color: #fff;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+}
+
+/* ===== 시상 단상 스테이지 ===== */
+.ranking-podium-container .podium-stage {
+  display: flex;
+  justify-content: center;
+  align-items: flex-end;
+  gap: 0; /* No gap for 3D blocks to touch */
+  max-width: 900px;
+  margin: 0 auto;
+  position: relative;
+  z-index: 2;
+  padding-bottom: 50px; /* Space for 3D depth */
+}
+
+/* ===== 각 순위 아이템 ===== */
+.ranking-podium-container .podium-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex: 1;
+  max-width: 280px;
+  position: relative;
+}
+
+/* 순위별 z-index (중앙이 제일 위) */
+.ranking-podium-container .podium-item.first {
+  z-index: 3;
+  margin-bottom: 40px; /* Lift up slightly */
+}
+
+.ranking-podium-container .podium-item.second {
+  z-index: 2;
+  margin-right: -10px; /* Overlap slightly */
+}
+
+.ranking-podium-container .podium-item.third {
+  z-index: 1;
+  margin-left: -10px; /* Overlap slightly */
+}
+
+/* ===== 캐릭터 컨테이너 ===== */
+.ranking-podium-container .character-container {
+  position: relative;
+  margin-bottom: -20px; /* Sit on the block */
+  z-index: 5;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+/* ===== 로고 기반 캐릭터 디자인 ===== */
+.ranking-podium-container .debate-character {
+  position: relative;
+  width: 120px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  animation: bounce 1s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* 말풍선 스타일 */
+.ranking-podium-container .character-bubble {
+  position: absolute;
+  width: 50px;
+  height: 55px;
+  border-radius: 45% 55% 50% 50% / 55% 50% 50% 45%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  border: 3px solid #000;
+}
+
+.ranking-podium-container .left-bubble {
+  left: 0;
+  transform: rotate(-10deg);
+}
+
+.ranking-podium-container .right-bubble {
+  right: 0;
+  transform: rotate(10deg);
+}
+
+.ranking-podium-container .bubble-eye {
+  width: 8px;
+  height: 8px;
+  background-color: #000;
+  border-radius: 50%;
+  position: absolute;
+  top: 18px;
+}
+
+.ranking-podium-container .left-bubble .bubble-eye { right: 15px; }
+.ranking-podium-container .right-bubble .bubble-eye { left: 15px; }
+
+.ranking-podium-container .character-connector {
+  width: 30px;
+  height: 20px;
+  background-color: #000;
+  border-radius: 0 0 15px 15px;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 1;
+}
+
+/* 메달 */
+.ranking-podium-container .medal {
+  position: absolute;
+  top: -20px;
+  right: -10px;
+  font-size: 2.5rem;
+  filter: drop-shadow(2px 2px 0 rgba(0,0,0,0.2));
+  z-index: 10;
+}
+
+/* 순위 배지 */
+.ranking-podium-container .rank-badge {
+  background: #000;
+  color: #fff;
+  padding: 4px 12px;
+  border-radius: 15px;
+  font-weight: bold;
+  margin-top: 5px;
+  font-size: 0.9rem;
+}
+
+/* ===== 사용자 정보 ===== */
+.ranking-podium-container .user-info {
+  text-align: center;
+  margin-bottom: 15px;
+  background: rgba(255,255,255,0.9);
+  padding: 10px;
+  border-radius: 10px;
+  border: 2px solid #000;
+  min-width: 140px;
+}
+
+.ranking-podium-container .user-avatar {
+  width: 60px;
+  height: 60px;
+  margin: 0 auto 5px;
+  border-radius: 50%;
+  overflow: hidden;
+  border: 3px solid #000;
+  background: #fff;
+}
+
+.ranking-podium-container .user-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.ranking-podium-container .avatar-placeholder {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #eee;
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.ranking-podium-container .user-nickname {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: #000;
+  margin-bottom: 5px;
+}
+
+.ranking-podium-container .user-stats {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ranking-podium-container .stat-item {
+  font-size: 0.85rem;
+  color: #333;
+  font-weight: 600;
+}
+
+/* ===== 시상 단상 베이스 (3D 효과) ===== */
+.ranking-podium-container .podium-base {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  border: 4px solid #000;
+  background-color: #fff;
+  box-shadow: 10px 10px 0px rgba(0,0,0,0.2);
+  z-index: 1;
+}
+
+/* 3D Top Face */
+.ranking-podium-container .podium-base::before {
+  content: '';
+  position: absolute;
+  top: -40px;
+  left: -4px; /* Border width adjustment */
+  width: calc(100% + 8px); /* Full width including borders */
+  height: 40px;
+  background-color: inherit; /* Match base color */
+  border: 4px solid #000;
+  border-bottom: none;
+  transform: skewX(45deg);
+  transform-origin: bottom left;
+  z-index: 0;
+}
+
+/* 단상 높이 및 색상 */
+.ranking-podium-container .first-base {
+  height: 220px;
+  background-color: #FFD700; /* Gold */
+}
+
+.ranking-podium-container .first-base::before {
+  background-color: #FFEC8B; /* Lighter Gold */
+}
+
+.ranking-podium-container .second-base {
+  height: 160px;
+  background-color: #C0C0C0; /* Silver */
+}
+
+.ranking-podium-container .second-base::before {
+  background-color: #E0E0E0; /* Lighter Silver */
+}
+
+.ranking-podium-container .third-base {
+  height: 100px;
+  background-color: #CD7F32; /* Bronze */
+}
+
+.ranking-podium-container .third-base::before {
+  background-color: #E6AA78; /* Lighter Bronze */
+}
+
+/* 단상 번호 */
+.ranking-podium-container .podium-rank-number {
+  font-size: 5rem;
+  font-weight: 900;
+  color: #000;
+  position: relative;
+  z-index: 2;
+  text-shadow: 2px 2px 0px #fff;
+}
+
+/* ===== 빈 캐릭터 (순위 없을 때) ===== */
+.ranking-podium-container .empty-character {
+  width: 120px;
+  height: 120px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 20px;
+}
+
+.ranking-podium-container .empty-icon {
+  font-size: 4rem;
+  opacity: 0.3;
+}
+
+/* ===== 팡파레 색종이 효과 ===== */
+.ranking-podium-container .confetti-container {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  pointer-events: none;
+  z-index: 10;
+  overflow: hidden;
+}
+
+.ranking-podium-container .confetti {
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  top: -10px;
+  border-radius: 50%;
+  animation: fall linear forwards;
+}
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh) rotate(720deg);
+    opacity: 0;
+  }
+}
+
+/* ===== 스파클 효과 ===== */
+.ranking-podium-container .sparkles {
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: space-around;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.ranking-podium-container .sparkle {
+  font-size: 2rem;
+  animation: sparkle 2s ease-in-out infinite;
+}
+
+.ranking-podium-container .sparkle:nth-child(1) { animation-delay: 0s; }
+.ranking-podium-container .sparkle:nth-child(2) { animation-delay: 0.5s; }
+.ranking-podium-container .sparkle:nth-child(3) { animation-delay: 1s; }
+.ranking-podium-container .sparkle:nth-child(4) { animation-delay: 1.5s; }
+
+@keyframes sparkle {
+  0%, 100% { opacity: 0; transform: scale(0.5) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1.2) rotate(180deg); }
+}
+
+/* ===== 랭킹 리스트 (4위 ~ 10위) ===== */
+.ranking-list {
+  max-width: 800px;
+  margin: 40px auto 0;
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 16px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  border: 2px solid #000;
+}
+
+.ranking-list h3 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #000;
+}
+
+.ranking-list-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-list-item {
+  display: flex;
+  align-items: center;
+  padding: 15px 20px;
+  border-bottom: 1px solid #eee;
+  transition: background-color 0.2s;
+}
+
+.ranking-list-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-list-item:hover {
+  background-color: #f9f9f9;
+}
+
+.ranking-list-item .rank-number {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: #666;
+  width: 40px;
+  text-align: center;
+  margin-right: 20px;
+}
+
+.ranking-list-item .user-nickname {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: #000;
+  flex: 1;
+}
+
+.ranking-list-item .user-score {
+  font-size: 0.95rem;
+  color: #000;
+  font-weight: 500;
+}
