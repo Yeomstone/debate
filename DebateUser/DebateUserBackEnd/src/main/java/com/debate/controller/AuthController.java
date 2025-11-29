@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus; // [필요시 import 추가]
+import org.springframework.web.multipart.MultipartFile;
 
 /**
  * 인증(Authentication) 관련 REST API 컨트롤러
@@ -32,8 +33,11 @@ public class AuthController {
      */
     @Operation(summary = "회원가입", description = "새로운 사용자를 등록하고 JWT 토큰을 발급합니다.")
     @PostMapping("/register")
-    public ResponseEntity<ApiResponse<AuthResponse>> register(@Valid @RequestBody RegisterRequest request) {
-        AuthResponse response = authService.register(request);
+    public ResponseEntity<ApiResponse<AuthResponse>> register(
+            @Valid @ModelAttribute RegisterRequest request,
+            @RequestParam(value = "profileImage", required = false) MultipartFile profileImage
+    ) {
+        AuthResponse response = authService.register(request, profileImage);
         return ResponseEntity.ok(ApiResponse.success("회원가입이 완료되었습니다", response));
     }
     /**

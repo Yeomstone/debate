@@ -22,6 +22,7 @@ import { useAuth } from "../../context/AuthContext";
 import axios from "axios";
 import "./Auth.css";
 import api from "../../services/api"; // api 인스턴스 import
+import defaultProfile from "../../assets/default-profile.png"; // 기본 프로필 이미지 import
 
 const RegisterPage = () => {
   // ========================================
@@ -93,6 +94,10 @@ const RegisterPage = () => {
     nickname: "",
     bio: "",
   });
+
+  // [추가] 프로필 이미지 상태
+  const [profileImage, setProfileImage] = useState(null); // 업로드할 파일 객체
+  const [previewUrl, setPreviewUrl] = useState(defaultProfile); // 미리보기 URL (기본값: defaultProfile)
 
   /**
    * 에러 메시지 상태
@@ -195,6 +200,24 @@ const RegisterPage = () => {
     if (val.length <= MAX_BIO_LENGTH) {
       setFormData({ ...formData, bio: val });
     }
+  };
+
+  // [추가] 프로필 이미지 변경 핸들러
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setProfileImage(file);
+      setPreviewUrl(URL.createObjectURL(file)); // 미리보기 URL 생성
+    }
+  };
+
+  // [추가] 기본 이미지로 변경 핸들러
+  const handleResetImage = () => {
+    setProfileImage(null);
+    setPreviewUrl(defaultProfile);
+    // 파일 입력 초기화 (같은 파일 다시 선택 가능하도록)
+    const fileInput = document.getElementById("profile-upload");
+    if (fileInput) fileInput.value = "";
   };
   // [추가] 중복 확인 상태 (idle, loading, success, error)
   const [emailCheck, setEmailCheck] = useState({ status: "idle", message: "" });
@@ -495,6 +518,37 @@ const RegisterPage = () => {
         {/* 회원가입 폼 */}
         {/* ======================================== */}
         <form onSubmit={handleSubmit} className="auth-form">
+          {/* [추가] 프로필 이미지 업로드 섹션 */}
+          <div className="profile-upload-section">
+            <div className="profile-preview">
+              <img
+                src={previewUrl}
+                alt="Profile Preview"
+                className="profile-image-preview"
+              />
+            </div>
+            <div className="profile-actions">
+              <label htmlFor="profile-upload" className="btn-upload">
+                이미지 선택
+              </label>
+              <input
+                type="file"
+                id="profile-upload"
+                accept="image/*"
+                onChange={handleImageChange}
+                className="hidden-input"
+              />
+              {profileImage && (
+                <button
+                  type="button"
+                  onClick={handleResetImage}
+                  className="btn-reset-image"
+                >
+                  기본 이미지로 변경
+                </button>
+              )}
+            </div>
+          </div>
           <div className="form-group">
             {/* 이메일 입력 필드 */}
             <label htmlFor="text" className="form-label">
