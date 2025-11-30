@@ -297,23 +297,11 @@ const Header = () => {
 
                       {/* 드롭다운 메뉴 */}
                       <div className="profile-dropdown">
-                        {/* 사용자 정보 표시 */}
-                        <div className="dropdown-header">
-                          <div className="dropdown-user-info">
-                            <p className="dropdown-username">
-                              {user?.nickname || "사용자"}
-                            </p>
-                            <p className="dropdown-email">
-                              {user?.email || "이메일 없음"}
-                            </p>
-                          </div>
-                        </div>
-
                         {/* 메뉴 항목들 */}
                         <div className="dropdown-menu">
                           {/* 마이페이지 */}
                           <Link
-                            to="/mypage"
+                            to="/my"
                             className="dropdown-item"
                             onClick={closeProfileMenu}
                           >
@@ -333,7 +321,7 @@ const Header = () => {
 
                           {/* 내가 쓴 토론 */}
                           <Link
-                            to="/mypage/debates"
+                            to="/my?tab=my-debate"
                             className="dropdown-item"
                             onClick={closeProfileMenu}
                           >
@@ -355,7 +343,7 @@ const Header = () => {
 
                           {/* 설정 */}
                           <Link
-                            to="/settings"
+                            to="/my/edit"
                             className="dropdown-item"
                             onClick={closeProfileMenu}
                           >
@@ -599,8 +587,8 @@ const Header = () => {
 
               {/* 내가 쓴 토론 메뉴 */}
               <Link
-                to="/mypage/debates"
-                className={`nav-item ${isActive('/mypage/debates') ? 'active' : ''}`}
+                to="/my?tab=my-debate"
+                className="nav-item"
                 onClick={closeSidebar}
               >
                 <svg
