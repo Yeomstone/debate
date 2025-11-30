@@ -14,7 +14,7 @@
  * 
  * 참고: ProtectedRoute로 보호되어 있어 로그인한 사용자만 접근 가능합니다.
  */
-
+import { useSearchParams } from 'react-router-dom';
 import { useState, useEffect } from 'react'
 import { useAuth } from '../context/AuthContext'
 import { userService } from '../services/userService'
@@ -27,6 +27,7 @@ const MyPage = () => {
 
   // 상태 관리
   const [profile, setProfile] = useState(null)
+  const [searchParams] = useSearchParams();
   const [loading, setLoading] = useState(true)
   const [activeTab, setActiveTab] = useState('dashboard')
   const [myDebates, setMyDebates] = useState([])
@@ -44,6 +45,26 @@ const MyPage = () => {
       fetchMyDebates() // 대시보드용
     }
   }, [user])
+
+  // URL 쿼리 파라미터로 탭 변경
+  useEffect(() => {
+    const tab = searchParams.get('tab')
+    if (tab) {
+      setActiveTab(tab) // 'debates', 'comments' 등
+
+      // 해당 탭의 데이터도 로딩
+      if (tab === 'my-debate') {
+        fetchMyDebates()
+      } else if (tab === 'participated') {
+        fetchParticipatedDebates()
+      } else if (tab === 'comments') {
+        fetchMyComments()
+      } else if (tab === 'likes') {
+        fetchLikedDebates()
+      }
+    }
+  }, [searchParams])
+
 
   /**
    * 프로필 정보 가져오기
@@ -89,7 +110,7 @@ const MyPage = () => {
       const response = await myPageService.getMyOpinions()
       const data = response.data || response
       const opinions = Array.isArray(data) ? data : []
-      
+
       // DebateOpinion에서 토론 정보 추출
       const debates = opinions.map(opinion => ({
         id: opinion.debate?.id,
@@ -99,7 +120,7 @@ const MyPage = () => {
         side: opinion.side,
         createdAt: opinion.createdAt
       })).filter(debate => debate.id) // 토론 정보가 있는 것만
-      
+
       setParticipatedDebates(debates)
     } catch (error) {
       console.error('참여한 토론 목록 로딩 실패:', error)
@@ -152,7 +173,7 @@ const MyPage = () => {
    */
   const handleTabChange = (tab) => {
     setActiveTab(tab)
-    
+
     // 탭에 따라 데이터 로딩
     if (tab === 'my-debate') {
       fetchMyDebates()
@@ -218,21 +239,21 @@ const MyPage = () => {
               <div className="mobile-profile-details">
                 <h2 className="mobile-profile-name">{profile.nickname || '이름 없음'}</h2>
                 <div className="mobile-profile-stats">
-                  <button 
+                  <button
                     className="mobile-stat-item"
                     onClick={() => handleTabChange('my-debate')}
                   >
                     <span className="mobile-stat-value">{profile.debateCount ?? 0}</span>
                     <span className="mobile-stat-label">작성한 토론</span>
                   </button>
-                  <button 
+                  <button
                     className="mobile-stat-item"
                     onClick={() => handleTabChange('participated')}
                   >
                     <span className="mobile-stat-value">{profile.participatedCount ?? 0}</span>
                     <span className="mobile-stat-label">참여한 토론</span>
                   </button>
-                  <button 
+                  <button
                     className="mobile-stat-item"
                     onClick={() => handleTabChange('likes')}
                   >
@@ -269,21 +290,21 @@ const MyPage = () => {
                   <h2 className="profile-name">{profile.nickname || '이름 없음'}</h2>
                   {profile.bio && <p className="profile-bio">{profile.bio}</p>}
                   <div className="profile-stats">
-                    <button 
+                    <button
                       className="stat-item stat-item-clickable"
                       onClick={() => handleTabChange('my-debate')}
                     >
                       <span className="stat-value">{profile.debateCount ?? 0}</span>
                       <span className="stat-label">작성한 토론</span>
                     </button>
-                    <button 
+                    <button
                       className="stat-item stat-item-clickable"
                       onClick={() => handleTabChange('participated')}
                     >
                       <span className="stat-value">{profile.participatedCount ?? 0}</span>
                       <span className="stat-label">참여한 토론</span>
                     </button>
-                    <button 
+                    <button
                       className="stat-item stat-item-clickable"
                       onClick={() => handleTabChange('likes')}
                     >
@@ -292,16 +313,16 @@ const MyPage = () => {
                     </button>
                   </div>
                   <div className="profile-actions">
-                    <Link 
-                      to="/my/edit" 
-                      className="btn btn-outline" 
+                    <Link
+                      to="/my/edit"
+                      className="btn btn-outline"
                       style={{ width: '100%' }}
                     >
                       프로필 수정
                     </Link>
-                    <Link 
-                      to="/my/settings" 
-                      className="btn btn-outline" 
+                    <Link
+                      to="/my/settings"
+                      className="btn btn-outline"
                       style={{ width: '100%', marginTop: '0.5rem' }}
                     >
                       계정 설정
@@ -310,44 +331,44 @@ const MyPage = () => {
                 </div>
 
                 <nav className="my-page-nav">
-                  <button 
-                    onClick={() => handleTabChange('dashboard')} 
+                  <button
+                    onClick={() => handleTabChange('dashboard')}
                     className={`nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
                   >
                     대시보드
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('my-debate')} 
+                  <button
+                    onClick={() => handleTabChange('my-debate')}
                     className={`nav-item ${activeTab === 'my-debate' ? 'active' : ''}`}
                   >
                     내 토론
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('participated')} 
+                  <button
+                    onClick={() => handleTabChange('participated')}
                     className={`nav-item ${activeTab === 'participated' ? 'active' : ''}`}
                   >
                     참여한 토론
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('comments')} 
+                  <button
+                    onClick={() => handleTabChange('comments')}
                     className={`nav-item ${activeTab === 'comments' ? 'active' : ''}`}
                   >
                     내 댓글
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('likes')} 
+                  <button
+                    onClick={() => handleTabChange('likes')}
                     className={`nav-item ${activeTab === 'likes' ? 'active' : ''}`}
                   >
                     받은 좋아요
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('bookmarks')} 
+                  <button
+                    onClick={() => handleTabChange('bookmarks')}
                     className={`nav-item ${activeTab === 'bookmarks' ? 'active' : ''}`}
                   >
                     북마크
                   </button>
-                  <button 
-                    onClick={() => handleTabChange('activity')} 
+                  <button
+                    onClick={() => handleTabChange('activity')}
                     className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`}
                   >
                     활동 내역
@@ -369,7 +390,7 @@ const MyPage = () => {
                 {/* 통계 요약 */}
                 {profile && (
                   <div className="stats-grid">
-                    <button 
+                    <button
                       className="stat-card stat-card-clickable"
                       onClick={() => handleTabChange('my-debate')}
                     >
@@ -379,7 +400,7 @@ const MyPage = () => {
                         <div className="stat-label">작성한 토론</div>
                       </div>
                     </button>
-                    <button 
+                    <button
                       className="stat-card stat-card-clickable"
                       onClick={() => handleTabChange('comments')}
                     >
@@ -389,7 +410,7 @@ const MyPage = () => {
                         <div className="stat-label">작성한 댓글</div>
                       </div>
                     </button>
-                    <button 
+                    <button
                       className="stat-card stat-card-clickable"
                       onClick={() => handleTabChange('participated')}
                     >
@@ -399,7 +420,7 @@ const MyPage = () => {
                         <div className="stat-label">참여한 토론</div>
                       </div>
                     </button>
-                    <button 
+                    <button
                       className="stat-card stat-card-clickable"
                       onClick={() => handleTabChange('likes')}
                     >
@@ -655,76 +676,76 @@ const MyPage = () => {
 
         {/* 모바일 하단 탭 네비게이션 */}
         <nav className="mobile-bottom-nav">
-          <button 
+          <button
             onClick={() => {
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               setIsProfileModalOpen(true)
-            }} 
+            }}
             className="mobile-nav-item mobile-nav-item-profile"
           >
             <span className="mobile-nav-icon">👤</span>
             <span className="mobile-nav-label">프로필</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               handleTabChange('dashboard')
-            }} 
+            }}
             className={`mobile-nav-item ${activeTab === 'dashboard' ? 'active' : ''}`}
           >
             <span className="mobile-nav-icon">📊</span>
             <span className="mobile-nav-label">대시보드</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               handleTabChange('my-debate')
-            }} 
+            }}
             className={`mobile-nav-item ${activeTab === 'my-debate' ? 'active' : ''}`}
           >
             <span className="mobile-nav-icon">📝</span>
             <span className="mobile-nav-label">내 토론</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               handleTabChange('participated')
-            }} 
+            }}
             className={`mobile-nav-item ${activeTab === 'participated' ? 'active' : ''}`}
           >
             <span className="mobile-nav-icon">🏆</span>
             <span className="mobile-nav-label">참여한 토론</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               handleTabChange('comments')
-            }} 
+            }}
             className={`mobile-nav-item ${activeTab === 'comments' ? 'active' : ''}`}
           >
             <span className="mobile-nav-icon">💬</span>
             <span className="mobile-nav-label">내 댓글</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(false) // 더보기 모달 닫기
               handleTabChange('likes')
-            }} 
+            }}
             className={`mobile-nav-item ${activeTab === 'likes' ? 'active' : ''}`}
           >
             <span className="mobile-nav-icon">👍</span>
             <span className="mobile-nav-label">받은 좋아요</span>
           </button>
-          <button 
+          <button
             onClick={() => {
               setIsProfileModalOpen(false) // 프로필 모달 닫기
               setIsMoreMenuModalOpen(true)
-            }} 
+            }}
             className="mobile-nav-item mobile-nav-item-more"
           >
             <span className="mobile-nav-icon">⋯</span>
@@ -735,14 +756,14 @@ const MyPage = () => {
         {/* 더보기 메뉴 모달 (모바일) */}
         {isMoreMenuModalOpen && (
           <>
-            <div 
+            <div
               className="more-menu-modal-overlay"
               onClick={() => setIsMoreMenuModalOpen(false)}
             ></div>
             <div className="more-menu-modal">
               <div className="more-menu-modal-header">
                 <h2>더보기</h2>
-                <button 
+                <button
                   className="more-menu-modal-close"
                   onClick={() => setIsMoreMenuModalOpen(false)}
                   aria-label="닫기"
@@ -752,7 +773,7 @@ const MyPage = () => {
               </div>
               <div className="more-menu-modal-content">
                 <nav className="more-menu-modal-nav">
-                  <button 
+                  <button
                     onClick={() => {
                       setIsMoreMenuModalOpen(false)
                       handleTabChange('bookmarks')
@@ -762,7 +783,7 @@ const MyPage = () => {
                     <span className="more-menu-nav-icon">🔖</span>
                     <span className="more-menu-nav-label">북마크</span>
                   </button>
-                  <button 
+                  <button
                     onClick={() => {
                       setIsMoreMenuModalOpen(false)
                       handleTabChange('activity')
@@ -781,14 +802,14 @@ const MyPage = () => {
         {/* 프로필 모달 (모바일) */}
         {isProfileModalOpen && profile && (
           <>
-            <div 
+            <div
               className="profile-modal-overlay"
               onClick={() => setIsProfileModalOpen(false)}
             ></div>
             <div className="profile-modal">
               <div className="profile-modal-header">
                 <h2>프로필</h2>
-                <button 
+                <button
                   className="profile-modal-close"
                   onClick={() => setIsProfileModalOpen(false)}
                   aria-label="닫기"
@@ -806,9 +827,9 @@ const MyPage = () => {
                 </div>
                 <h2 className="profile-modal-name">{profile.nickname || '이름 없음'}</h2>
                 {profile.bio && <p className="profile-modal-bio">{profile.bio}</p>}
-                
+
                 <div className="profile-modal-stats">
-                  <button 
+                  <button
                     className="profile-modal-stat-item"
                     onClick={() => {
                       setIsProfileModalOpen(false)
@@ -818,7 +839,7 @@ const MyPage = () => {
                     <span className="profile-modal-stat-value">{profile.debateCount ?? 0}</span>
                     <span className="profile-modal-stat-label">작성한 토론</span>
                   </button>
-                  <button 
+                  <button
                     className="profile-modal-stat-item"
                     onClick={() => {
                       setIsProfileModalOpen(false)
@@ -828,7 +849,7 @@ const MyPage = () => {
                     <span className="profile-modal-stat-value">{profile.participatedCount ?? 0}</span>
                     <span className="profile-modal-stat-label">참여한 토론</span>
                   </button>
-                  <button 
+                  <button
                     className="profile-modal-stat-item"
                     onClick={() => {
                       setIsProfileModalOpen(false)
@@ -841,15 +862,15 @@ const MyPage = () => {
                 </div>
 
                 <div className="profile-modal-actions">
-                  <Link 
-                    to="/my/edit" 
+                  <Link
+                    to="/my/edit"
                     className="btn btn-primary"
                     onClick={() => setIsProfileModalOpen(false)}
                   >
                     프로필 수정
                   </Link>
-                  <Link 
-                    to="/my/settings" 
+                  <Link
+                    to="/my/settings"
                     className="btn btn-outline"
                     onClick={() => setIsProfileModalOpen(false)}
                   >
