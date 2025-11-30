@@ -9,14 +9,16 @@
  * - 사용자 인증 상태에 따른 UI 변경
  * - 알림 아이콘 (인증된 사용자)
  * - 사용자 아바타 (인증된 사용자)
+ * - 활성화된 페이지 메뉴 하이라이트
  *
  * 변경사항:
  * - 헤더 중앙의 검색바 제거됨 (홈페이지 본문으로 이동)
  * - 사이드바 메뉴로 네비게이션 개선
+ * - 현재 활성화된 페이지에 색상 표시 추가
  */
 
 import { useState, useEffect } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import "./Header.css";
@@ -33,12 +35,23 @@ const Header = () => {
   const { user, logout, isAuthenticated } = useAuth(); // 인증 관련 상태 및 함수
   const { theme, toggleTheme } = useTheme(); // 테마 관련 상태 및 함수
   const navigate = useNavigate(); // 페이지 이동을 위한 navigate 함수
-  const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight; // 추가!
+  const location = useLocation(); // 현재 경로 확인을 위한 location 훅
+  const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 열림/닫힘 상태
 
   // ===== 프로필 드롭다운 상태 =====
   // 프로필(아바타)을 눌렀을 때 드롭다운 메뉴 열림/닫힘을 관리
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
+
+  /**
+   * 현재 경로가 특정 경로와 일치하는지 확인하는 함수
+   * 
+   * @param {string} path - 확인할 경로
+   * @returns {boolean} 일치 여부
+   */
+  const isActive = (path) => {
+    return location.pathname === path;
+  };
 
   // 프로필 메뉴 토글 (열기/닫기)
   const toggleProfileMenu = () => {
@@ -146,25 +159,34 @@ const Header = () => {
           <div className="header-center">
             <nav className="header-nav">
               {/* 토론 목록 */}
-              <Link to="/debate" className="header-nav-item">
+              <Link
+                to="/debate"
+                className={`header-nav-item ${isActive('/debate') ? 'active' : ''}`}
+              >
                 토론목록
               </Link>
 
               {/* 토론 작성 (항상 표시, 클릭 시 로그인 필요 시 로그인 페이지로 이동) */}
               <Link
                 to="/debate/create"
-                className="header-nav-item header-nav-item-primary"
+                className={`header-nav-item ${isActive('/debate/create') ? 'active' : ''}`}
               >
                 토론작성
               </Link>
 
               {/* 카테고리 */}
-              <Link to="/categories" className="header-nav-item">
+              <Link
+                to="/categories"
+                className={`header-nav-item ${isActive('/categories') ? 'active' : ''}`}
+              >
                 카테고리
               </Link>
 
               {/* 랭킹 */}
-              <Link to="/ranking" className="header-nav-item">
+              <Link
+                to="/ranking"
+                className={`header-nav-item ${isActive('/ranking') ? 'active' : ''}`}
+              >
                 랭킹
               </Link>
             </nav>
@@ -179,17 +201,19 @@ const Header = () => {
               aria-label="테마 전환"
             >
               {theme === "light" ? (
-                // 라이트 모드일 때: 달 아이콘 표시
+                // 라이트 모드일 때 달 아이콘 (다크모드로 전환)
                 <svg
                   width="20"
                   height="20"
                   viewBox="0 0 24 24"
-                  fill="currentColor"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
                 >
                   <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
                 </svg>
               ) : (
-                // 다크 모드일 때: 태양 아이콘 표시
+                // 다크 모드일 때 해 아이콘 (라이트모드로 전환)
                 <svg
                   width="20"
                   height="20"
@@ -211,13 +235,12 @@ const Header = () => {
               )}
             </button>
 
-            {/* 인증 상태에 따른 UI 분기 */}
+            {/* 로그인된 경우: 알림 + 아바타 */}
             {isAuthenticated ? (
-              // 로그인된 경우: 알림 + 사용자 아바타
               <>
-                {/* 알림 버튼 */}
+                {/* 알림 아이콘 */}
                 <button className="icon-btn notification-btn" aria-label="알림">
-                  {/* 종 아이콘 */}
+                  {/* 벨 아이콘 */}
                   <svg
                     width="20"
                     height="20"
@@ -229,80 +252,168 @@ const Header = () => {
                     <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
                     <path d="M13.73 21a2 2 0 0 1-3.46 0" />
                   </svg>
-                  {/* 읽지 않은 알림 배지 */}
+                  {/* 알림 배지 (새 알림이 있을 때 표시) */}
                   <span className="notification-badge">3</span>
                 </button>
 
-                {/* =========================  
-    사용자 프로필 드롭다운 (구글 스타일)
-========================= */}
-                <div className="profile-wrapper">
-                  {/* 아바타 버튼 */}
-                  <button className="user-avatar" onClick={toggleProfileMenu}>
+                {/* 사용자 아바타 (프로필 메뉴 토글) */}
+                <div className="user-avatar-wrapper">
+                  <button
+                    className="user-avatar"
+                    onClick={toggleProfileMenu}
+                    aria-label="사용자 메뉴"
+                    aria-expanded={isProfileMenuOpen}
+                  >
+                    {/* 프로필 이미지가 있으면 표시, 없으면 기본 아이콘 */}
                     {user?.profileImage ? (
-                      <img src={user.profileImage} alt={user.nickname} />
+                      <img
+                        src={user.profileImage}
+                        alt={user.nickname || "사용자"}
+                        className="avatar-image"
+                      />
                     ) : (
-                      <div className="avatar-placeholder">
-                        {user?.nickname?.charAt(0) || "U"}
-                      </div>
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 24 24"
+                        fill="none"
+                        stroke="currentColor"
+                        strokeWidth="2"
+                      >
+                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                        <circle cx="12" cy="7" r="4" />
+                      </svg>
                     )}
                   </button>
 
-                  {/* 드롭다운 메뉴 */}
+                  {/* 프로필 드롭다운 메뉴 */}
                   {isProfileMenuOpen && (
-                    <div className="profile-dropdown google-style">
-                      {/* 상단 프로필 박스 */}
-                      <div className="dropdown-profile-box">
-                        <div className="dropdown-profile-avatar">
-                          {user?.profileImage ? (
-                            <img src={user.profileImage} alt={user.nickname} />
-                          ) : (
-                            <div className="avatar-placeholder-lg">
-                              {user?.nickname?.charAt(0) || "U"}
-                            </div>
-                          )}
+                    <>
+                      {/* 드롭다운 배경 클릭 시 닫기 */}
+                      <div
+                        className="dropdown-overlay"
+                        onClick={closeProfileMenu}
+                      />
+
+                      {/* 드롭다운 메뉴 */}
+                      <div className="profile-dropdown">
+                        {/* 사용자 정보 표시 */}
+                        <div className="dropdown-header">
+                          <div className="dropdown-user-info">
+                            <p className="dropdown-username">
+                              {user?.nickname || "사용자"}
+                            </p>
+                            <p className="dropdown-email">
+                              {user?.email || "이메일 없음"}
+                            </p>
+                          </div>
                         </div>
 
-                        <div className="dropdown-profile-info">
-                          <p className="profile-name">{user?.nickname}</p>
-                          {/* 이메일 제거 */}
+                        {/* 메뉴 항목들 */}
+                        <div className="dropdown-menu">
+                          {/* 마이페이지 */}
+                          <Link
+                            to="/mypage"
+                            className="dropdown-item"
+                            onClick={closeProfileMenu}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                              <circle cx="12" cy="7" r="4" />
+                            </svg>
+                            마이페이지
+                          </Link>
+
+                          {/* 내가 쓴 토론 */}
+                          <Link
+                            to="/mypage/debates"
+                            className="dropdown-item"
+                            onClick={closeProfileMenu}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+                            </svg>
+                            내가 쓴 토론
+                          </Link>
+
+                          {/* 설정 */}
+                          <Link
+                            to="/settings"
+                            className="dropdown-item"
+                            onClick={closeProfileMenu}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                              strokeLinecap="round"
+                              strokeLinejoin="round"
+                            >
+                              <circle cx="12" cy="12" r="3" />
+                              <path d="M12 1v6M12 17v6M4.22 4.22l4.25 4.25M15.54 15.54l4.25 4.25M1 12h6M17 12h6M4.22 19.78l4.25-4.25M15.54 8.46l4.25-4.25" />
+                            </svg>
+                            설정
+                          </Link>
+
+                          {/* 구분선 */}
+                          <div className="dropdown-divider" />
+
+                          {/* 로그아웃 */}
+                          <button
+                            className="dropdown-item dropdown-item-danger"
+                            onClick={() => {
+                              handleLogout();
+                              closeProfileMenu();
+                            }}
+                          >
+                            <svg
+                              width="16"
+                              height="16"
+                              viewBox="0 0 24 24"
+                              fill="none"
+                              stroke="currentColor"
+                              strokeWidth="2"
+                            >
+                              <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                              <polyline points="16 17 21 12 16 7" />
+                              <line x1="21" y1="12" x2="9" y2="12" />
+                            </svg>
+                            로그아웃
+
+                          </button>
                         </div>
                       </div>
-
-                      <div className="divider" />
-
-                      {/* 메뉴 영역 */}
-                      <Link
-                        to="/my"
-                        onClick={closeProfileMenu}
-                        className="dropdown-item"
-                      >
-                        내 정보
-                      </Link>
-
-                      <Link
-                        to="/my/settings"
-                        onClick={closeProfileMenu}
-                        className="dropdown-item"
-                      >
-                        계정 설정
-                      </Link>
-
-                      {/* [수정] logout 클래스 제거 -> 다른 메뉴와 완전 동일해짐 */}
-                      <button onClick={handleLogout} className="dropdown-item">
-                        로그아웃
-                      </button>
-                    </div>
+                    </>
                   )}
                 </div>
               </>
             ) : (
-              // 로그인되지 않은 경우: 로그인/회원가입 버튼
+              /* 로그인되지 않은 경우: 로그인 + 회원가입 버튼 */
               <div className="auth-buttons">
-                <Link to="/auth/login" className="btn btn-secondary btn-sm">
+                <Link to="/auth/login" className="btn btn-secondary">
                   로그인
                 </Link>
-                <Link to="/auth/register" className="btn btn-primary btn-sm">
+                <Link to="/auth/register" className="btn btn-primary">
                   회원가입
                 </Link>
               </div>
@@ -311,13 +422,12 @@ const Header = () => {
         </div>
       </header>
 
-      {/* ===== 사이드바 오버레이 ===== */}
-      {/* 사이드바가 열렸을 때 배경을 어둡게 하는 오버레이 */}
+      {/* ===== 사이드바 오버레이 (배경 클릭 시 닫기) ===== */}
       {isSidebarOpen && (
         <div className="sidebar-overlay" onClick={closeSidebar} />
       )}
 
-      {/* ===== 사이드바 메뉴 ===== */}
+      {/* ===== 사이드바 ===== */}
       <aside className={`sidebar ${isSidebarOpen ? "sidebar-open" : ""}`}>
         {/* 사이드바 헤더 */}
         <div className="sidebar-header">
@@ -350,7 +460,11 @@ const Header = () => {
             <h3 className="nav-section-title">메인</h3>
 
             {/* 홈 메뉴 */}
-            <Link to="/" className="nav-item" onClick={closeSidebar}>
+            <Link
+              to="/"
+              className={`nav-item ${isActive('/') ? 'active' : ''}`}
+              onClick={closeSidebar}
+            >
               <svg
                 className="nav-icon"
                 width="20"
@@ -367,7 +481,11 @@ const Header = () => {
             </Link>
 
             {/* 토론 목록 메뉴 */}
-            <Link to="/debate" className="nav-item" onClick={closeSidebar}>
+            <Link
+              to="/debate"
+              className={`nav-item ${isActive('/debate') ? 'active' : ''}`}
+              onClick={closeSidebar}
+            >
               <svg
                 className="nav-icon"
                 width="20"
@@ -377,13 +495,39 @@ const Header = () => {
                 stroke="currentColor"
                 strokeWidth="2"
               >
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+                <path d="m21 15-3-3h-2l-3 3v-2l3-3h2l3-3" />
+                <path d="M9 15 6 12H4l-3 3v-2l3-3h2l3-3" />
               </svg>
-              <span>토론 목록</span>
+              <span>토론목록</span>
+            </Link>
+
+            {/* 토론 작성 메뉴 (강조) */}
+            <Link
+              to="/debate/create"
+              className={`nav-item nav-item-primary ${isActive('/debate/create') ? 'active' : ''}`}
+              onClick={closeSidebar}
+            >
+              <svg
+                className="nav-icon"
+                width="20"
+                height="20"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="2"
+              >
+                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7" />
+                <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z" />
+              </svg>
+              <span>토론작성</span>
             </Link>
 
             {/* 카테고리 메뉴 */}
-            <Link to="/categories" className="nav-item" onClick={closeSidebar}>
+            <Link
+              to="/categories"
+              className={`nav-item ${isActive('/categories') ? 'active' : ''}`}
+              onClick={closeSidebar}
+            >
               <svg
                 className="nav-icon"
                 width="20"
@@ -401,25 +545,12 @@ const Header = () => {
               <span>카테고리</span>
             </Link>
 
-            {/* 검색 메뉴 */}
-            <Link to="/search" className="nav-item" onClick={closeSidebar}>
-              <svg
-                className="nav-icon"
-                width="20"
-                height="20"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="2"
-              >
-                <circle cx="11" cy="11" r="8" />
-                <path d="m21 21-4.35-4.35" />
-              </svg>
-              <span>검색</span>
-            </Link>
-
             {/* 랭킹 메뉴 */}
-            <Link to="/ranking" className="nav-item" onClick={closeSidebar}>
+            <Link
+              to="/ranking"
+              className={`nav-item ${isActive('/ranking') ? 'active' : ''}`}
+              onClick={closeSidebar}
+            >
               <svg
                 className="nav-icon"
                 width="20"
@@ -440,34 +571,17 @@ const Header = () => {
             </Link>
           </div>
 
-          {/* ===== 마이페이지 메뉴 섹션 (인증된 사용자만) ===== */}
+          {/* ===== 마이페이지 섹션 (로그인 시에만 표시) ===== */}
           {isAuthenticated && (
             <div className="nav-section">
               <h3 className="nav-section-title">마이페이지</h3>
 
-              {/* 토론 작성 버튼 (하이라이트) */}
+              {/* 프로필 메뉴 */}
               <Link
-                to="/debate/create"
-                className="nav-item nav-item-primary"
+                to="/mypage"
+                className={`nav-item ${isActive('/mypage') ? 'active' : ''}`}
                 onClick={closeSidebar}
               >
-                <svg
-                  className="nav-icon"
-                  width="20"
-                  height="20"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                >
-                  <line x1="12" y1="5" x2="12" y2="19" />
-                  <line x1="5" y1="12" x2="19" y2="12" />
-                </svg>
-                <span>토론 작성</span>
-              </Link>
-
-              {/* 내 정보 메뉴 */}
-              <Link to="/my" className="nav-item" onClick={closeSidebar}>
                 <svg
                   className="nav-icon"
                   width="20"
@@ -480,13 +594,37 @@ const Header = () => {
                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
                   <circle cx="12" cy="7" r="4" />
                 </svg>
-                <span>내 정보</span>
+                <span>프로필</span>
+              </Link>
+
+              {/* 내가 쓴 토론 메뉴 */}
+              <Link
+                to="/mypage/debates"
+                className={`nav-item ${isActive('/mypage/debates') ? 'active' : ''}`}
+                onClick={closeSidebar}
+              >
+                <svg
+                  className="nav-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z" />
+                  <polyline points="14 2 14 8 20 8" />
+                  <line x1="16" y1="13" x2="8" y2="13" />
+                  <line x1="16" y1="17" x2="8" y2="17" />
+                  <polyline points="10 9 9 9 8 9" />
+                </svg>
+                <span>내가 쓴 토론</span>
               </Link>
 
               {/* 설정 메뉴 */}
               <Link
-                to="/my/settings"
-                className="nav-item"
+                to="/settings"
+                className={`nav-item ${isActive('/settings') ? 'active' : ''}`}
                 onClick={closeSidebar}
               >
                 <svg
@@ -499,15 +637,49 @@ const Header = () => {
                   strokeWidth="2"
                 >
                   <circle cx="12" cy="12" r="3" />
-                  <path d="M12 1v6m0 6v6M5.636 5.636l4.243 4.243m4.242 4.242l4.243 4.243M1 12h6m6 0h6M5.636 18.364l4.243-4.243m4.242-4.242l4.243-4.243" />
+                  <path d="M12 1v6m0 6v6" />
+                  <path d="m4.93 4.93 4.24 4.24m5.66 5.66 4.24 4.24" />
+                  <path d="M1 12h6m6 0h6" />
+                  <path d="m4.93 19.07 4.24-4.24m5.66-5.66 4.24-4.24" />
                 </svg>
                 <span>설정</span>
               </Link>
 
               {/* 로그아웃 버튼 */}
               <button
-                className="nav-item nav-item-danger"
-                onClick={handleLogout}
+                className="dropdown-item dropdown-item-danger"
+                onClick={() => {
+                  handleLogout();
+                  closeProfileMenu();
+                }}
+              >
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
+                  <polyline points="16 17 21 12 16 7" />
+                  <line x1="21" y1="12" x2="9" y2="12" />
+                </svg>
+                로그아웃
+              </button>
+            </div>
+          )}
+
+          {/* ===== 로그인하지 않은 경우 ===== */}
+          {!isAuthenticated && (
+            <div className="nav-section">
+              <h3 className="nav-section-title">계정</h3>
+
+              {/* 로그인 메뉴 */}
+              <Link
+                to="/login"
+                className="nav-item"
+                onClick={closeSidebar}
               >
                 <svg
                   className="nav-icon"
@@ -518,21 +690,42 @@ const Header = () => {
                   stroke="currentColor"
                   strokeWidth="2"
                 >
-                  <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4" />
-                  <polyline points="16 17 21 12 16 7" />
-                  <line x1="21" y1="12" x2="9" y2="12" />
+                  <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4" />
+                  <polyline points="10 17 15 12 10 7" />
+                  <line x1="15" y1="12" x2="3" y2="12" />
                 </svg>
-                <span>로그아웃</span>
-              </button>
+                <span>로그인</span>
+              </Link>
+
+              {/* 회원가입 메뉴 */}
+              <Link
+                to="/register"
+                className="nav-item"
+                onClick={closeSidebar}
+              >
+                <svg
+                  className="nav-icon"
+                  width="20"
+                  height="20"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                >
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2" />
+                  <circle cx="9" cy="7" r="4" />
+                  <line x1="19" y1="8" x2="19" y2="14" />
+                  <line x1="22" y1="11" x2="16" y2="11" />
+                </svg>
+                <span>회원가입</span>
+              </Link>
             </div>
           )}
         </nav>
 
         {/* 사이드바 푸터 */}
         <div className="sidebar-footer">
-          <p className="sidebar-footer-text">
-            © 2025 DEBATE. All rights reserved.
-          </p>
+          <p className="sidebar-footer-text">© 2024 DEBATE</p>
         </div>
       </aside>
     </>

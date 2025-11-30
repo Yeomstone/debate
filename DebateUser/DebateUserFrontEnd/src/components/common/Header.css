@@ -1,10 +1,12 @@
 /**
  * Header.css - 사이드바 방식 헤더 스타일시트
- * * 주요 기능:
+ *
+ * 주요 기능:
  * - 고정 헤더 (position: fixed)
  * - 사이드바 네비게이션
  * - 다크모드 지원
  * - 반응형 디자인
+ * - 활성화된 메뉴 하이라이트
  */
 
 /* ===== 고정 헤더 ===== */
@@ -115,6 +117,13 @@
   color: var(--primary-color);
 }
 
+/* 활성화된 메뉴 항목 (토론 작성 제외) */
+.header-nav-item.active:not(.header-nav-item-primary) {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000 !important;
+  font-weight: 600;
+}
+
 /* 토론 작성 버튼 (강조) */
 .header-nav-item-primary {
   background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
@@ -125,20 +134,26 @@
 .header-nav-item-primary:hover {
   background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
   color: #000;
-  transform: translateY(-1px);
-  box-shadow: 0 2px 8px rgba(255, 215, 0, 0.3);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* 토론 작성 버튼이 활성화되었을 때 */
+.header-nav-item-primary.active {
+  background: linear-gradient(135deg, #ff8c00 0%, #ff7700 100%);
+  color: #000 !important;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
 }
 
 /* ===== 오른쪽 영역: 테마 + 사용자 메뉴 ===== */
 .header-right {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
 }
 
-/* 아이콘 버튼 (테마, 알림) */
+/* 아이콘 버튼 (테마 전환, 알림) */
 .icon-btn {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -150,6 +165,7 @@
   cursor: pointer;
   border-radius: 8px;
   transition: all 0.2s ease;
+  position: relative;
 }
 
 .icon-btn:hover {
@@ -164,7 +180,7 @@
   min-width: 18px;
   height: 18px;
   padding: 0 4px;
-  background-color: #ff4444;
+  background: linear-gradient(135deg, #ff4444 0%, #ff6666 100%);
   color: white;
   font-size: 0.7rem;
   font-weight: 600;
@@ -175,14 +191,23 @@
 }
 
 /* 사용자 아바타 */
+.user-avatar-wrapper {
+  position: relative;
+}
+
 .user-avatar {
-  width: 36px;
-  height: 36px;
+  width: 40px;
+  height: 40px;
   border-radius: 50%;
-  overflow: hidden;
   border: 2px solid var(--border-color);
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   transition: all 0.2s ease;
+  overflow: hidden;
 }
 
 .user-avatar:hover {
@@ -190,59 +215,157 @@
   transform: scale(1.05);
 }
 
-.user-avatar img {
+.avatar-image {
   width: 100%;
   height: 100%;
   object-fit: cover;
 }
 
-/* 아바타 플레이스홀더 (프로필 이미지가 없을 때) */
-.avatar-placeholder {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
-  color: white;
-  font-weight: 600;
-  font-size: 0.9rem;
+/* ===== 프로필 드롭다운 ===== */
+.dropdown-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 999;
 }
 
-/* 인증 버튼들 (로그인/회원가입) */
+.profile-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  min-width: 240px;
+  background-color: var(--card-bg);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  animation: fadeInDown 0.2s ease;
+}
+
+@keyframes fadeInDown {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.dropdown-header {
+  padding: 16px;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.dropdown-user-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.dropdown-username {
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+}
+
+.dropdown-email {
+  margin: 0;
+  font-size: 0.85rem;
+  color: var(--text-secondary);
+}
+
+.dropdown-menu {
+  padding: 8px;
+}
+
+.dropdown-menu .dropdown-item {
+  display: flex;
+  align-items: center;
+  gap: 16px !important;
+  padding: 10px 12px;
+  color: var(--text-primary);
+  text-decoration: none;
+  font-size: 0.9rem;
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  background: transparent;
+  border: none;
+  width: 100%;
+  text-align: left;
+}
+
+.dropdown-item:hover {
+  background-color: var(--hover-bg);
+}
+
+.dropdown-item-danger {
+  color: #ff4444;
+}
+
+.dropdown-item-danger:hover {
+  background-color: rgba(255, 68, 68, 0.1);
+}
+
+.dropdown-divider {
+  height: 1px;
+  background-color: var(--border-color);
+  margin: 8px 0;
+}
+
+/* ===== 로그인/회원가입 버튼 ===== */
 .auth-buttons {
   display: flex;
   gap: 8px;
+  align-items: center;
 }
 
-/* 공통 버튼 스타일 */
 .btn {
-  padding: 6px 14px; /* 버튼 전체 조금 작게 */
+  padding: 8px 16px;
   border: none;
   border-radius: 8px;
-  font-size: 0.85rem; /* 글자도 살짝 줄이기 */
-  font-weight: 600;
+  font-size: 0.9rem;
+  font-weight: 500;
   cursor: pointer;
-  transition: all 0.2s ease;
   text-decoration: none;
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.2s ease;
 }
 
-/* 노란 CTA 버튼 (로그인/회원가입 둘 다 사용) */
-.btn-primary,
+.btn-primary {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000;
+}
+
+.btn-primary:hover {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
 .btn-secondary {
   background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
   color: #000;
-  border: none;
 }
 
-/* hover 효과 통일 (둘 다 똑같이) */
-.btn-primary:hover,
 .btn-secondary:hover {
+  background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(255, 215, 0, 0.3);
+  box-shadow: 0 4px 8px rgba(255, 215, 0, 0.3);
+}
+
+/* 헤더 로그인/회원가입 버튼 크기 + 글자색 (PC용) */
+.auth-buttons .btn {
+  padding: 4px 10px; /* 세로·가로 여백 더 줄이기 */
+  font-size: 0.8rem; /* 글자 크기도 더 줄이기 */
+  color: #000 !important; /* 글자는 계속 검정 */
 }
 
 /* ===== 사이드바 오버레이 ===== */
@@ -255,13 +378,6 @@
   background-color: rgba(0, 0, 0, 0.5);
   z-index: 1100;
   animation: fadeIn 0.3s ease;
-}
-
-/* 헤더 로그인/회원가입 버튼 크기 + 글자색 (PC용) */
-.auth-buttons .btn {
-  padding: 4px 10px; /* 🔹 세로·가로 여백 더 줄이기 */
-  font-size: 0.8rem; /* 🔹 글자 크기도 더 줄이기 */
-  color: #000 !important; /* 🔹 글자는 계속 검정 */
 }
 
 @keyframes fadeIn {
@@ -374,6 +490,17 @@
   background-color: var(--hover-bg);
 }
 
+/* 활성화된 사이드바 메뉴 항목 (토론 작성 제외) */
+.nav-item.active:not(.nav-item-primary) {
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000 !important;
+  font-weight: 600;
+}
+
+.nav-item.active:not(.nav-item-primary) .nav-icon {
+  stroke: #000;
+}
+
 /* 주요 액션 항목 (토론 작성) */
 .nav-item-primary {
   color: #000;
@@ -385,6 +512,17 @@
 
 .nav-item-primary:hover {
   background: linear-gradient(135deg, #ffa500 0%, #ff8c00 100%);
+}
+
+/* 토론 작성 버튼이 활성화되었을 때 (사이드바) */
+.nav-item-primary.active {
+  background: linear-gradient(135deg, #ff8c00 0%, #ff7700 100%);
+  color: #000 !important;
+  box-shadow: 0 4px 12px rgba(255, 140, 0, 0.4);
+}
+
+.nav-item-primary .nav-icon {
+  stroke: #000;
 }
 
 /* 위험한 액션 항목 (로그아웃) */
@@ -401,10 +539,11 @@
   flex-shrink: 0; /* 아이콘 크기 고정 */
   margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
 }
+
 .nav-item span {
   display: inline-block;
   line-height: 1; /* 글자 박스 높이 줄이기 */
-  transform: translateY(-4px); /* 🔹 필요하면 -2px, -3px로 조금씩 조정 */
+  transform: translateY(-4px); /* 필요하면 -2px, -3px로 조금씩 조정 */
 }
 
 /* ===== 사이드바 푸터 ===== */
@@ -502,121 +641,6 @@
   --text-primary: #f9fafb;
   --text-secondary: #d1d5db;
   --text-tertiary: #9ca3af;
-  --hover-bg: #0f172a;
+  --hover-bg: #374151;
+  --primary-color: #ffd700;
 }
-
-/* ================================
-   프로필 드롭다운 컨테이너
-================================ */
-.profile-wrapper {
-  position: relative;
-  display: inline-block;
-}
-
-/* =====================================
-   드롭다운 박스 (공통 스타일)
-===================================== */
-.profile-dropdown {
-  position: absolute;
-  top: 50px;
-  right: 0;
-  background-color: var(--card-bg); /* 다크모드 대응 배경 */
-  border: 1px solid var(--border-color);
-  border-radius: 12px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 9999;
-  overflow: hidden;
-}
-
-/* 구글 스타일 (너비 조정) */
-.profile-dropdown.google-style {
-  width: 240px;
-  padding: 8px 0;
-}
-
-/* ================================
-   상단 프로필 정보 박스
-================================ */
-.dropdown-profile-box {
-  display: flex;
-  align-items: center;
-  padding: 12px 20px;
-  gap: 12px;
-}
-
-.dropdown-profile-avatar img {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-  border: 1px solid var(--border-color);
-}
-
-.avatar-placeholder-lg {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #fff;
-  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
-}
-
-.dropdown-profile-info {
-  flex: 1;
-  overflow: hidden;
-}
-
-.dropdown-profile-info .profile-name {
-  font-size: 0.95rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin: 0;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-}
-
-/* 구분선 */
-.divider {
-  height: 1px;
-  background-color: var(--border-color);
-  margin: 8px 0;
-}
-
-/* ======================================
-   드롭다운 메뉴 아이템 (수정됨)
-====================================== */
-.dropdown-item {
-  display: flex;
-  align-items: center;
-  width: 100%;
-  padding: 10px 20px;
-  font-size: 0.9rem;
-  font-weight: 500;
-  text-align: left;
-
-  /* [핵심] 배경 투명화 + 테두리 제거 */
-  background-color: transparent !important;
-  border: none;
-
-  cursor: pointer;
-  text-decoration: none;
-  color: var(--text-primary); /* 다크/라이트 자동 적용 */
-  transition: all 0.2s ease;
-}
-
-/* 호버 효과: 다른 메뉴와 동일하게 */
-.dropdown-item:hover {
-  background-color: var(--hover-bg);
-  color: var(--primary-color);
-}
-
-/* [삭제됨] .dropdown-item.logout 스타일
-  -> 빨간색 및 별도 배경 설정을 모두 제거하여
-     위 .dropdown-item 스타일을 그대로 따르게 함
-*/
