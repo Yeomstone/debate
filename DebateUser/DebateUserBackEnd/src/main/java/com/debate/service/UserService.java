@@ -34,50 +34,61 @@ public class UserService {
      * @param limit 조회할 상위 사용자 수
      * @return 사용자 랭킹 목록
      */
-    public List<UserRankingResponse> getUserRanking(int limit) {
-        // 1. 모든 사용자의 받은 좋아요 수 계산
-        List<User> users = userRepository.findAll();
+    /**
+     * 사용자 랭킹 조회 (기간 및 기준별)
+     *
+     * @param period 기간 (daily, monthly, yearly, all)
+     * @param criteria 기준 (likes, votes, comments)
+     * @param limit 조회할 상위 사용자 수
+     * @return 사용자 랭킹 목록
+     */
+    public List<UserRankingResponse> getUserRanking(String period, String criteria, int limit) {
+        java.time.LocalDateTime end = java.time.LocalDateTime.now();
+        java.time.LocalDateTime start = calculateStartDate(period, end);
+        Pageable pageable = org.springframework.data.domain.PageRequest.of(0, limit);
 
-        List<UserRankingResponse> ranking = new ArrayList<>();
+        List<UserRankingResponse> ranking;
 
-        for (User user : users) {
-            // 사용자가 작성한 토론 목록 조회
-            List<Debate> debates = debateRepository.findByUserAndIsHiddenFalse(
-                    user,
-                    Sort.by(Sort.Direction.DESC, "createdAt")
-            );
-
-            // 토론들의 총 좋아요 수 계산
-            long totalLikes = 0;
-            for (Debate debate : debates) {
-                totalLikes += likeRepository.countByDebate(debate);
-            }
-
-            // 좋아요가 1개 이상인 경우만 랭킹에 포함
-            if (totalLikes > 0) {
-                UserRankingResponse response = UserRankingResponse.builder()
-                        .userId(user.getId())
-                        .nickname(user.getNickname())
-                        .profileImage(user.getProfileImage())
-                        .totalLikes(totalLikes)
-                        .debateCount((long) debates.size())
-                        .build();
-                ranking.add(response);
-            }
+        switch (criteria.toLowerCase()) {
+            case "votes": // 투표율 (의견 수)
+                ranking = userRepository.findRankingByDebateOpinions(start, end, pageable);
+                break;
+            case "comments": // 댓글 좋아요
+                ranking = userRepository.findRankingByCommentLikes(start, end, pageable);
+                break;
+            case "likes": // 토론 좋아요 (기본값)
+            default:
+                ranking = userRepository.findRankingByDebateLikes(start, end, pageable);
+                break;
         }
 
-        // 2. 좋아요 수 기준 내림차순 정렬
-        ranking.sort((a, b) -> Long.compare(b.getTotalLikes(), a.getTotalLikes()));
-
-        // 3. 순위 부여
+        // 순위 부여
         for (int i = 0; i < ranking.size(); i++) {
             ranking.get(i).setRank((long) (i + 1));
         }
 
-        // 4. 상위 N개만 반환
-        return ranking.stream()
-                .limit(limit)
-                .collect(Collectors.toList());
+        return ranking;
+    }
+
+    private java.time.LocalDateTime calculateStartDate(String period, java.time.LocalDateTime end) {
+        switch (period.toLowerCase()) {
+            case "daily":
+                return java.time.LocalDate.now().atStartOfDay();
+            case "monthly":
+                return java.time.LocalDate.now().withDayOfMonth(1).atStartOfDay();
+            case "yearly":
+                return java.time.LocalDate.now().withDayOfYear(1).atStartOfDay();
+            case "all":
+            default:
+                return java.time.LocalDateTime.of(2000, 1, 1, 0, 0);
+        }
+    }
+
+    /**
+     * (Deprecated) 기존 메서드 유지 - 하위 호환성
+     */
+    public List<UserRankingResponse> getUserRanking(int limit) {
+        return getUserRanking("all", "likes", limit);
     }
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)

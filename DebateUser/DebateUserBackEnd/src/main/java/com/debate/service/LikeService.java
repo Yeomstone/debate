@@ -15,19 +15,17 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
     private final LikeRepository likeRepository;
     private final DebateRepository debateRepository;
+    private final com.debate.repository.UserRepository userRepository;
 
     @Transactional
     public void toggleLike(Long debateId, Long userId) {
-        Debate debate = debateRepository.findById(debateId)
-                .orElseThrow(() -> new ResourceNotFoundException("토론을 찾을 수 없습니다"));
-
-        User user = new User();
-        user.setId(userId);
-
-        likeRepository.findByDebateAndUser(debate, user)
+        likeRepository.findByDebateIdAndUserId(debateId, userId)
                 .ifPresentOrElse(
                         likeRepository::delete,
                         () -> {
+                            Debate debate = debateRepository.getReferenceById(debateId);
+                            User user = userRepository.getReferenceById(userId);
+                            
                             Like like = Like.builder()
                                     .debate(debate)
                                     .user(user)
@@ -38,11 +36,10 @@ public class LikeService {
     }
 
     public boolean isLiked(Long debateId, Long userId) {
-        Debate debate = new Debate();
-        debate.setId(debateId);
-        User user = new User();
-        user.setId(userId);
-        return likeRepository.existsByDebateAndUser(debate, user);
+        System.out.println("LikeService.isLiked - DebateID: " + debateId + ", UserID: " + userId);
+        boolean exists = likeRepository.existsByDebateIdAndUserId(debateId, userId);
+        System.out.println("LikeService.isLiked - Exists: " + exists);
+        return exists;
     }
 }
 

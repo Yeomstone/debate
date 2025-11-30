@@ -45,14 +45,16 @@ export const userService = {
 };
 
 /**
- * 사용자 랭킹 조회 (받은 좋아요 수 기준)
+ * 사용자 랭킹 조회 (기간 및 기준별)
  * @param {number} limit - 조회할 상위 사용자 수
+ * @param {string} period - 기간 (daily, monthly, yearly, all)
+ * @param {string} criteria - 기준 (likes, votes, comments)
  * @returns {Promise} 사용자 랭킹 목록
  */
-export const getUserRanking = async (limit = 10) => {
+export const getUserRanking = async (limit = 10, period = 'all', criteria = 'likes') => {
   try {
     const response = await api.get("/users/ranking", {
-      params: { limit },
+      params: { limit, period, criteria },
     });
     return response.data;
   } catch (error) {

@@ -39,17 +39,24 @@ export const authService = {
    * 
    * 새로운 사용자를 등록합니다.
    * 
-   * @param {Object} registerData - 회원가입 데이터
+   * @param {FormData|Object} registerData - 회원가입 데이터 (FormData 또는 일반 객체)
    * @param {string} registerData.email - 이메일
    * @param {string} registerData.password - 비밀번호
    * @param {string} registerData.nickname - 닉네임
+   * @param {string} [registerData.bio] - 자기소개 (선택사항)
+   * @param {File} [registerData.profileImage] - 프로필 이미지 파일 (선택사항)
    * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
    * @returns {Object} response - ApiResponse { success: boolean, message: string, data: AuthResponse }
    * @returns {Object} response.data - AuthResponse { token: string, type: string, user: UserResponse }
    */
   async register(registerData) {
+    // FormData인 경우 multipart/form-data로 전송
+    const config = registerData instanceof FormData 
+      ? { headers: { 'Content-Type': 'multipart/form-data' } }
+      : {}
+    
     // 인터셉터가 이미 ApiResponse 구조를 반환하므로 그대로 사용
-    const response = await api.post('/auth/register', registerData)
+    const response = await api.post('/auth/register', registerData, config)
     // ApiResponse 구조: { success: boolean, message: string, data: AuthResponse }
     // 인터셉터에서 이미 ApiResponse를 반환하므로 response가 ApiResponse입니다
     return response

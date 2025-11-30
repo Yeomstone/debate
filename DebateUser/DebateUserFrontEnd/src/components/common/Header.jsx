@@ -182,8 +182,8 @@ const Header = () => {
                 카테고리
               </Link>
 
-              {/* 랭킹 (홈페이지로 링크, 추후 랭킹 페이지 생성 시 변경 가능) */}
-              <Link to="/" className="header-nav-item">
+              {/* 랭킹 */}
+              <Link to="/ranking" className="header-nav-item">
                 랭킹
               </Link>
             </nav>
@@ -441,7 +441,7 @@ const Header = () => {
             </Link>
 
             {/* 랭킹 메뉴 */}
-            <Link to="/" className="nav-item" onClick={closeSidebar}>
+            <Link to="/ranking" className="nav-item" onClick={closeSidebar}>
               <svg
                 className="nav-icon"
                 width="20"

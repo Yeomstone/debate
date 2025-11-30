@@ -19,4 +19,13 @@ public class UserRankingResponse {
     private Long totalLikes;          // 받은 총 좋아요 수
     private Long debateCount;         // 작성한 토론 수
     private Long rank;                // 순위
+
+    public UserRankingResponse(com.debate.entity.User user, Long score) {
+        this.userId = user.getId();
+        this.nickname = user.getNickname();
+        this.profileImage = user.getProfileImage();
+        this.totalLikes = score;
+        this.debateCount = 0L;
+        this.rank = 0L;
+    }
 }

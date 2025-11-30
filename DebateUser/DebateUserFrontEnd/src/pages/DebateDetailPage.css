@@ -1271,3 +1271,20 @@
     margin-left: 1.5rem;
   }
 }
+
+/* [긴급 수정] 댓글 좋아요 버튼 스타일 강제 적용 */
+.comment-actions .comment-like-btn {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.25rem 0.5rem !important;
+  margin-top: 0 !important; /* 상단 여백 제거 */
+}
+
+.comment-actions .comment-like-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .comment-actions .comment-like-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}

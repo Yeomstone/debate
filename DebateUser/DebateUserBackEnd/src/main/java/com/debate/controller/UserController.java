@@ -23,11 +23,13 @@ public class UserController {
      * @param limit 조회할 상위 사용자 수 (기본값: 10)
      * @return 사용자 랭킹 목록
      */
-    @Operation(summary = "사용자 랭킹 조회", description = "받은 좋아요 수가 많은 사용자 순으로 랭킹을 조회합니다.")
+    @Operation(summary = "사용자 랭킹 조회", description = "기간 및 기준별로 사용자 랭킹을 조회합니다.")
     @GetMapping("/ranking")
     public ResponseEntity<ApiResponse<List<UserRankingResponse>>> getUserRanking(
-            @RequestParam(defaultValue = "10") int limit) {
-        List<UserRankingResponse> ranking = userService.getUserRanking(limit);
+            @RequestParam(defaultValue = "10") int limit,
+            @RequestParam(defaultValue = "all") String period,
+            @RequestParam(defaultValue = "likes") String criteria) {
+        List<UserRankingResponse> ranking = userService.getUserRanking(period, criteria, limit);
         return ResponseEntity.ok(ApiResponse.success(ranking));
     }
     private final UserService userService;

@@ -1,269 +1,220 @@
-/* 랭킹 페이지 */
+/* RankingPage.css */
+
 .ranking-page {
+  width: 100%;
   min-height: 100vh;
-  padding: 3rem 1rem;
-  background: #1a1a1a;
+  padding: 20px;
+  box-sizing: border-box;
+}
+.ranking-page.dark-mode {
+  background-color: #121212;
+  color: #ffffff;
+}
+/* 라이트 모드 배경 - 다크모드가 아닐 때만 적용 */
+.ranking-page:not(.dark-mode) {
+  background: linear-gradient(135deg, #ffc107 0%, #ffd54f 50%, #fff9c4 100%);
 }
 
-.ranking-page .container {
-  max-width: 800px;
-  margin: 0 auto;
-}
-
-/* 페이지 제목 */
-.page-title {
-  text-align: center;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: #ffc107;
-  margin-bottom: 0.5rem;
-}
-
-.page-desc {
-  text-align: center;
-  color: #999;
-  font-size: 1.1rem;
-  margin-bottom: 3rem;
-}
-
-/* 랭킹 리스트 */
-.ranking-list {
+/* 필터 버튼 스타일 복원 */
+.ranking-filters {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-}
-
-/* 랭킹 아이템 */
-.rank-item {
-  display: flex;
   align-items: center;
-  gap: 1.5rem;
-  padding: 1.5rem;
-  background: var(--card-background);
-  border: 2px solid #333;
-  border-radius: 12px;
-  text-decoration: none;
-  transition: all 0.2s ease;
+  gap: 15px;
+  margin-bottom: 30px;
 }
 
-.rank-item:hover {
-  border-color: #ffc107;
-  transform: translateX(5px);
-  box-shadow: 0 4px 15px rgba(255, 193, 7, 0.2);
-}
-
-/* 상위 3명 강조 */
-.rank-item.rank-1 {
-  border-color: #ffc107;
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.05), transparent);
-}
-
-.rank-item.rank-2 {
-  border-color: #c0c0c0;
-}
-
-.rank-item.rank-3 {
-  border-color: #cd7f32;
-}
-
-/* 순위 번호 */
-.rank-number {
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--text-primary);
-  min-width: 70px;
-  text-align: center;
-}
-
-.rank-item.rank-1 .rank-number,
-.rank-item.rank-2 .rank-number,
-.rank-item.rank-3 .rank-number {
-  font-size: 2.5rem;
-}
-
-/* 아바타 */
-.user-avatar {
-  width: 60px;
-  height: 60px;
-  border-radius: 50%;
-  overflow: hidden;
-  flex-shrink: 0;
-  background: #ffc107;
-}
-
-.user-avatar img {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
-.avatar-text {
-  width: 100%;
-  height: 100%;
+.filter-group {
   display: flex;
-  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
   justify-content: center;
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #1a1a1a;
 }
 
-/* 사용자 정보 */
-.user-info {
-  flex: 1;
-}
-
-.nickname {
-  font-size: 1.2rem;
-  font-weight: 600;
-  color: var(--text-primary);
-  margin-bottom: 0.25rem;
-}
-
-.stats {
-  font-size: 0.95rem;
-  color: #999;
-}
-
-/* 좋아요 */
-.likes {
-  text-align: right;
-  min-width: 100px;
-}
-
-.likes-count {
-  font-size: 2rem;
-  font-weight: 700;
-  color: #ffc107;
-  line-height: 1;
-  margin-bottom: 0.25rem;
-}
-
-.likes-label {
-  font-size: 0.875rem;
-  color: #999;
-}
-
-/* 로딩 */
-.loading {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #999;
-}
-
-.spinner {
-  width: 50px;
-  height: 50px;
-  margin: 0 auto 1rem;
-  border: 4px solid #333;
-  border-top-color: #ffc107;
-  border-radius: 50%;
-  animation: spin 1s linear infinite;
-}
-
-@keyframes spin {
-  to {
-    transform: rotate(360deg);
-  }
-}
-
-/* 에러 */
-.error {
-  text-align: center;
-  padding: 4rem 2rem;
-}
-
-.error p {
-  color: #ff4444;
-  font-size: 1.1rem;
-  margin-bottom: 1.5rem;
-}
-
-.retry-btn {
-  padding: 0.75rem 2rem;
-  background: #ffc107;
-  color: #1a1a1a;
-  border: none;
-  border-radius: 8px;
+.filter-btn {
+  padding: 8px 16px;
+  border: 1px solid #ddd;
+  border-radius: 20px;
+  background: #fff;
+  color: #666;
+  font-size: 0.9rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.2s;
 }
 
-.retry-btn:hover {
-  background: #ffd54f;
+.filter-btn:hover {
+  background: #f5f5f5;
   transform: translateY(-2px);
 }
 
-/* 빈 상태 */
-.empty {
-  text-align: center;
-  padding: 4rem 2rem;
-  color: #999;
-}
-
-.empty-icon {
-  font-size: 5rem;
-  display: block;
-  margin-bottom: 1.5rem;
-  opacity: 0.5;
-}
-
-.empty p {
-  font-size: 1.2rem;
-  margin-bottom: 0.5rem;
-  color: #999;
-}
-
-.empty-hint {
-  font-size: 1rem;
-  color: #666;
-}
-
-/* 반응형 */
-@media (max-width: 768px) {
-  .page-title {
-    font-size: 2rem;
-  }
-
-  .rank-item {
-    gap: 1rem;
-    padding: 1rem;
-  }
-
-  .rank-number {
-    font-size: 1.5rem;
-    min-width: 50px;
-  }
-
-  .user-avatar {
-    width: 50px;
-    height: 50px;
-  }
-
-  .nickname {
-    font-size: 1rem;
-  }
-
-  .likes-count {
-    font-size: 1.5rem;
-  }
-
-  .likes {
-    min-width: 80px;
-  }
-}
-
-/* 라이트 모드 */
-[data-theme="light"] .ranking-page {
-  background: #f5f5f5;
-}
-
-[data-theme="light"] .rank-item {
-  background: #ffffff;
-  border-color: #e0e0e0;
-}
-
-[data-theme="light"] .rank-item:hover {
+.filter-btn.active {
+  background: #ffc107; /* Primary Yellow */
   border-color: #ffc107;
+  color: #000;
+  font-weight: 700;
+  box-shadow: 0 4px 10px rgba(255, 193, 7, 0.3);
+}
+
+/* 다크모드 필터 버튼 */
+.dark-mode .filter-btn {
+  background: #2a2a2a;
+  border-color: #444;
+  color: #aaa;
+}
+
+.dark-mode .filter-btn:hover {
+  background: #333;
+  color: #fff;
+}
+
+.dark-mode .filter-btn.active {
+  background: #ffc107;
+  border-color: #ffc107;
+  color: #000;
+}
+
+/* 랭킹 리스트 (Top 4-10) 스타일 */
+.ranking-list {
+  max-width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  border-radius: 16px;
+  padding: 20px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.dark-mode .ranking-list {
+  background: #1e1e1e;
+  border: 1px solid #333;
+}
+
+.ranking-list h3 {
+  margin-top: 0;
+  margin-bottom: 20px;
+  text-align: center;
+  color: #333;
+}
+
+.dark-mode .ranking-list h3 {
+  color: #fff;
+}
+
+.ranking-list-items {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.ranking-list-item {
+  display: flex;
+  align-items: center;
+  padding: 15px;
+  border-bottom: 1px solid #eee;
+  transition: background 0.2s;
+}
+
+.dark-mode .ranking-list-item {
+  border-bottom-color: #333;
+}
+
+.ranking-list-item:last-child {
+  border-bottom: none;
+}
+
+.ranking-list-item:hover {
+  background: #f9f9f9;
+}
+
+.dark-mode .ranking-list-item:hover {
+  background: #252525;
+}
+
+.rank-number {
+  font-size: 1.2rem;
+  font-weight: 800;
+  width: 40px;
+  color: #888;
+}
+
+.user-nickname {
+  flex: 1;
+  font-weight: 600;
+  color: #333;
+}
+
+.dark-mode .user-nickname {
+  color: #eee;
+}
+
+.user-score {
+  font-weight: 700;
+  color: #ffc107;
+}
+/* 배경 애니메이션 - 떠다니는 버블 */
+.ranking-page {
+  position: relative;
+  overflow: hidden;
+}
+
+.ranking-page::before,
+.ranking-page::after {
+  content: "";
+  position: absolute;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.05);
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* 다크모드 버블 - 밝은 색상으로 변경 👈 이 부분 추가 */
+.dark-mode.ranking-page::before,
+.dark-mode.ranking-page::after {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.ranking-page::before {
+  width: 300px;
+  height: 300px;
+  top: 10%;
+  left: 5%;
+  animation: floatBubble1 20s ease-in-out infinite;
+}
+
+.ranking-page::after {
+  width: 200px;
+  height: 200px;
+  bottom: 10%;
+  right: 10%;
+  animation: floatBubble2 15s ease-in-out infinite;
+}
+
+@keyframes floatBubble1 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(30px, -30px) scale(1.1);
+  }
+  66% {
+    transform: translate(-20px, 20px) scale(0.9);
+  }
+}
+
+@keyframes floatBubble2 {
+  0%, 100% {
+    transform: translate(0, 0) scale(1);
+  }
+  33% {
+    transform: translate(-25px, 25px) scale(1.15);
+  }
+  66% {
+    transform: translate(15px, -15px) scale(0.85);
+  }
+}
+
+/* 모든 콘텐츠가 버블 위에 표시되도록 */
+.ranking-page > * {
+  position: relative;
+  z-index: 1;
 }
