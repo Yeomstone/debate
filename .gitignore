@@ -4,6 +4,12 @@
 **/.gradle/
 **/.gradle/**
 
+# 특정 파일만 막기
+private_info/AWS/debate2025.pem
+
+# (추천) 실수 방지를 위해 모든 pem 파일 막기
+*.pem
+
 # Gradle lock files (모든 .lock 파일 무시, 단 yarn.lock은 제외)
 **/*.lock
 !yarn.lock

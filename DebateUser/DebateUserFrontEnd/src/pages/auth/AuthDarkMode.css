@@ -1,0 +1,123 @@
+
+/* ===== 다크 모드 지원 (클래스 기반) ===== */
+.auth-page.dark {
+  background: linear-gradient(135deg, #1a1a1a 0%, #0d0d0d 100%) !important;
+}
+
+.auth-page.dark .auth-title {
+  color: var(--primary-yellow);
+  text-shadow: 0 0 20px rgba(255, 193, 7, 0.3);
+}
+
+.auth-page.dark .auth-subtitle {
+  color: #b0b0b0;
+}
+
+.auth-page.dark .auth-container {
+  background: #1e1e1e;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.8);
+  border: 1px solid #333;
+}
+
+.auth-page.dark .form-title {
+  color: #ffffff;
+}
+
+.auth-page.dark .form-label {
+  color: #ffffff;
+}
+
+.auth-page.dark .auth-form .form-input,
+.auth-page.dark .auth-form .form-textarea,
+.auth-page.dark input[type="email"],
+.auth-page.dark input[type="password"],
+.auth-page.dark input[type="text"] {
+  background: #1a1a1a !important;
+  border-color: #333 !important;
+  color: #ffffff !important;
+}
+
+.auth-page.dark .form-input::placeholder,
+.auth-page.dark .form-textarea::placeholder {
+  color: #808080;
+}
+
+.auth-page.dark .form-input:focus,
+.auth-page.dark .form-textarea:focus {
+  border-color: var(--primary-yellow);
+  background: #333;
+  box-shadow: 0 0 0 4px rgba(255, 193, 7, 0.2);
+}
+
+.auth-page.dark .validation-message.global-error {
+  background: rgba(244, 67, 54, 0.1);
+  border-color: rgba(244, 67, 54, 0.3);
+}
+
+.auth-page.dark .auth-divider::before {
+  background: #404040;
+}
+
+.auth-page.dark .auth-divider span {
+  background: #1e1e1e;
+  color: #b0b0b0;
+}
+
+.auth-page.dark .link-primary {
+  color: var(--primary-yellow);
+}
+
+.auth-page.dark .link-primary:hover {
+  color: #ffd54f;
+}
+
+.auth-page.dark .checkbox-custom {
+  border-color: #555;
+  background: #2a2a2a;
+}
+
+.auth-page.dark .btn-upload {
+  background-color: #2a2a2a;
+  color: #ffffff;
+  border-color: #444;
+}
+
+.auth-page.dark .btn-upload:hover {
+  background-color: #333;
+}
+
+.auth-page.dark .btn-reset-image {
+  color: #b0b0b0;
+}
+
+.auth-page.dark .btn-reset-image:hover {
+  color: var(--error-color);
+}
+
+.auth-page.dark .profile-preview {
+  border-color: var(--primary-yellow);
+  background-color: #2a2a2a;
+}
+
+.auth-page.dark .character-count {
+  color: #b0b0b0;
+}
+/* 브라우저 자동완성 스타일 덮어쓰기 */
+.auth-page.dark input:-webkit-autofill,
+.auth-page.dark input:-webkit-autofill:hover,
+.auth-page.dark input:-webkit-autofill:focus,
+.auth-page.dark input:-webkit-autofill:active {
+  -webkit-box-shadow: 0 0 0 30px #1a1a1a inset !important;
+  -webkit-text-fill-color: #ffffff !important;
+  border-color: #333 !important;
+  transition: background-color 5000s ease-in-out 0s;
+}
+
+/* Firefox 자동완성 */
+.auth-page.dark input:-moz-autofill,
+.auth-page.dark input:-moz-autofill:hover,
+.auth-page.dark input:-moz-autofill:focus {
+  background-color: #1a1a1a !important;
+  color: #ffffff !important;
+  border-color: #333 !important;
+}

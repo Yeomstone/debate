@@ -19,8 +19,10 @@
 import { useState, useEffect } from "react";
 import { useNavigate, Link } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
+import { useTheme } from "../../context/ThemeContext";
 import axios from "axios";
 import "./Auth.css";
+import "./AuthDarkMode.css";
 import api from "../../services/api"; // api 인스턴스 import
 import defaultProfile from "../../assets/default-profile.png"; // 기본 프로필 이미지 import
 
@@ -29,7 +31,8 @@ const RegisterPage = () => {
   // 훅 초기화
   // ========================================
   const navigate = useNavigate(); // 페이지 이동을 위한 네비게이션 훅
-  const { register } = useAuth(); // AuthContext에서 회원가입 함수 가져오기4
+  const { register } = useAuth(); // AuthContext에서 회원가입 함수 가져오기
+  const { theme } = useTheme(); // 다크 모드 상태
 
   // [수정 1] 최대 글자 수 상수 정의
   const MAX_BIO_LENGTH = 200; // 자기소개 최대 글자 수 제한
@@ -437,12 +440,12 @@ const RegisterPage = () => {
       formDataToSend.append("email", formData.email);
       formDataToSend.append("password", formData.password);
       formDataToSend.append("nickname", formData.nickname);
-      
+
       // bio가 있을 경우에만 추가
       if (formData.bio) {
         formDataToSend.append("bio", formData.bio);
       }
-      
+
       // 프로필 이미지가 있을 경우에만 추가
       if (profileImage) {
         formDataToSend.append("profileImage", profileImage);
@@ -467,7 +470,7 @@ const RegisterPage = () => {
   // ========================================
 
   return (
-    <div className="auth-page">
+    <div className={`auth-page ${theme === 'dark' ? 'dark' : ''}`}>
       {/* ======================================== */}
       {/* 로고 섹션 - 브랜드 아이덴티티 표시 */}
       {/* ======================================== */}
@@ -573,9 +576,8 @@ const RegisterPage = () => {
                 setFormData({ ...formData, email: e.target.value })
               }
               required
-              className={`form-input ${
-                emailCheck.status === "error" ? "input-error" : ""
-              }`}
+              className={`form-input ${emailCheck.status === "error" ? "input-error" : ""
+                }`}
               placeholder="example@email.com"
             />
             {/* [추가] 메시지 표시 영역 */}
@@ -599,9 +601,8 @@ const RegisterPage = () => {
                 setFormData({ ...formData, nickname: e.target.value })
               }
               required
-              className={`form-input ${
-                nicknameCheck.status === "error" ? "input-error" : ""
-              }`}
+              className={`form-input ${nicknameCheck.status === "error" ? "input-error" : ""
+                }`}
               placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
             />
             {/* [추가] 메시지 표시 영역 */}
@@ -663,11 +664,10 @@ const RegisterPage = () => {
             {/* 비밀번호 일치 여부 표시 (비밀번호 확인 입력 시) */}
             {formData.passwordConfirm && (
               <div
-                className={`password-match ${
-                  formData.password === formData.passwordConfirm
+                className={`password-match ${formData.password === formData.passwordConfirm
                     ? "match"
                     : "mismatch"
-                }`}
+                  }`}
               >
                 {formData.password === formData.passwordConfirm ? (
                   <span>✓ 비밀번호가 일치합니다</span>

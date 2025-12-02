@@ -2,6 +2,7 @@ package com.debate.service;
 
 import com.debate.dto.response.DebateResponse;
 import com.debate.dto.response.CommentResponse;
+import com.debate.dto.response.DebateOpinionResponse;
 import com.debate.entity.DebateOpinion;
 import com.debate.entity.User;
 import com.debate.repository.DebateOpinionRepository;
@@ -82,13 +83,16 @@ public class MyPageService {
      * 현재 로그인한 사용자가 입장을 선택한 토론 목록을 조회합니다.
      * 
      * @param userId 사용자 ID
-     * @return 사용자가 선택한 의견 목록
+     * @return 사용자가 선택한 의견 목록 (debateId 포함)
      */
-    public List<DebateOpinion> getMyOpinions(Long userId) {
+    public List<DebateOpinionResponse> getMyOpinions(Long userId) {
         User user = new User();
         user.setId(userId);
         
-        return debateOpinionRepository.findByUser(user);
+        return debateOpinionRepository.findByUser(user)
+                .stream()
+                .map(DebateOpinionResponse::from)
+                .collect(Collectors.toList());
     }
 
     /**

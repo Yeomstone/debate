@@ -12,6 +12,7 @@ public interface UserRepository extends JpaRepository<User, Long> {//debate 테�
     boolean existsByEmail(String email);
     // [추가] 닉네임 중복 확인용 메서드
     boolean existsByNickname(String nickname);
+    Optional<User> findByNickname(String nickname);
 
     // [추가] 랭킹 쿼리
     // 1. 토론 좋아요 순

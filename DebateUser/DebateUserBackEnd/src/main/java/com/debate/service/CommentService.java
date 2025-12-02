@@ -26,6 +26,8 @@ public class CommentService {
     private final com.debate.repository.CommentLikeRepository commentLikeRepository;
     private final com.debate.repository.UserRepository userRepository;
 
+    private final NotificationService notificationService;
+
     @Transactional
     public CommentResponse createComment(CreateCommentRequest request, Long userId) {
         Debate debate = debateRepository.findById(request.getDebateId())
@@ -52,7 +54,38 @@ public class CommentService {
                 .build();
 
         comment = commentRepository.save(comment);
+
+        // 알림 생성 로직
+        try {
+            // 1. 대댓글인 경우 부모 댓글 작성자에게 알림
+            if (parent != null && !parent.getUser().getId().equals(userId)) {
+                notificationService.createNotification(
+                        parent.getUser(),
+                        user.getNickname() + "님이 대댓글을 남겼습니다: " + truncateContent(comment.getContent()),
+                        "COMMENT",
+                        "/debate/" + debate.getId()
+                );
+            }
+            // 2. 일반 댓글인 경우 토론 작성자에게 알림 (대댓글이 아닐 때만, 그리고 본인이 아닐 때)
+            else if (parent == null && !debate.getUser().getId().equals(userId)) {
+                notificationService.createNotification(
+                        debate.getUser(),
+                        user.getNickname() + "님이 토론에 댓글을 남겼습니다: " + truncateContent(comment.getContent()),
+                        "COMMENT",
+                        "/debate/" + debate.getId()
+                );
+            }
+        } catch (Exception e) {
+            // 알림 생성 실패가 핵심 로직에 영향을 주지 않도록 예외 처리
+            System.err.println("알림 생성 실패: " + e.getMessage());
+        }
+
         return CommentResponse.from(comment);
+    }
+
+    private String truncateContent(String content) {
+        if (content == null) return "";
+        return content.length() > 15 ? content.substring(0, 20) + "..." : content;
     }
 
     public Page<CommentResponse> getCommentsByDebate(Long debateId, Pageable pageable, Long userId) {
@@ -111,6 +144,20 @@ public class CommentService {
                     .build();
             
             commentLikeRepository.save(like);
+
+            // 좋아요 알림 생성 (본인이 아닐 경우)
+            if (!comment.getUser().getId().equals(userId)) {
+                try {
+                    notificationService.createNotification(
+                            comment.getUser(),
+                            user.getNickname() + "님이 댓글을 좋아합니다.",
+                            "LIKE",
+                            "/debate/" + comment.getDebate().getId()
+                    );
+                } catch (Exception e) {
+                    System.err.println("알림 생성 실패: " + e.getMessage());
+                }
+            }
         }
     }
 }
