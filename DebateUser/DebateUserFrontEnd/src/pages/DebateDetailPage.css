@@ -734,7 +734,8 @@
   border-radius: 8px;
   padding: 0.8rem;
   resize: none;
-  height: 50px; /* 높이 축소 */
+  height: 50px;
+  /* 높이 축소 */
   font-size: 0.95rem;
   background: var(--bg-secondary);
   color: var(--text-primary);
@@ -749,7 +750,8 @@
 .comment-input-area button {
   padding: 0 1.2rem;
   background: var(--primary-color);
-  color: #000; /* Yellow 배경에는 검은 글씨 */
+  color: #000;
+  /* Yellow 배경에는 검은 글씨 */
   border: none;
   border-radius: 8px;
   font-weight: 700;
@@ -757,13 +759,22 @@
   cursor: pointer;
   transition: background 0.2s;
   white-space: nowrap;
-  height: 50px; /* 텍스트 영역과 높이 맞춤 */
+  height: 50px;
+  /* 텍스트 영역과 높이 맞춤 */
 }
 
 .comment-input-area button:disabled {
   background: var(--text-secondary);
   cursor: not-allowed;
   opacity: 0.5;
+}
+
+.char-counter {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  text-align: right;
+  margin-top: 0.25rem;
+  font-weight: 500;
 }
 
 /* 댓글 목록 */
@@ -1101,6 +1112,27 @@
   text-decoration: underline;
 }
 
+/* [추가] 수정/삭제 버튼 (텍스트 스타일) */
+.action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.action-btn:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.action-btn.delete:hover {
+  color: var(--danger-color);
+}
+
 /* 답글 입력 폼 컨테이너 */
 .reply-form-container {
   display: flex;
@@ -1278,7 +1310,8 @@
   border: none !important;
   box-shadow: none !important;
   padding: 0.25rem 0.5rem !important;
-  margin-top: 0 !important; /* 상단 여백 제거 */
+  margin-top: 0 !important;
+  /* 상단 여백 제거 */
 }
 
 .comment-actions .comment-like-btn:hover {

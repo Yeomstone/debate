@@ -31,7 +31,11 @@ const DebateDetailPage = () => {
   // 입력 상태
   const [commentContent, setCommentContent] = useState("");
   const [replyContent, setReplyContent] = useState("");
+
   const [replyingTo, setReplyingTo] = useState(null);
+  // [추가] 댓글 수정 상태
+  const [editingCommentId, setEditingCommentId] = useState(null);
+  const [editContent, setEditContent] = useState("");
 
   // UI 상태 (메뉴)
   const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -95,7 +99,7 @@ const DebateDetailPage = () => {
         try {
           const liked = await likeService.isLiked(id);
           setIsLiked(liked.data || liked);
-        } catch {}
+        } catch { }
       }
     } catch (err) {
       console.error(err);
@@ -115,7 +119,7 @@ const DebateDetailPage = () => {
 
       const response = await commentService.getCommentsByDebate(id, page, 7, sortParam); // 7개씩
       const data = response.data || response;
-      
+
       setComments(data.content || []);
       setTotalPages(data.totalPages || 0);
     } catch (err) {
@@ -199,7 +203,7 @@ const DebateDetailPage = () => {
       setComments((prev) => [newComment, ...prev]);
     }
     setCommentContent("");
-    
+
     // [수정] 댓글 수 즉시 업데이트
     setDebate(prev => ({
       ...prev,
@@ -311,6 +315,89 @@ const DebateDetailPage = () => {
       setComments((prev) => updateLike(prev));
       alert("좋아요 처리에 실패했습니다.");
     }
+
+  };
+
+  // [추가] 댓글 수정 모드 진입
+  const handleEditClick = (comment) => {
+    setEditingCommentId(comment.id);
+    setEditContent(comment.content);
+    setReplyingTo(null); // 답글 작성 중이었다면 취소
+  };
+
+  // [추가] 댓글 수정 취소
+  const handleCancelEdit = () => {
+    setEditingCommentId(null);
+    setEditContent("");
+  };
+
+  // [추가] 댓글 수정 저장
+  const handleUpdateComment = async (commentId) => {
+    if (!editContent.trim()) return;
+
+    // 낙관적 업데이트
+    const updateContent = (list) => {
+      return list.map((c) => {
+        if (c.id === commentId) {
+          return { ...c, content: editContent, updatedAt: new Date().toISOString() };
+        }
+        if (c.replies && c.replies.length > 0) {
+          return { ...c, replies: updateContent(c.replies) };
+        }
+        return c;
+      });
+    };
+
+    const prevComments = [...comments];
+    setComments((prev) => updateContent(prev));
+    handleCancelEdit();
+
+    try {
+      await commentService.updateComment(commentId, editContent);
+    } catch (err) {
+      console.error(err);
+      setComments(prevComments); // 롤백
+      alert("댓글 수정 실패");
+    }
+  };
+
+  // [추가] 댓글 삭제
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("댓글을 정말로 삭제하시겠습니까?")) return;
+
+    // 낙관적 업데이트
+    const deleteFromList = (list) => {
+      return list
+        .filter((c) => c.id !== commentId)
+        .map((c) => {
+          if (c.replies && c.replies.length > 0) {
+            return { ...c, replies: deleteFromList(c.replies) };
+          }
+          return c;
+        });
+    };
+
+    const prevComments = [...comments];
+    setComments((prev) => deleteFromList(prev));
+
+    // 댓글 수 감소 (화면상)
+    setDebate((prev) => ({
+      ...prev,
+      commentCount: Math.max(0, (prev.commentCount || 0) - 1),
+    }));
+
+    try {
+      await commentService.deleteComment(commentId);
+      alert("댓글이 삭제되었습니다.");
+    } catch (err) {
+      console.error(err);
+      setComments(prevComments); // 롤백
+      setDebate((prev) => ({
+        ...prev,
+        commentCount: (prev.commentCount || 0) + 1,
+      }));
+      alert("댓글 삭제 실패");
+    }
   };
 
   // 투표 참여
@@ -342,6 +429,9 @@ const DebateDetailPage = () => {
 
     return comments.map((comment) => {
       const replies = comment.replies || [];
+      const isMyComment = user && user.nickname === comment.nickname;
+      const isEditing = editingCommentId === comment.id;
+      const isModified = comment.updatedAt && comment.updatedAt !== comment.createdAt;
 
       return (
         <div key={comment.id} className="comment-block">
@@ -353,58 +443,187 @@ const DebateDetailPage = () => {
                 <span className="name">{comment.nickname}</span>
                 <span className="time">
                   {format(new Date(comment.createdAt), "MM.dd HH:mm")}
+                  {isModified && " (수정됨)"}
                 </span>
               </div>
-              <p className="comment-text">{comment.content}</p>
-              <div className="comment-actions">
-                <button
-                  className={`comment-like-btn ${comment.liked ? "active" : ""}`}
-                  onClick={() => handleCommentLike(comment.id)}
-                >
-                  {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
-                </button>
-                <button
-                  className="reply-btn"
-                  onClick={() =>
-                    setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                  }
-                >
-                  답글 달기
-                </button>
-              </div>
+
+              {isEditing ? (
+                <div className="edit-form">
+                  <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                    <textarea
+                      value={editContent}
+                      onChange={(e) => setEditContent(e.target.value)}
+                      maxLength={500}
+                      autoFocus
+                      style={{
+                        width: "100%",
+                        padding: "0.5rem",
+                        borderRadius: "8px",
+                        border: "1px solid var(--border-color)",
+                        resize: "none",
+                        minHeight: "60px",
+                        marginBottom: "0.5rem"
+                      }}
+                    />
+                    <span className="char-counter" style={{ textAlign: "right", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                      {editContent.length} / 500
+                    </span>
+                  </div>
+                  <div className="edit-actions" style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                    <button
+                      onClick={() => handleUpdateComment(comment.id)}
+                      style={{
+                        padding: "0.4rem 0.8rem",
+                        background: "var(--primary-color)",
+                        border: "none",
+                        borderRadius: "4px",
+                        fontWeight: "bold",
+                        cursor: "pointer"
+                      }}
+                    >
+                      저장
+                    </button>
+                    <button
+                      onClick={handleCancelEdit}
+                      style={{
+                        padding: "0.4rem 0.8rem",
+                        background: "var(--bg-tertiary)",
+                        border: "none",
+                        borderRadius: "4px",
+                        cursor: "pointer"
+                      }}
+                    >
+                      취소
+                    </button>
+                  </div>
+                </div>
+              ) : (
+                <>
+                  <p className="comment-text">{comment.content}</p>
+                  <div className="comment-actions">
+                    <button
+                      className={`comment-like-btn ${comment.liked ? "active" : ""}`}
+                      onClick={() => handleCommentLike(comment.id)}
+                    >
+                      {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
+                    </button>
+                    <button
+                      className="reply-btn"
+                      onClick={() =>
+                        setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                      }
+                    >
+                      답글 달기
+                    </button>
+                    {isMyComment && (
+                      <>
+                        <button className="action-btn" onClick={() => handleEditClick(comment)}>수정</button>
+                        <button className="action-btn delete" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                      </>
+                    )}
+                  </div>
+                </>
+              )}
             </div>
           </div>
 
           {/* 자식 댓글 (답글) */}
           {replies.length > 0 && (
             <div className="replies-container">
-              {replies.map((reply) => (
-                <div key={reply.id} className="comment-row reply">
-                  <div className="reply-line"></div>
-                  <div className="comment-avatar small">
-                    {reply.nickname?.charAt(0)}
-                  </div>
-                  <div className="comment-main">
-                    <div className="comment-header">
-                      <span className="name">{reply.nickname}</span>
-                      <span className="time">
-                        {format(new Date(reply.createdAt), "MM.dd HH:mm")}
-                      </span>
+              {replies.map((reply) => {
+                const isMyReply = user && user.nickname === reply.nickname;
+                const isReplyEditing = editingCommentId === reply.id;
+                const isReplyModified = reply.updatedAt && reply.updatedAt !== reply.createdAt;
+
+                return (
+                  <div key={reply.id} className="comment-row reply">
+                    <div className="reply-line"></div>
+                    <div className="comment-avatar small">
+                      {reply.nickname?.charAt(0)}
                     </div>
-                    <p className="comment-text">{reply.content}</p>
-                    <div className="comment-actions">
-                      <button
-                        className={`comment-like-btn ${
-                          reply.liked ? "active" : ""
-                        }`}
-                        onClick={() => handleCommentLike(reply.id)}
-                      >
-                        {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
-                      </button>
+                    <div className="comment-main">
+                      <div className="comment-header">
+                        <span className="name">{reply.nickname}</span>
+                        <span className="time">
+                          {format(new Date(reply.createdAt), "MM.dd HH:mm")}
+                          {isReplyModified && " (수정됨)"}
+                        </span>
+                      </div>
+
+                      {isReplyEditing ? (
+                        <div className="edit-form">
+                          <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
+                            <textarea
+                              value={editContent}
+                              onChange={(e) => setEditContent(e.target.value)}
+                              maxLength={500}
+                              autoFocus
+                              style={{
+                                width: "100%",
+                                padding: "0.5rem",
+                                borderRadius: "8px",
+                                border: "1px solid var(--border-color)",
+                                resize: "none",
+                                minHeight: "60px",
+                                marginBottom: "0.5rem"
+                              }}
+                            />
+                            <span className="char-counter" style={{ textAlign: "right", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
+                              {editContent.length} / 500
+                            </span>
+                          </div>
+                          <div className="edit-actions" style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
+                            <button
+                              onClick={() => handleUpdateComment(reply.id)}
+                              style={{
+                                padding: "0.4rem 0.8rem",
+                                background: "var(--primary-color)",
+                                border: "none",
+                                borderRadius: "4px",
+                                fontWeight: "bold",
+                                cursor: "pointer"
+                              }}
+                            >
+                              저장
+                            </button>
+                            <button
+                              onClick={handleCancelEdit}
+                              style={{
+                                padding: "0.4rem 0.8rem",
+                                background: "var(--bg-tertiary)",
+                                border: "none",
+                                borderRadius: "4px",
+                                cursor: "pointer"
+                              }}
+                            >
+                              취소
+                            </button>
+                          </div>
+                        </div>
+                      ) : (
+                        <>
+                          <p className="comment-text">{reply.content}</p>
+                          <div className="comment-actions">
+                            <button
+                              className={`comment-like-btn ${reply.liked ? "active" : ""
+                                }`}
+                              onClick={() => handleCommentLike(reply.id)}
+                            >
+                              {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
+                            </button>
+                            {isMyReply && (
+                              <>
+                                <button className="action-btn" onClick={() => handleEditClick(reply)}>수정</button>
+                                <button className="action-btn delete" onClick={() => handleDeleteComment(reply.id)}>삭제</button>
+                              </>
+                            )}
+                          </div>
+                        </>
+                      )}
                     </div>
                   </div>
-                </div>
-              ))}
+                );
+              })}
             </div>
           )}
 
@@ -413,13 +632,19 @@ const DebateDetailPage = () => {
             <div className="reply-form-container">
               <div className="reply-line"></div>
               <div className="reply-form">
-                <input
-                  type="text"
-                  placeholder="답글을 입력하세요..."
-                  value={replyContent}
-                  onChange={(e) => setReplyContent(e.target.value)}
-                  autoFocus
-                />
+                <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+                  <input
+                    type="text"
+                    placeholder="답글을 입력하세요..."
+                    value={replyContent}
+                    onChange={(e) => setReplyContent(e.target.value)}
+                    maxLength={500}
+                    autoFocus
+                  />
+                  <span className="char-counter">
+                    {replyContent.length} / 500
+                  </span>
+                </div>
                 <button onClick={() => handleCreateReply(comment.id)}>
                   등록
                 </button>
@@ -468,8 +693,8 @@ const DebateDetailPage = () => {
                 {debate.status === "ACTIVE"
                   ? "진행중"
                   : debate.status === "ENDED"
-                  ? "종료됨"
-                  : "예정"}
+                    ? "종료됨"
+                    : "예정"}
               </span>
             </div>
 
@@ -547,7 +772,7 @@ const DebateDetailPage = () => {
               <h3>투표 현황</h3>
               <p>당신의 의견을 선택해주세요</p>
             </div>
-            
+
             <div className="vote-container">
               {/* 찬성 측 */}
               <div className="vote-card for">
@@ -560,8 +785,8 @@ const DebateDetailPage = () => {
                     <span className="count">{forCount}명</span>
                   </div>
                   <div className="progress-container">
-                    <div 
-                      className="progress-fill" 
+                    <div
+                      className="progress-fill"
                       style={{ "--percent": `${forPercent}%` }}
                     ></div>
                   </div>
@@ -590,8 +815,8 @@ const DebateDetailPage = () => {
                     <span className="count">{againstCount}명</span>
                   </div>
                   <div className="progress-container">
-                    <div 
-                      className="progress-fill" 
+                    <div
+                      className="progress-fill"
                       style={{ "--percent": `${againstPercent}%` }}
                     ></div>
                   </div>
@@ -612,23 +837,23 @@ const DebateDetailPage = () => {
             <h3 className="section-header">
               댓글 <span className="count">{debate.commentCount}</span>
             </h3>
-            
+
             {/* [추가] 정렬 탭 */}
             <div className="sort-tabs">
-              <button 
-                className={sort === "latest" ? "active" : ""} 
+              <button
+                className={sort === "latest" ? "active" : ""}
                 onClick={() => setSort("latest")}
               >
                 최신순
               </button>
-              <button 
-                className={sort === "oldest" ? "active" : ""} 
+              <button
+                className={sort === "oldest" ? "active" : ""}
                 onClick={() => setSort("oldest")}
               >
                 오래된순
               </button>
-              <button 
-                className={sort === "replies" ? "active" : ""} 
+              <button
+                className={sort === "replies" ? "active" : ""}
                 onClick={() => setSort("replies")}
               >
                 답글순
@@ -637,14 +862,22 @@ const DebateDetailPage = () => {
           </div>
 
           <form className="comment-input-area" onSubmit={handleCreateComment}>
-            <textarea
-              placeholder={
-                isAuthenticated ? "의견을 남겨주세요." : "로그인이 필요합니다."
-              }
-              value={commentContent}
-              onChange={(e) => setCommentContent(e.target.value)}
-              disabled={!isAuthenticated}
-            />
+            <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
+              <textarea
+                placeholder={
+                  isAuthenticated
+                    ? "의견을 남겨주세요."
+                    : "로그인이 필요합니다."
+                }
+                value={commentContent}
+                onChange={(e) => setCommentContent(e.target.value)}
+                disabled={!isAuthenticated}
+                maxLength={500}
+              />
+              <span className="char-counter">
+                {commentContent.length} / 500
+              </span>
+            </div>
             <button
               type="submit"
               disabled={!isAuthenticated || !commentContent.trim()}
@@ -660,8 +893,8 @@ const DebateDetailPage = () => {
           {/* [추가] 페이지네이션 */}
           {totalPages > 1 && (
             <div className="pagination">
-              <button 
-                disabled={page === 0} 
+              <button
+                disabled={page === 0}
                 onClick={() => setPage(p => Math.max(0, p - 1))}
               >
                 &lt;
@@ -675,8 +908,8 @@ const DebateDetailPage = () => {
                   {i + 1}
                 </button>
               ))}
-              <button 
-                disabled={page === totalPages - 1} 
+              <button
+                disabled={page === totalPages - 1}
                 onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               >
                 &gt;

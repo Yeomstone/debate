@@ -61,6 +61,20 @@ export const commentService = {
   },
 
   /**
+   * 댓글 수정
+   * 
+   * 댓글을 수정합니다. 작성자만 수정 가능합니다.
+   * 
+   * @param {number} id - 수정할 댓글 ID
+   * @param {string} content - 수정할 내용
+   * @returns {Promise<Object>} ApiResponse 구조의 응답 데이터
+   */
+  async updateComment(id, content) {
+    const response = await api.put(`/comments/${id}`, { content })
+    return response.data
+  },
+
+  /**
    * 댓글 좋아요 토글
    * 
    * 댓글에 좋아요를 누르거나 취소합니다.

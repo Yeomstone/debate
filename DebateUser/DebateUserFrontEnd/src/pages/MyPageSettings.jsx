@@ -1,12 +1,7 @@
 /**
  * MyPageSettings 컴포넌트
- * 
+ *
  * 마이페이지 계정 설정 페이지입니다.
- * 
- * 주요 기능:
- * - 비밀번호 변경 (향후 구현)
- * - 알림 설정 (향후 구현)
- * - 개인정보 보호 설정 (향후 구현)
  */
 
 import { useState, useEffect } from 'react'
@@ -54,7 +49,7 @@ const MyPageSettings = () => {
   }
 
   /**
-   * 비밀번호 변경 핸들러
+   * 비밀번호 변경 입력 핸들러
    */
   const handlePasswordChange = (e) => {
     const { name, value } = e.target
@@ -62,6 +57,7 @@ const MyPageSettings = () => {
       ...prev,
       [name]: value
     }))
+
     // 에러 초기화
     if (errors[name]) {
       setErrors(prev => ({
@@ -77,18 +73,23 @@ const MyPageSettings = () => {
   const validatePassword = () => {
     const newErrors = {}
 
-    if (!passwordData.currentPassword) {
-      newErrors.currentPassword = '현재 비밀번호를 입력하세요.'
-    }
+    // 비밀번호 정규식: 대문자, 소문자, 숫자, 특수문자 각 1개 이상, 8자 이상
+    const passwordPattern =
+      /^(?=.*[A-Z])(?=.*[a-z])(?=.*\d)(?=.*[!@#$%^&*()_+\-={}|:;'"<>,.?/]).{8,}$/
 
     if (!passwordData.newPassword) {
       newErrors.newPassword = '새 비밀번호를 입력하세요.'
-    } else if (passwordData.newPassword.length < 8) {
-      newErrors.newPassword = '비밀번호는 8자 이상이어야 합니다.'
+    } else if (!passwordPattern.test(passwordData.newPassword)) {
+      newErrors.newPassword =
+        '대문자, 소문자, 숫자, 특수문자를 각각 1개 이상 포함해야 합니다.'
     }
 
     if (passwordData.newPassword !== passwordData.confirmPassword) {
       newErrors.confirmPassword = '비밀번호가 일치하지 않습니다.'
+    }
+
+    if (!passwordData.currentPassword) {
+      newErrors.currentPassword = '현재 비밀번호를 입력하세요.'
     }
 
     setErrors(newErrors)
@@ -132,8 +133,12 @@ const MyPageSettings = () => {
                   <span>👤</span>
                 )}
               </div>
-              <h2 className="profile-name">{profile?.nickname || '이름 없음'}</h2>
-              <p className="profile-bio">{profile?.bio || '자기소개를 입력하세요'}</p>
+              <h2 className="profile-name">
+                {profile?.nickname || '이름 없음'}
+              </h2>
+              <p className="profile-bio">
+                {profile?.bio || '자기소개를 입력하세요'}
+              </p>
               <div className="profile-actions">
                 <button
                   onClick={() => navigate('/my')}
@@ -150,15 +155,22 @@ const MyPageSettings = () => {
           <div className="my-page-content">
             <div className="page-header">
               <h1>계정 설정</h1>
-              <p className="page-description">계정 정보 및 보안 설정을 관리할 수 있습니다.</p>
+              <p className="page-description">
+                계정 정보 및 보안 설정을 관리할 수 있습니다.
+              </p>
             </div>
 
             <div className="settings-form">
-              {/* 이메일 주소 */}
-              <div className="form-section">
-                <h3>이메일 주소</h3>
+              {/* 이메일 설정 */}
+              <div className="form-section modern-section section-with-title">
+                <div className="section-title">이메일 설정</div>
                 <div className="form-group">
-                  <label htmlFor="current-email" className="form-label">이메일</label>
+                  <label
+                    htmlFor="current-email"
+                    className="form-label"
+                  >
+                    이메일
+                  </label>
                   <input
                     type="email"
                     id="current-email"
@@ -167,78 +179,134 @@ const MyPageSettings = () => {
                     readOnly
                     disabled
                   />
+                  <p className="form-help">
+                    이메일 변경 기능은 준비 중입니다.
+                  </p>
                 </div>
               </div>
 
               {/* 비밀번호 변경 */}
-              <div className="form-section">
-                <h3>비밀번호 변경</h3>
+              <div className="form-section password-change-section section-with-title">
+                <div className="section-title">비밀번호 변경</div>
                 <form onSubmit={handlePasswordSubmit}>
                   <div className="form-group">
-                    <label htmlFor="current-password" className="form-label">현재 비밀번호</label>
-                    <input
-                      type="password"
-                      id="current-password"
-                      name="currentPassword"
-                      className={`form-input ${errors.currentPassword ? 'error' : ''}`}
-                      value={passwordData.currentPassword}
-                      onChange={handlePasswordChange}
-                      placeholder="현재 비밀번호를 입력하세요"
-                    />
-                    {errors.currentPassword && <p className="form-error">{errors.currentPassword}</p>}
-                  </div>
-                  <div className="form-group">
-                    <label htmlFor="new-password" className="form-label">새 비밀번호</label>
+                    <label
+                      htmlFor="new-password"
+                      className="form-label"
+                    >
+                      새 비밀번호
+                      <span className="password-hint">
+                        영문, 숫자, 특수문자 조합 8자 이상
+                      </span>
+                    </label>
                     <input
                       type="password"
                       id="new-password"
                       name="newPassword"
-                      className={`form-input ${errors.newPassword ? 'error' : ''}`}
+                      className={`form-input ${errors.newPassword ? 'error' : ''
+                        }`}
                       value={passwordData.newPassword}
                       onChange={handlePasswordChange}
-                      placeholder="새 비밀번호를 입력하세요"
+                      placeholder="새 비밀번호"
                     />
-                    {errors.newPassword && <p className="form-error">{errors.newPassword}</p>}
-                    <p className="form-help">8자 이상, 영문, 숫자, 특수문자 포함</p>
+                    {errors.newPassword && (
+                      <p className="form-error">
+                        {errors.newPassword}
+                      </p>
+                    )}
                   </div>
+
                   <div className="form-group">
-                    <label htmlFor="confirm-password" className="form-label">새 비밀번호 확인</label>
+                    <label
+                      htmlFor="confirm-password"
+                      className="form-label"
+                    >
+                      새 비밀번호 확인
+                    </label>
                     <input
                       type="password"
                       id="confirm-password"
                       name="confirmPassword"
-                      className={`form-input ${errors.confirmPassword ? 'error' : ''}`}
+                      className={`form-input ${errors.confirmPassword ? 'error' : ''
+                        }`}
                       value={passwordData.confirmPassword}
                       onChange={handlePasswordChange}
-                      placeholder="새 비밀번호를 다시 입력하세요"
+                      placeholder="새 비밀번호 확인"
                     />
-                    {errors.confirmPassword && <p className="form-error">{errors.confirmPassword}</p>}
+                    {errors.confirmPassword && (
+                      <p className="form-error">
+                        {errors.confirmPassword}
+                      </p>
+                    )}
                   </div>
-                  <button type="submit" className="btn btn-outline">비밀번호 변경</button>
+
+                  <div className="form-group">
+                    <label
+                      htmlFor="current-password"
+                      className="form-label"
+                    >
+                      현재 비밀번호
+                    </label>
+                    <input
+                      type="password"
+                      id="current-password"
+                      name="currentPassword"
+                      className={`form-input ${errors.currentPassword ? 'error' : ''
+                        }`}
+                      value={passwordData.currentPassword}
+                      onChange={handlePasswordChange}
+                      placeholder="현재 비밀번호"
+                    />
+                    {errors.currentPassword && (
+                      <p className="form-error">
+                        {errors.currentPassword}
+                      </p>
+                    )}
+                  </div>
+
+                  <button
+                    type="submit"
+                    className="btn btn-password-change"
+                  >
+                    비밀번호 변경
+                  </button>
                 </form>
               </div>
 
               {/* 알림 설정 */}
-              <div className="form-section">
-                <h3>알림 설정</h3>
-                <p className="form-help">알림 설정 기능은 준비 중입니다.</p>
+              <div className="form-section modern-section section-with-title">
+                <div className="section-title">알림 설정</div>
+                <p className="form-help">
+                  알림 설정 기능은 준비 중입니다.
+                </p>
               </div>
 
               {/* 개인정보 보호 */}
-              <div className="form-section">
-                <h3>개인정보 보호</h3>
-                <p className="form-help">개인정보 보호 설정 기능은 준비 중입니다.</p>
+              <div className="form-section modern-section section-with-title">
+                <div className="section-title">개인정보 보호</div>
+                <p className="form-help">
+                  개인정보 보호 설정 기능은 준비 중입니다.
+                </p>
               </div>
 
               {/* 계정 삭제 */}
-              <div className="form-section danger-section">
-                <h3 style={{ color: 'var(--danger-color, #dc3545)' }}>계정 삭제</h3>
-                <p className="form-help">계정을 삭제하면 모든 데이터가 영구적으로 삭제되며 복구할 수 없습니다.</p>
+              <div className="form-section danger-section section-with-title">
+                <div className="section-title section-title-danger">
+                  계정 삭제
+                </div>
+                <p className="form-help">
+                  계정을 삭제하면 모든 데이터가 영구적으로 삭제되며
+                  복구할 수 없습니다.
+                </p>
                 <button
                   type="button"
                   className="btn btn-danger"
                   onClick={() => {
-                    if (window.confirm('정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.')) {
+                    if (
+                      window.confirm(
+                        '정말 계정을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+                      )
+                    ) {
                       alert('계정 삭제 기능은 준비 중입니다.')
                     }
                   }}
@@ -247,7 +315,7 @@ const MyPageSettings = () => {
                 </button>
               </div>
 
-              {/* 저장 버튼 */}
+              {/* 하단 버튼 */}
               <div className="form-actions">
                 <button
                   type="button"
@@ -266,4 +334,3 @@ const MyPageSettings = () => {
 }
 
 export default MyPageSettings
-

@@ -301,8 +301,8 @@ const HomePage = () => {
                           {debate.status === "active"
                             ? "진행중"
                             : debate.status === "ended"
-                            ? "종료"
-                            : "예정"}
+                              ? "종료"
+                              : "예정"}
                         </span>
                       </div>
 
@@ -420,8 +420,8 @@ const HomePage = () => {
                           {debate.status === "active"
                             ? "진행중"
                             : debate.status === "ended"
-                            ? "종료"
-                            : "예정"}
+                              ? "종료"
+                              : "예정"}
                         </span>
                       </div>
 

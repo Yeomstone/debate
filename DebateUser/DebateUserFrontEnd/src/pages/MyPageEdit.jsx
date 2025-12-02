@@ -225,9 +225,7 @@ const MyPageEdit = () => {
 
               {/* 닉네임 */}
               <div className="form-section">
-                <label htmlFor="nickname" className="form-label">
-                  닉네임
-                </label>
+                <h3>닉네임</h3>
                 <input
                   type="text"
                   id="nickname"
@@ -240,14 +238,12 @@ const MyPageEdit = () => {
                 {errors.nickname && (
                   <p className="form-error">{errors.nickname}</p>
                 )}
-                <p className="form-help">2-20자 사이의 닉네임을 입력하세요.</p>
+                <p className="form-help">2-8자 사이의 닉네임을 입력하세요.</p>
               </div>
 
               {/* 소개 */}
               <div className="form-section">
-                <label htmlFor="bio" className="form-label">
-                  소개
-                </label>
+                <h3>소개</h3>
                 <textarea
                   id="bio"
                   name="bio"
