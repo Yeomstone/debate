@@ -15,6 +15,7 @@
  * - 헤더 중앙의 검색바 제거됨 (홈페이지 본문으로 이동)
  * - 사이드바 메뉴로 네비게이션 개선
  * - 현재 활성화된 페이지에 색상 표시 추가
+ * - [수정] 사이드바 로그아웃 버튼 스타일 일관성 개선
  */
 import axios from "axios";
 import { useState, useEffect } from "react";
@@ -47,7 +48,7 @@ const Header = () => {
 
   /**
    * 현재 경로가 특정 경로와 일치하는지 확인하는 함수
-   * 
+   *
    * @param {string} path - 확인할 경로
    * @returns {boolean} 일치 여부
    */
@@ -223,7 +224,9 @@ const Header = () => {
               {/* 토론 목록 */}
               <Link
                 to="/debate"
-                className={`header-nav-item ${isActive('/debate') ? 'active' : ''}`}
+                className={`header-nav-item ${
+                  isActive("/debate") ? "active" : ""
+                }`}
               >
                 토론목록
               </Link>
@@ -231,7 +234,9 @@ const Header = () => {
               {/* 토론 작성 (항상 표시, 클릭 시 로그인 필요 시 로그인 페이지로 이동) */}
               <Link
                 to="/debate/create"
-                className={`header-nav-item ${isActive('/debate/create') ? 'active' : ''}`}
+                className={`header-nav-item ${
+                  isActive("/debate/create") ? "active" : ""
+                }`}
               >
                 토론작성
               </Link>
@@ -239,7 +244,9 @@ const Header = () => {
               {/* 카테고리 */}
               <Link
                 to="/categories"
-                className={`header-nav-item ${isActive('/categories') ? 'active' : ''}`}
+                className={`header-nav-item ${
+                  isActive("/categories") ? "active" : ""
+                }`}
               >
                 카테고리
               </Link>
@@ -247,7 +254,9 @@ const Header = () => {
               {/* 랭킹 */}
               <Link
                 to="/ranking"
-                className={`header-nav-item ${isActive('/ranking') ? 'active' : ''}`}
+                className={`header-nav-item ${
+                  isActive("/ranking") ? "active" : ""
+                }`}
               >
                 랭킹
               </Link>
@@ -512,7 +521,6 @@ const Header = () => {
                               <line x1="21" y1="12" x2="9" y2="12" />
                             </svg>
                             로그아웃
-
                           </button>
                         </div>
                       </div>
@@ -577,7 +585,7 @@ const Header = () => {
             {/* 홈 메뉴 */}
             <Link
               to="/"
-              className={`nav-item ${isActive('/') ? 'active' : ''}`}
+              className={`nav-item ${isActive("/") ? "active" : ""}`}
               onClick={closeSidebar}
             >
               <svg
@@ -598,7 +606,7 @@ const Header = () => {
             {/* 토론 목록 메뉴 */}
             <Link
               to="/debate"
-              className={`nav-item ${isActive('/debate') ? 'active' : ''}`}
+              className={`nav-item ${isActive("/debate") ? "active" : ""}`}
               onClick={closeSidebar}
             >
               <svg
@@ -619,7 +627,9 @@ const Header = () => {
             {/* 토론 작성 메뉴 (강조) */}
             <Link
               to="/debate/create"
-              className={`nav-item nav-item-primary ${isActive('/debate/create') ? 'active' : ''}`}
+              className={`nav-item nav-item-primary ${
+                isActive("/debate/create") ? "active" : ""
+              }`}
               onClick={closeSidebar}
             >
               <svg
@@ -640,7 +650,7 @@ const Header = () => {
             {/* 카테고리 메뉴 */}
             <Link
               to="/categories"
-              className={`nav-item ${isActive('/categories') ? 'active' : ''}`}
+              className={`nav-item ${isActive("/categories") ? "active" : ""}`}
               onClick={closeSidebar}
             >
               <svg
@@ -663,7 +673,7 @@ const Header = () => {
             {/* 랭킹 메뉴 */}
             <Link
               to="/ranking"
-              className={`nav-item ${isActive('/ranking') ? 'active' : ''}`}
+              className={`nav-item ${isActive("/ranking") ? "active" : ""}`}
               onClick={closeSidebar}
             >
               <svg
@@ -694,7 +704,7 @@ const Header = () => {
               {/* 프로필 메뉴 */}
               <Link
                 to="/mypage"
-                className={`nav-item ${isActive('/mypage') ? 'active' : ''}`}
+                className={`nav-item ${isActive("/mypage") ? "active" : ""}`}
                 onClick={closeSidebar}
               >
                 <svg
@@ -739,7 +749,7 @@ const Header = () => {
               {/* 설정 메뉴 */}
               <Link
                 to="/settings"
-                className={`nav-item ${isActive('/settings') ? 'active' : ''}`}
+                className={`nav-item ${isActive("/settings") ? "active" : ""}`}
                 onClick={closeSidebar}
               >
                 <svg
@@ -762,15 +772,16 @@ const Header = () => {
 
               {/* 로그아웃 버튼 */}
               <button
-                className="dropdown-item dropdown-item-danger"
+                className="nav-item nav-item-danger"
                 onClick={() => {
                   handleLogout();
                   closeProfileMenu();
                 }}
               >
                 <svg
-                  width="16"
-                  height="16"
+                  className="nav-icon" // <--- ADDED
+                  width="20" // <--- CHANGED: 16 -> 20
+                  height="20" // <--- CHANGED: 16 -> 20
                   viewBox="0 0 24 24"
                   fill="none"
                   stroke="currentColor"
@@ -780,7 +791,7 @@ const Header = () => {
                   <polyline points="16 17 21 12 16 7" />
                   <line x1="21" y1="12" x2="9" y2="12" />
                 </svg>
-                로그아웃
+                <span>로그아웃</span> {/* <--- ADDED <span> tag */}
               </button>
             </div>
           )}
@@ -792,7 +803,7 @@ const Header = () => {
 
               {/* 로그인 메뉴 */}
               <Link
-                to="/login"
+                to="/auth/login"
                 className="nav-item"
                 onClick={closeSidebar}
               >
@@ -814,7 +825,7 @@ const Header = () => {
 
               {/* 회원가입 메뉴 */}
               <Link
-                to="/register"
+                to="/auth/register"
                 className="nav-item"
                 onClick={closeSidebar}
               >
