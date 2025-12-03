@@ -627,7 +627,7 @@ sudo systemctl status mysql
 sudo journalctl -u debate-backend -n 50
 
 # JAR 파일 실행 테스트
-cd /opt/debate/backend
+cd opt/debate/backend
 java -jar -Dspring.profiles.active=prod debate-user-1.0.0.jar
 
 # 포트 사용 확인
@@ -642,7 +642,7 @@ sudo lsof -i :9001
 sudo tail -f /var/log/nginx/error.log
 
 # 파일 권한 확인
-ls -la /opt/debate/frontend
+ls -la opt/debate/frontend
 
 # Nginx 설정 테스트
 sudo nginx -t
@@ -735,8 +735,8 @@ sudo certbot renew --dry-run
 
 ```bash
 # .env 파일 권한 제한
-sudo chmod 600 /opt/debate/backend/.env
-sudo chown ubuntu:ubuntu /opt/debate/backend/.env
+sudo chmod 600 opt/debate/backend/.env
+sudo chown ubuntu:ubuntu opt/debate/backend/.env
 ```
 
 ---
