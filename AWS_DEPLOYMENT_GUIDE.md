@@ -790,4 +790,4 @@ sudo systemctl reload nginx
 
 **작성일**: 2025-01-XX  
 **작성자**: AI Assistant  
-**버전**: 1.0.0
+**버전**: 1.0.2
