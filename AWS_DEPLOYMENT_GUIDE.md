@@ -70,11 +70,11 @@ sudo apt install gradle -y
 
 ```bash
 # 프로젝트 디렉토리 생성
-sudo mkdir -p /opt/debate
-sudo chown ubuntu:ubuntu /opt/debate
+sudo mkdir -p opt/debate
+sudo chown ubuntu:ubuntu opt/debate
 
 # 애플리케이션 디렉토리 생성
-mkdir -p /opt/debate/{backend,frontend,logs,files}
+mkdir -p opt/debate/{backend,frontend,logs,files}
 ```
 
 ---
@@ -117,19 +117,19 @@ cd DebateUser\DebateUserBackEnd
 # JAR 파일 업로드
 scp -i private_info\AWS\debate2025.pem `
     DebateUser\DebateUserBackEnd\build\libs\debate-user-1.0.0.jar `
-    ubuntu@13.209.254.24:/opt/debate/backend/
+    ubuntu@13.209.254.24:opt/debate/backend/
 
 # application-prod.yml 업로드 (필요시)
 scp -i private_info\AWS\debate2025.pem `
     DebateUser\DebateUserBackEnd\src\main\resources\application-prod.yml `
-    ubuntu@13.209.254.24:/opt/debate/backend/
+    ubuntu@13.209.254.24:opt/debate/backend/
 ```
 
 #### 방법 2: Git을 통한 배포
 
 ```bash
 # 서버에서
-cd /opt/debate/backend
+cd opt/debate/backend
 git clone [your-repository-url] .
 # 또는 git pull로 최신 코드 가져오기
 
@@ -148,7 +148,7 @@ ssh -i private_info/AWS/debate2025.pem ubuntu@13.209.254.24
 #### 3.1 환경 변수 설정 파일 생성
 
 ```bash
-cd /opt/debate/backend
+cd opt/debate/backend
 
 # 환경 변수 파일 생성
 sudo nano .env
@@ -170,13 +170,13 @@ JWT_EXPIRATION=86400000
 SERVER_PORT=9001
 
 # 파일 업로드 경로
-FILE_UPLOAD_DIR=/opt/debate/files/editor/images
+FILE_UPLOAD_DIR=opt/debate/files/editor/images
 ```
 
 #### 3.2 application-prod.yml 수정
 
 ```bash
-sudo nano /opt/debate/backend/application-prod.yml
+sudo nano opt/debate/backend/application-prod.yml
 ```
 
 수정된 내용:
@@ -241,9 +241,9 @@ After=network.target mysql.service
 [Service]
 Type=simple
 User=ubuntu
-WorkingDirectory=/opt/debate/backend
-EnvironmentFile=/opt/debate/backend/.env
-ExecStart=/usr/bin/java -jar -Dspring.profiles.active=prod -Dspring.config.additional-location=file:/opt/debate/backend/application-prod.yml /opt/debate/backend/debate-user-1.0.0.jar
+WorkingDirectory=opt/debate/backend
+EnvironmentFile=opt/debate/backend/.env
+ExecStart=/usr/bin/java -jar -Dspring.profiles.active=prod -Dspring.config.additional-location=file:opt/debate/backend/application-prod.yml opt/debate/backend/debate-user-1.0.0.jar
 Restart=always
 RestartSec=10
 StandardOutput=journal
@@ -357,14 +357,14 @@ npm run build
 # dist 폴더 전체 업로드
 scp -i private_info\AWS\debate2025.pem `
     -r DebateUser\DebateUserFrontEnd\dist\* `
-    ubuntu@13.209.254.24:/opt/debate/frontend/
+    ubuntu@13.209.254.24:opt/debate/frontend/
 ```
 
 #### 방법 2: Git을 통한 배포
 
 ```bash
 # 서버에서
-cd /opt/debate/frontend
+cd opt/debate/frontend
 git clone [your-repository-url] .
 # 또는 git pull로 최신 코드 가져오기
 
@@ -397,7 +397,7 @@ server {
     server_name 13.209.254.24;  # 또는 도메인 이름
 
     # 프론트엔드 정적 파일 서빙
-    root /opt/debate/frontend;
+    root opt/debate/frontend;
     index index.html;
 
     # 프론트엔드 라우팅 (React Router)
@@ -540,10 +540,10 @@ mysql -u debate_web -p debate_db < /tmp/insert_categories.sql
 
 ```bash
 # .env 파일 확인
-cat /opt/debate/backend/.env
+cat opt/debate/backend/.env
 
 # 환경 변수 테스트
-cd /opt/debate/backend
+cd opt/debate/backend
 source .env
 echo $DB_URL
 ```
@@ -675,18 +675,18 @@ sudo systemctl status mysql
 mysql -u debate_web -p debate_db
 
 # 데이터베이스 연결 정보 확인
-cat /opt/debate/backend/.env | grep DB_
+cat opt/debate/backend/.env | grep DB_
 ```
 
 ### 5. 파일 업로드 오류
 
 ```bash
 # 파일 업로드 디렉토리 확인
-ls -la /opt/debate/files/editor/images
+ls -la opt/debate/files/editor/images
 
 # 디렉토리 권한 설정
-sudo chown -R ubuntu:ubuntu /opt/debate/files
-sudo chmod -R 755 /opt/debate/files
+sudo chown -R ubuntu:ubuntu opt/debate/files
+sudo chmod -R 755 opt/debate/files
 ```
 
 ---
@@ -753,7 +753,7 @@ cd DebateUser\DebateUserBackEnd
 # 2. 서버에 업로드
 scp -i private_info\AWS\debate2025.pem `
     build\libs\debate-user-1.0.0.jar `
-    ubuntu@13.209.254.24:/opt/debate/backend/
+    ubuntu@13.209.254.24:opt/debate/backend/
 
 # 3. 서버에서 서비스 재시작
 ssh -i private_info\AWS\debate2025.pem ubuntu@13.209.254.24
@@ -770,7 +770,7 @@ npm run build
 # 2. 서버에 업로드
 scp -i private_info\AWS\debate2025.pem `
     -r dist\* `
-    ubuntu@13.209.254.24:/opt/debate/frontend/
+    ubuntu@13.209.254.24:opt/debate/frontend/
 
 # 3. Nginx 캐시 클리어 (필요시)
 ssh -i private_info\AWS\debate2025.pem ubuntu@13.209.254.24

@@ -1,9 +1,12 @@
 # DebateUserBackEnd 배포 스크립트 (PowerShell)
 # 사용법: .\deploy-backend.ps1
 
-$SSH_KEY = "private_info\AWS\debate2025.pem"
+# 한글 출력 인코딩 설정
+[Console]::OutputEncoding = [System.Text.Encoding]::UTF8
+
+$SSH_KEY = Join-Path $PSScriptRoot "private_info\AWS\debate2025.pem"
 $SERVER = "ubuntu@13.209.254.24"
-$BACKEND_DIR = "DebateUser\DebateUserBackEnd"
+$BACKEND_DIR = Join-Path $PSScriptRoot "DebateUser\DebateUserBackEnd"
 $JAR_FILE = "build\libs\debate-user-1.0.0.jar"
 $REMOTE_PATH = "/opt/debate/backend"
 
@@ -11,8 +14,20 @@ Write-Host "=== DebateUserBackEnd 배포 시작 ===" -ForegroundColor Green
 
 # 1. 빌드
 Write-Host "`n[1/4] 프로젝트 빌드 중..." -ForegroundColor Yellow
+# 1. 빌드
+Write-Host "`n[1/4] 프로젝트 빌드 중..." -ForegroundColor Yellow
 Set-Location $BACKEND_DIR
-.\gradlew.bat clean build -x test
+
+# Gradle Wrapper 대신 다운로드한 로컬 Gradle 사용
+$GRADLE_BIN = Join-Path $PSScriptRoot "temp_gradle\gradle-8.5\bin\gradle.bat"
+
+if (Test-Path $GRADLE_BIN) {
+    & $GRADLE_BIN clean build -x test
+} else {
+    Write-Host "Gradle을 찾을 수 없습니다. Wrapper로 시도합니다." -ForegroundColor Yellow
+    .\gradlew.bat clean build -x test
+}
+
 if ($LASTEXITCODE -ne 0) {
     Write-Host "빌드 실패!" -ForegroundColor Red
     exit 1
@@ -51,5 +66,5 @@ Start-Sleep -Seconds 3
 ssh -i $SSH_KEY $SERVER "sudo systemctl status debate-backend --no-pager"
 
 Write-Host "`n=== 배포 완료 ===" -ForegroundColor Green
-Set-Location ..\..
+Set-Location $PSScriptRoot
 
