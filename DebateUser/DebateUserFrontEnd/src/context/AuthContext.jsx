@@ -32,7 +32,8 @@ const AuthContext = createContext(null);
 // API 기본 URL 설정
 // ========================================
 
-const API_BASE_URL = "http://localhost:9001/api";
+// 환경 변수 VITE_API_BASE_URL이 있으면 사용, 없으면 /api 사용 (Vite 프록시 또는 상대 경로)
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '/api';
 
 // Axios 기본 설정
 axios.defaults.baseURL = API_BASE_URL;
