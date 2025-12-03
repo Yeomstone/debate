@@ -15,7 +15,7 @@
 /* ============================================
    MyPage.css 상속
    ============================================ */
-@import './MyPage.css';
+@import "./MyPage.css";
 
 /* ============================================
    폼 컨테이너
@@ -30,9 +30,9 @@
    ============================================ */
 .form-section {
   position: relative;
-  margin-bottom: 2rem;  /* 2.5rem → 2rem */
-  padding: 1.5rem;      /* 2rem → 1.5rem */
-  padding-bottom: 1.5rem;  /* 2.5rem → 1.5rem */
+  margin-bottom: 2rem; /* 2.5rem → 2rem */
+  padding: 1.5rem; /* 2rem → 1.5rem */
+  padding-bottom: 1.5rem; /* 2.5rem → 1.5rem */
   border-bottom: 2px solid var(--border-color);
   border-radius: 1.25rem;
   background: var(--bg-secondary);
@@ -40,7 +40,7 @@
 }
 
 .form-section::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 0;
   left: 0;
@@ -53,15 +53,15 @@
 }
 
 .section-title-centered {
-  display: flex !important;  /* block → flex로 다시 */
-  justify-content: center !important;  /* 가운데 정렬 */
+  display: flex !important; /* block → flex로 다시 */
+  justify-content: center !important; /* 가운데 정렬 */
   align-items: center !important;
   width: 100% !important;
   text-align: center;
 }
 
 .section-title-centered::before {
-  display: none !important;  /* 이모지 제거 */
+  display: none !important; /* 이모지 제거 */
 }
 
 .form-section:hover::before {
@@ -73,20 +73,19 @@
 }
 
 .form-section h3 {
-  font-size: 1.25rem;  /* 1.5rem → 1.25rem */
+  font-size: 1.25rem; /* 1.5rem → 1.25rem */
   font-weight: 700;
-  margin-bottom: 1rem;  /* 1.5rem → 1rem */
+  margin-bottom: 1rem; /* 1.5rem → 1rem */
   color: var(--text-primary);
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  justify-content: center;  /* 추가: 왼쪽 정렬 방지 */
+  justify-content: center; /* 추가: 왼쪽 정렬 방지 */
   width: 100%;
 }
 
-
 .form-section h3::before {
-  content: '✏️';
+  content: "✏️";
   font-size: 1.75rem;
 }
 
@@ -96,20 +95,20 @@
 .profile-photo-section {
   display: flex;
   flex-direction: column;
-  gap: 1rem;  /* 1.5rem → 1rem */
-  align-items: center;  /* 가운데 정렬 */
+  gap: 1rem; /* 1.5rem → 1rem */
+  align-items: center; /* 가운데 정렬 */
 }
 
 .profile-photo-preview {
   position: relative;
   display: flex;
   justify-content: center;
-  padding: 1.5rem;  /* 2rem → 1.5rem */
+  padding: 1.5rem; /* 2rem → 1.5rem */
   background: var(--bg-primary);
   border-radius: 1.25rem;
   border: 3px dashed var(--border-color);
   transition: all 0.3s ease;
-  align-items: center;  /* 추가 */
+  align-items: center; /* 추가 */
 }
 
 .profile-photo-preview.dragging {
@@ -126,15 +125,18 @@
   width: 140px;
   height: 140px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-yellow-dark) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--brand-yellow) 0%,
+    var(--brand-yellow-dark) 100%
+  );
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 4rem;
   overflow: hidden;
   border: 4px solid var(--bg-primary);
-  box-shadow: 0 8px 32px rgba(253, 184, 19, 0.3),
-              0 0 0 8px var(--bg-secondary);
+  box-shadow: 0 8px 32px rgba(253, 184, 19, 0.3), 0 0 0 8px var(--bg-secondary);
   transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
   position: relative;
 }
@@ -142,7 +144,7 @@
 .profile-avatar-large:hover {
   transform: scale(1.05);
   box-shadow: 0 12px 40px rgba(253, 184, 19, 0.4),
-              0 0 0 10px var(--brand-yellow);
+    0 0 0 10px var(--brand-yellow);
 }
 
 .profile-avatar-large img {
@@ -187,7 +189,11 @@
 
 .upload-progress-bar {
   height: 100%;
-  background: linear-gradient(90deg, var(--brand-yellow) 0%, var(--brand-yellow-light) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--brand-yellow) 0%,
+    var(--brand-yellow-light) 100%
+  );
   transition: width 0.3s ease;
   animation: shimmer 1.5s infinite;
 }
@@ -195,11 +201,11 @@
 /* 프로필 사진 액션 버튼 */
 .profile-photo-actions {
   display: flex;
-  flex-direction: row;  /* row → column 으로 변경 */
+  flex-direction: row; /* row → column 으로 변경 */
   gap: 0.75rem;
   flex-wrap: wrap;
-  align-items: center;  /* 가운데 정렬 */
-  width: 100%;  /* 전체 너비 */
+  align-items: center; /* 가운데 정렬 */
+  width: 100%; /* 전체 너비 */
   justify-content: center;
 }
 
@@ -214,9 +220,9 @@
 .form-label {
   display: block;
   font-weight: 600;
-  margin-bottom: 0.5rem;  /* 0.75rem → 0.5rem */
+  margin-bottom: 0.5rem; /* 0.75rem → 0.5rem */
   color: var(--text-primary);
-  font-size: 0.95rem;     /* 1rem → 0.95rem */
+  font-size: 0.95rem; /* 1rem → 0.95rem */
   transition: all 0.3s ease;
   white-space: nowrap;
 }
@@ -276,7 +282,8 @@
   outline: none;
   border-color: var(--brand-yellow);
   background: var(--bg-primary);
-  box-shadow: 0 0 0 4px rgba(253, 184, 19, 0.1), 0 4px 16px rgba(253, 184, 19, 0.2);
+  box-shadow: 0 0 0 4px rgba(253, 184, 19, 0.1),
+    0 4px 16px rgba(253, 184, 19, 0.2);
   transform: translateY(-2px);
 }
 
@@ -294,7 +301,8 @@
 .form-input.valid:focus,
 .form-textarea.valid:focus {
   border-color: var(--brand-yellow);
-  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1), 0 4px 16px rgba(253, 184, 19, 0.2);
+  box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.1),
+    0 4px 16px rgba(253, 184, 19, 0.2);
 }
 
 /* 오류 상태 */
@@ -306,11 +314,13 @@
 
 .form-input.error:focus,
 .form-textarea.error:focus {
-  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1), 0 4px 16px rgba(220, 53, 69, 0.2);
+  box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.1),
+    0 4px 16px rgba(220, 53, 69, 0.2);
 }
 
 @keyframes shake {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateX(0);
   }
   25% {
@@ -333,28 +343,28 @@
    ============================================ */
 .textarea-footer {
   display: flex;
-  justify-content: flex-start;  /* space-between → flex-start */
+  justify-content: flex-start; /* space-between → flex-start */
   align-items: center;
   margin-top: 0.75rem;
-  justify-content: flex-start;  /* 왼쪽 정렬 */
-  justify-content: flex-end;    /* 오른쪽 정렬 */
+  justify-content: flex-start; /* 왼쪽 정렬 */
+  justify-content: flex-end; /* 오른쪽 정렬 */
   justify-content: space-between; /* 양쪽 끝 정렬 */
-  padding-left: 76px;    /* 왼쪽 들여쓰기 */
-  gap: 1rem;             /* 요소들 사이 간격 */
+  padding-left: 76px; /* 왼쪽 들여쓰기 */
+  gap: 1rem; /* 요소들 사이 간격 */
 }
 
 .character-count {
-  font-size: 0.875rem;  /* 글자 크기 */
-  color: var(--text-secondary);  /* 글자 색상 */
-  font-weight: 600;  /* 글자 굵기 */
-  margin-left: -50px;  /* 오른쪽 정렬 */
-  padding: 0.5rem 1rem;  /* 내부 여백 */
-  background: var(--bg-secondary);  /* 배경색 */
+  font-size: 0.875rem; /* 글자 크기 */
+  color: var(--text-secondary); /* 글자 색상 */
+  font-weight: 600; /* 글자 굵기 */
+  margin-left: -50px; /* 오른쪽 정렬 */
+  padding: 0.5rem 1rem; /* 내부 여백 */
+  background: var(--bg-secondary); /* 배경색 */
   border-radius: 0.75rem;
   border: 2px solid var(--border-color);
   transition: all 0.3s ease;
-  display: inline-block;  /* 추가 */
-  width: 120px;          /* 너비 고정 */
+  display: inline-block; /* 추가 */
+  width: 120px; /* 너비 고정 */
 }
 
 .character-count.warning {
@@ -384,18 +394,18 @@
    도움말 및 메시지
    ============================================ */
 .form-help {
-  font-size: 0.85rem;  /* 0.875rem → 0.85rem */
+  font-size: 0.85rem; /* 0.875rem → 0.85rem */
   color: var(--text-secondary);
-  margin-top: 0.5rem;  /* 0.75rem → 0.5rem */
+  margin-top: 0.5rem; /* 0.75rem → 0.5rem */
   display: flex;
   align-items: center;
   gap: 0.5rem;
 }
 
 .form-error {
-  font-size: 0.85rem;  /* 0.875rem → 0.85rem */
+  font-size: 0.85rem; /* 0.875rem → 0.85rem */
   color: var(--danger-color);
-  margin-top: 0.5rem;  /* 0.75rem → 0.5rem */
+  margin-top: 0.5rem; /* 0.75rem → 0.5rem */
   display: flex;
   align-items: center;
   gap: 0.5rem;
@@ -403,10 +413,10 @@
 }
 
 .form-success {
-  font-size: 0.85rem;  /* 0.875rem → 0.85rem */
+  font-size: 0.85rem; /* 0.875rem → 0.85rem */
   color: #10b981;
-  margin-top: 0.5rem;  /* 0.75rem → 0.5rem */
-  display: inline-block;  /* flex → inline-block 로 변경 */
+  margin-top: 0.5rem; /* 0.75rem → 0.5rem */
+  display: inline-block; /* flex → inline-block 로 변경 */
   align-items: center;
   gap: 0.5rem;
   animation: slideIn 0.3s ease;
@@ -414,11 +424,11 @@
 }
 
 .profile-photo-section .form-help {
-  text-align: center;  /* 텍스트 가운데 정렬 */
-  width: 100%;  /* 전체 너비 */
+  text-align: center; /* 텍스트 가운데 정렬 */
+  width: 100%; /* 전체 너비 */
   margin-top: 0.5rem;
- /* 라벨이 가운데로 오게하기 */
- justify-content: center;
+  /* 라벨이 가운데로 오게하기 */
+  justify-content: center;
 }
 
 /* ============================================
@@ -502,7 +512,7 @@
   position: relative;
   overflow: hidden;
   z-index: 1;
-  background: #FDB813;
+  background: #fdb813;
   color: #1a1a1a;
 }
 
@@ -512,7 +522,7 @@
 }
 
 .profile-edit-form .btn::before {
-  content: '';
+  content: "";
   position: absolute;
   top: 50%;
   left: 50%;
@@ -531,7 +541,7 @@
 }
 
 .profile-edit-form .btn-primary {
-  background: linear-gradient(135deg, #FDB813 0%, #FFCA4A 100%);
+  background: linear-gradient(135deg, #fdb813 0%, #ffca4a 100%);
   color: #1a1a1a;
   box-shadow: 0 4px 16px rgba(253, 184, 19, 0.3);
 }
@@ -553,12 +563,12 @@
 
 .profile-edit-form .btn-outline {
   background: transparent;
-  color: #FDB813;
-  border-color: #FDB813;
+  color: #fdb813;
+  border-color: #fdb813;
 }
 
 .profile-edit-form .btn-outline:hover {
-  background: #FDB813;
+  background: #fdb813;
   color: #1a1a1a;
   transform: translateY(-3px);
   box-shadow: 0 4px 16px rgba(253, 184, 19, 0.3);
@@ -591,17 +601,29 @@
 
 .toast-success {
   border-color: #10b981;
-  background: linear-gradient(135deg, rgba(16, 185, 129, 0.1) 0%, rgba(16, 185, 129, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(16, 185, 129, 0.1) 0%,
+    rgba(16, 185, 129, 0.05) 100%
+  );
 }
 
 .toast-error {
   border-color: var(--danger-color);
-  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(220, 53, 69, 0.1) 0%,
+    rgba(220, 53, 69, 0.05) 100%
+  );
 }
 
 .toast-info {
   border-color: var(--brand-yellow);
-  background: linear-gradient(135deg, rgba(253, 184, 19, 0.1) 0%, rgba(253, 184, 19, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(253, 184, 19, 0.1) 0%,
+    rgba(253, 184, 19, 0.05) 100%
+  );
 }
 
 .toast-icon {
@@ -783,10 +805,10 @@
    소개 텍스트 영역 (개별 스타일)
    ============================================ */
 .form-textarea-bio {
-  width: 100%;           /* 전체 너비 */
-  max-width: 800px;      /* 최대 너비 제한 */
-  min-height: 120px;     /* 최소 높이 */
-  margin-left: 10px;     /* 왼쪽 여백 */
+  width: 100%; /* 전체 너비 */
+  max-width: 800px; /* 최대 너비 제한 */
+  min-height: 120px; /* 최소 높이 */
+  margin-left: 10px; /* 왼쪽 여백 */
 }
 /* ============================================
    라벨과 입력 필드 간격
@@ -834,22 +856,21 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 0.5rem;  /* 0.75rem → 0.5rem 간격 줄임 */
+  margin-bottom: 0.5rem;
 }
 
 .nickname-input-wrapper .form-label {
-  width: 30px;           /* 라벨 너비 */
-  margin-left: -65px;     /* 왼쪽 여백 (오른쪽으로 이동) */
-  margin-right: 20px;    /* 오른쪽 여백 (인풋과의 간격) */
-  padding-top: 5px;      /* 위로 올리기 */
+  min-width: 60px; /* [수정] "닉네임" 라벨이 필요한 최소 너비 확보 */
+  margin-left: 0; /* [수정] 불필요한 음수 여백 제거 */
+  margin-right: 0; /* [수정] 불필요한 여백 제거 */
+  padding-top: 0; /* [수정] 불필요한 여백 제거 */
+  text-align: right; /* 라벨 텍스트 오른쪽 정렬 */
 }
 
 .nickname-input-wrapper .form-input-nickname {
-  width: 400px;          /* 고정 너비 */
-  /* 또는 */
-  max-width: 400px;      /* 최대 너비 */
-  flex: 1;               /* 남은 공간 모두 차지 */
-  margin-left: -10px;     /* 왼쪽 여백 */
+  /* 기존의 width: 400px; 나 max-width: 400px;를 제거합니다. */
+  flex: 1; /* [수정] 남은 공간 모두 차지하여 입력 필드가 충분히 확장되도록 함 */
+  margin-left: 0; /* [수정] 불필요한 음수 여백 제거 */
 }
 
 /* ============================================
@@ -859,17 +880,48 @@
   display: flex;
   justify-content: flex-start;
   align-items: center;
-  margin-top: 0;  /* 0.75rem → 0 간격 제거 */
+  margin-top: 0;
   gap: 1rem;
-  padding-left: 76px;  /* 96px → 76px (라벨 60px + gap 1rem = 76px) */
+  /* 라벨 너비(60px)와 래퍼의 간격(1rem)을 더해서 정확히 input과 시작점을 맞춥니다. */
+  padding-left: calc(60px + 1rem);
 }
 
 .nickname-footer .form-success {
-  margin-left: -10px;     /* 왼쪽 들여쓰기 */
-  padding-left: 10px;    /* 추가 왼쪽 여백 */
+  margin-left: -10px; /* 왼쪽 들여쓰기 */
+  padding-left: 10px; /* 추가 왼쪽 여백 */
   margin-bottom: 10px;
 }
 .nickname-footer .form-error {
-  margin-top: 0;  /* 추가: 상단 여백 제거 */
+  margin-top: 0; /* 추가: 상단 여백 제거 */
+}
+/* ===========================================
+   유효성 검사 메시지 스타일 (성공, 에러, 정보)
+   ============================================ */
+/* validation-message 클래스에 white-space: nowrap을 추가하여 텍스트가 줄바꿈되지 않도록 강제합니다. */
+.validation-message {
+  font-size: 0.85rem;
+  margin-top: 0.5rem;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  animation: slideIn 0.3s ease;
+  white-space: nowrap; /* [추가] 텍스트가 무조건 한 줄에 나오도록 강제 */
 }
 
+/* 아래는 기존의 form-error 스타일입니다. validation-message를 상속받거나 확장할 경우, 
+   validation-message에 white-space: nowrap을 적용하는 것이 가장 효율적입니다. */
+
+/* .form-error, .form-success, .form-info 등의 스타일이 이미 존재할 경우,
+   위의 .validation-message 정의가 없었다면 아래와 같이 추가해야 합니다. 
+   만약 .validation-message 클래스 정의 자체가 없다면, 
+   가장 많이 사용되는 .form-success에 아래 스타일을 추가합니다. */
+
+.form-success {
+  color: var(--success-color);
+  white-space: nowrap; /* [추가] */
+}
+
+.form-error {
+  color: var(--danger-color);
+  white-space: nowrap; /* [추가] */
+}

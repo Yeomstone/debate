@@ -665,8 +665,8 @@ const RegisterPage = () => {
             {formData.passwordConfirm && (
               <div
                 className={`password-match ${formData.password === formData.passwordConfirm
-                    ? "match"
-                    : "mismatch"
+                  ? "match"
+                  : "mismatch"
                   }`}
               >
                 {formData.password === formData.passwordConfirm ? (
