@@ -38,10 +38,10 @@ public class CommentService {
         Comment parent = null;
         if (request.getParentId() != null) {
             parent = commentRepository.findById(request.getParentId())
-                    .orElseThrow(() -> new ResourceNotFoundException("부모 댓글을 찾을 수 없습니다"));
+                    .orElseThrow(() -> new ResourceNotFoundException("기존 댓글을 찾을 수 없습니다"));
 
             if (!parent.getDebate().getId().equals(debate.getId())) {
-                throw new BadRequestException("부모 댓글이 해당 토론에 속하지 않습니다");
+                throw new BadRequestException("기존 댓글이 해당 토론에 속하지 않습니다");
             }
         }
 
@@ -159,6 +159,18 @@ public class CommentService {
                 }
             }
         }
+    }
+    @Transactional
+    public CommentResponse updateComment(Long commentId, Long userId, String content) {
+        Comment comment = commentRepository.findById(commentId)
+                .orElseThrow(() -> new ResourceNotFoundException("댓글을 찾을 수 없습니다"));
+
+        if (!comment.getUser().getId().equals(userId)) {
+            throw new BadRequestException("댓글을 수정할 권한이 없습니다");
+        }
+
+        comment.setContent(content);
+        return CommentResponse.from(comment);
     }
 }
 

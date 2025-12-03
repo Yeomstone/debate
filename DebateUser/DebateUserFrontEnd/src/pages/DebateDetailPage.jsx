@@ -193,6 +193,7 @@ const DebateDetailPage = () => {
       debateId: parseInt(id),
       content: commentContent,
       nickname: user.nickname,
+      userId: user.id,
       createdAt: new Date().toISOString(),
       parentId: null,
       replies: [], // 새 댓글은 대댓글 없음
@@ -239,6 +240,7 @@ const DebateDetailPage = () => {
       debateId: parseInt(id),
       content: replyContent,
       nickname: user.nickname,
+      userId: user.id,
       createdAt: new Date().toISOString(),
       parentId: parentId,
     };
@@ -333,7 +335,10 @@ const DebateDetailPage = () => {
 
   // [추가] 댓글 수정 저장
   const handleUpdateComment = async (commentId) => {
-    if (!editContent.trim()) return;
+    if (!editContent.trim()) {
+      alert("수정할 댓글 내용을 입력해주세요.");
+      return;
+    }
 
     // 낙관적 업데이트
     const updateContent = (list) => {
@@ -429,7 +434,7 @@ const DebateDetailPage = () => {
 
     return comments.map((comment) => {
       const replies = comment.replies || [];
-      const isMyComment = user && user.nickname === comment.nickname;
+      const isMyComment = user && String(user.id) === String(comment.userId);
       const isEditing = editingCommentId === comment.id;
       const isModified = comment.updatedAt && comment.updatedAt !== comment.createdAt;
 
@@ -531,7 +536,7 @@ const DebateDetailPage = () => {
           {replies.length > 0 && (
             <div className="replies-container">
               {replies.map((reply) => {
-                const isMyReply = user && user.nickname === reply.nickname;
+                const isMyReply = user && String(user.id) === String(reply.userId);
                 const isReplyEditing = editingCommentId === reply.id;
                 const isReplyModified = reply.updatedAt && reply.updatedAt !== reply.createdAt;
 

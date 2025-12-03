@@ -1,6 +1,7 @@
 package com.debate.controller;
 
 import com.debate.dto.request.CreateCommentRequest;
+import com.debate.dto.request.UpdateCommentRequest;
 import com.debate.dto.response.ApiResponse;
 import com.debate.dto.response.CommentResponse;
 import com.debate.service.CommentService;
@@ -67,6 +68,18 @@ public class CommentController {
 
         commentService.toggleLike(id, userId);
         return ResponseEntity.ok(ApiResponse.success("좋아요 처리가 완료되었습니다", null));
+    }
+    @PutMapping("/{id}")
+    public ResponseEntity<ApiResponse<CommentResponse>> updateComment(
+            @PathVariable Long id,
+            @Valid @RequestBody UpdateCommentRequest request) {
+        Long userId = securityUtil.getCurrentUserId();
+        if (userId == null) {
+            return ResponseEntity.status(401).body(ApiResponse.error("인증이 필요합니다"));
+        }
+        
+        CommentResponse response = commentService.updateComment(id, userId, request.getContent());
+        return ResponseEntity.ok(ApiResponse.success("댓글이 수정되었습니다", response));
     }
 }
 
