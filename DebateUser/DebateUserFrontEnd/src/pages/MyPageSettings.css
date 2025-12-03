@@ -1,516 +1,683 @@
 /**
- * MyPageSettings 스타일
- * 마이페이지 설정 화면 전용 스타일시트
+ * MyPageSettings 스타일 (계정 설정 페이지) - 개선된 버전
+ *
+ * MyPageEdit.css를 기반으로 계정 설정 폼 스타일 정의
+ * 
+ * 디자인 컨셉:
+ * - 토론 플랫폼의 정체성 반영
+ * - 노란색(#FDB813)과 검정색의 강렬한 대비
+ * - 부드러운 애니메이션과 입력 피드백
+ * - 라이트/다크 모드 완벽 지원
+ * - 실제 작동하는 토글 스위치
+ * - 비밀번호 강도 측정
  */
 
-/* 전체 페이지 컨테이너 */
-.my-page-settings {
-    min-height: 100vh;
-    background-color: var(--bg-secondary);
-    padding: 2rem 0;
-}
+/* ============================================
+   MyPageEdit.css 상속
+   ============================================ */
+@import './MyPageEdit.css';
 
-/* 레이아웃 그리드 */
-.my-page-layout {
-    display: grid;
-    grid-template-columns: 300px 1fr;
-    gap: 2rem;
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 1.5rem;
-}
-
-/* 사이드바 */
-.my-page-sidebar {
-    position: sticky;
-    top: 2rem;
-    height: fit-content;
-}
-
-.profile-card {
-    background-color: var(--bg-primary);
-    border-radius: 16px;
-    padding: 2rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-    text-align: center;
-}
-
-.profile-avatar {
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    background-color: var(--bg-secondary);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 3rem;
-    margin: 0 auto 1rem;
-    overflow: hidden;
-}
-
-.profile-avatar img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-}
-
-.profile-name {
-    font-size: 1.3rem;
-    font-weight: 700;
-    margin-bottom: 0.5rem;
-    color: var(--text-primary);
-}
-
-.profile-bio {
-    color: var(--text-secondary);
-    font-size: 0.9rem;
-    margin-bottom: 1.5rem;
-}
-
-.profile-actions {
-    margin-top: 1rem;
-}
-
-/* 메인 컨텐츠 */
-.my-page-content {
-    background-color: var(--bg-primary);
-    border-radius: 16px;
-    padding: 2.5rem;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-}
-
-.page-header {
-    margin-bottom: 2rem;
-    padding-bottom: 1.5rem;
-    border-bottom: 1px solid var(--border-color);
-}
-
-.page-header h1 {
-    font-size: 2rem;
-    font-weight: 800;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
-}
-
-.page-description {
-    color: var(--text-secondary);
-    font-size: 0.95rem;
-}
-
-/* 설정 폼 */
-.settings-form {
-    display: flex;
-    flex-direction: column;
-    gap: 2rem;
-}
-
-/* 폼 섹션 */
-.form-section {
-    background-color: var(--bg-secondary);
-    border-radius: 12px;
-    padding: 1.5rem;
-    border: 1px solid var(--border-color);
-}
-
-/* 공통: 섹션 상단 가운데 제목 레이아웃 */
-.section-with-title {
-    position: relative;
-    padding: 3.5rem 2rem 2rem !important;
-    /* 위쪽에 제목 자리 확보 */
-}
-
-.section-title {
-    position: absolute;
-    top: 1.2rem;
-    left: 50%;
-    transform: translateX(-50%);
-    margin: 0;
-    font-size: 1.3rem;
-    font-weight: 700;
-    text-align: center;
-    color: var(--text-primary);
-}
-
-.section-title-danger {
-    color: var(--danger-color, #dc3545);
-}
-
-/* 폼 그룹 */
 .form-group {
-    margin-bottom: 1.5rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-group:last-child {
-    margin-bottom: 0;
+  margin-bottom: 0;
 }
 
-.form-label {
-    display: block;
-    font-size: 0.9rem;
-    font-weight: 600;
-    color: var(--text-primary);
-    margin-bottom: 0.5rem;
+/* ============================================
+   설정 카드
+   ============================================ */
+.settings-card {
+  position: relative;
+  margin-bottom: 2rem;
+  padding: 0;
+  border: 2px solid var(--border-color);
+  border-radius: 1.25rem;
+  background: var(--bg-secondary);
+  transition: all 0.3s ease;
+  overflow: hidden;
 }
 
-.form-input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 1px solid var(--border-color);
-    border-radius: 8px;
-    background-color: var(--bg-primary);
-    color: var(--text-primary);
-    font-size: 0.95rem;
-    transition: all 0.2s;
+.settings-card:hover {
+  border-color: var(--brand-yellow);
+  box-shadow: 0 8px 24px rgba(253, 184, 19, 0.15);
+  transform: translateY(-2px);
 }
 
-.form-input:focus {
-    outline: none;
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+.settings-card-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.75rem 2rem;
+  border-bottom: 2px solid var(--border-color);
+  background: var(--bg-primary);
+  position: relative;
 }
 
-.form-input:disabled {
-    background-color: var(--bg-tertiary);
-    color: var(--text-secondary);
-    cursor: not-allowed;
-    opacity: 0.6;
+.settings-card-header::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 2rem;
+  width: 80px;
+  height: 2px;
+  background: var(--brand-yellow);
+  transition: width 0.3s ease;
 }
 
-.form-input.error {
-    border-color: var(--danger-color);
+.settings-card:hover .settings-card-header::after {
+  width: 120px;
 }
 
-.form-error {
-    color: var(--danger-color);
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
+.settings-card-icon {
+  font-size: 2rem;
+  width: 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-yellow-light) 100%);
+  border-radius: 1rem;
+  box-shadow: 0 4px 16px rgba(253, 184, 19, 0.3);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 
-.form-help {
-    color: var(--text-secondary);
-    font-size: 0.85rem;
-    margin-top: 0.5rem;
-    text-align: center;
+.settings-card:hover .settings-card-icon {
+  transform: rotate(10deg) scale(1.1);
 }
 
-/* 위험 섹션 (계정 삭제) */
+.settings-card-title {
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.settings-card-body {
+  padding: 2rem;
+}
+
+/* ============================================
+   정보 박스
+   ============================================ */
+.info-box {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem;
+  background: var(--bg-primary);
+  border: 2px solid var(--border-color);
+  border-radius: 1rem;
+  transition: all 0.3s ease;
+}
+
+.info-box:hover {
+  border-color: var(--brand-yellow);
+  background: rgba(253, 184, 19, 0.05);
+}
+
+.info-box-icon {
+  font-size: 2rem;
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg-secondary);
+  border-radius: 0.75rem;
+  flex-shrink: 0;
+}
+
+.info-box-content {
+  flex: 1;
+}
+
+.info-box-title {
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-secondary);
+  margin: 0 0 0.5rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.info-box-text {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+  word-break: break-all;
+}
+
+.info-box-description {
+  font-size: 0.875rem;
+  color: var(--text-secondary);
+  margin: 0.75rem 0 0 0;
+  line-height: 1.6;
+}
+
+/* ============================================
+   비밀번호 강도 표시
+   ============================================ */
+.password-strength {
+  margin-top: 1rem;
+  padding: 1.25rem;
+  background: var(--bg-secondary);
+  border-radius: 1rem;
+  border: 2px solid var(--border-color);
+  animation: fadeIn 0.3s ease;
+}
+
+.password-strength-bar {
+  display: flex;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.password-strength-segment {
+  flex: 1;
+  height: 8px;
+  background: var(--border-color);
+  border-radius: 4px;
+  transition: all 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.password-strength-segment.active {
+  transform: scaleY(1.2);
+}
+
+.password-strength-segment.active::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.5), transparent);
+  animation: shimmer 2s infinite;
+}
+
+.password-strength-segment.active.weak {
+  background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+  box-shadow: 0 2px 8px rgba(239, 68, 68, 0.3);
+}
+
+.password-strength-segment.active.medium {
+  background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.3);
+}
+
+.password-strength-segment.active.strong {
+  background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+  box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.password-strength-label {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  text-align: center;
+  margin-bottom: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+}
+
+.password-requirements {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.password-requirements p {
+  margin: 0;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+}
+
+.password-requirements p.unmet {
+  color: var(--text-secondary);
+  background: var(--bg-primary);
+  border: 1px solid var(--border-color);
+}
+
+.password-requirements p.met {
+  color: #10b981;
+  background: rgba(16, 185, 129, 0.1);
+  border: 1px solid #10b981;
+  animation: scaleIn 0.3s ease;
+}
+
+/* ============================================
+   토글 스위치
+   ============================================ */
+.toggle-switch {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 1.5rem;
+  background: var(--bg-primary);
+  border-radius: 1rem;
+  border: 2px solid var(--border-color);
+  margin-bottom: 1rem;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  user-select: none;
+}
+
+.toggle-switch:last-child {
+  margin-bottom: 0;
+}
+
+.toggle-switch:hover {
+  border-color: var(--brand-yellow);
+  background: rgba(253, 184, 19, 0.05);
+  transform: translateX(4px);
+}
+
+.toggle-switch:active {
+  transform: translateX(4px) scale(0.98);
+}
+
+.toggle-switch-label {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  pointer-events: none;
+}
+
+.toggle-switch-title {
+  font-weight: 700;
+  font-size: 1.05rem;
+  color: var(--text-primary);
+}
+
+.toggle-switch-description {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  line-height: 1.5;
+}
+
+.toggle-switch-input {
+  position: relative;
+  width: 64px;
+  height: 36px;
+  background: var(--border-color);
+  border-radius: 18px;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  border: 2px solid transparent;
+  flex-shrink: 0;
+}
+
+.toggle-switch-input::after {
+  content: '';
+  position: absolute;
+  top: 4px;
+  left: 4px;
+  width: 24px;
+  height: 24px;
+  background: white;
+  border-radius: 50%;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.toggle-switch-input.active {
+  background: linear-gradient(135deg, var(--brand-yellow) 0%, var(--brand-yellow-light) 100%);
+  box-shadow: 0 0 0 4px rgba(253, 184, 19, 0.2);
+}
+
+.toggle-switch-input.active::after {
+  left: 32px;
+  background: white;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.3);
+}
+
+.toggle-switch:hover .toggle-switch-input {
+  border-color: var(--brand-yellow);
+  transform: scale(1.05);
+}
+
+.toggle-switch:active .toggle-switch-input::after {
+  width: 28px;
+}
+
+/* ============================================
+   위험 섹션 (계정 삭제)
+   ============================================ */
 .danger-section {
-    background-color: rgba(220, 53, 69, 0.05);
-    border-color: rgba(220, 53, 69, 0.2);
+  position: relative;
+  border: 2px solid var(--danger-color) !important;
+  background: linear-gradient(135deg, 
+    rgba(220, 53, 69, 0.05) 0%, 
+    rgba(220, 53, 69, 0.1) 100%) !important;
+  overflow: hidden;
 }
 
-/* 위험 섹션 (계정 삭제) */
-.danger-section {
-    background-color: rgba(220, 53, 69, 0.05);
-    border-color: rgba(220, 53, 69, 0.2);
-    text-align: center;
-    /* 버튼 및 텍스트 가운데 정렬 */
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.danger-section::before {
+  content: '⚠️';
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  font-size: 4rem;
+  opacity: 0.15;
+  animation: pulse 2s infinite;
+  pointer-events: none;
+}
+
+.danger-section:hover {
+  box-shadow: 0 8px 32px rgba(220, 53, 69, 0.25) !important;
+  transform: translateY(-2px) !important;
+}
+
+.danger-section .settings-card-header {
+  background: rgba(220, 53, 69, 0.05);
+  border-bottom-color: rgba(220, 53, 69, 0.2);
+}
+
+.danger-section .settings-card-header::after {
+  background: var(--danger-color);
+}
+
+.danger-section .settings-card-icon {
+  background: rgba(220, 53, 69, 0.1);
+  color: var(--danger-color);
+  box-shadow: 0 4px 16px rgba(220, 53, 69, 0.2);
+}
+
+.danger-section .settings-card-title {
+  color: var(--danger-color);
 }
 
 .danger-section .form-help {
-    margin-bottom: 1.5rem;
-    text-align: center;
+  font-weight: 600;
+  color: var(--danger-color);
 }
 
+/* ============================================
+   위험 버튼
+   ============================================ */
 .btn-danger {
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 700;
-    cursor: pointer;
-    transition: background-color 0.2s;
+  position: relative;
+  background: linear-gradient(135deg, var(--danger-color) 0%, #ff6b6b 100%);
+  color: white;
+  border: 2px solid transparent;
+  padding: 1rem 2rem;
+  border-radius: 1rem;
+  cursor: pointer;
+  font-size: 1rem;
+  font-weight: 600;
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
+  box-shadow: 0 4px 16px rgba(220, 53, 69, 0.3);
+  z-index: 1;
+}
+
+.btn-danger > * {
+  position: relative;
+  z-index: 2;
+}
+
+.btn-danger::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  transform: translate(-50%, -50%);
+  transition: width 0.6s, height 0.6s;
+  z-index: 1;
 }
 
 .btn-danger:hover {
-    background-color: #c82333;
+  transform: translateY(-3px) scale(1.02);
+  box-shadow: 0 8px 24px rgba(220, 53, 69, 0.4);
+  background: linear-gradient(135deg, #c82333 0%, #ff5252 100%);
 }
 
-/* 다크모드에서도 위험 버튼은 빨간색 유지 */
-[data-theme="dark"] .btn-danger {
-    background-color: #dc3545 !important;
-    color: white !important;
-    border: none !important;
+.btn-danger:hover::before {
+  width: 300px;
+  height: 300px;
 }
 
-[data-theme="dark"] .btn-danger:hover {
-    background-color: #c82333 !important;
+.btn-danger:active {
+  transform: translateY(-1px) scale(0.98);
 }
 
-/* 폼 액션 버튼 영역 */
-.form-actions {
-    display: flex;
-    gap: 1rem;
-    justify-content: flex-end;
-    margin-top: 2rem;
-    padding-top: 2rem;
-    border-top: 1px solid var(--border-color);
+.btn-danger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
-/* 버튼 스타일 */
-.btn {
-    padding: 0.75rem 1.5rem;
-    border-radius: 8px;
-    font-weight: 600;
-    font-size: 0.95rem;
-    cursor: pointer;
-    transition: all 0.2s;
-    border: none;
-    white-space: nowrap;
+.btn-danger:disabled:hover {
+  transform: none;
+  box-shadow: 0 4px 16px rgba(220, 53, 69, 0.2);
 }
 
-.btn-outline {
-    background-color: transparent;
-    border: 1px solid var(--border-color);
-    color: var(--text-primary);
+/* ============================================
+   확인 모달
+   ============================================ */
+.confirm-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.75);
+  backdrop-filter: blur(8px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 2000;
+  animation: fadeIn 0.3s ease;
 }
 
-.btn-outline:hover {
-    background-color: var(--bg-tertiary);
+.confirm-modal {
+  background: var(--bg-primary);
+  border-radius: 1.5rem;
+  padding: 0;
+  max-width: 550px;
+  width: 90%;
+  border: 3px solid var(--danger-color);
+  box-shadow: 0 20px 60px rgba(220, 53, 69, 0.5);
+  animation: modalBounce 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  overflow: hidden;
 }
 
-.btn-danger {
-    background-color: var(--danger-color);
-    color: white;
-    border: none;
-    margin-top: 1rem;
+@keyframes modalBounce {
+  0% {
+    transform: scale(0.7) translateY(-50px);
+    opacity: 0;
+  }
+  50% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1) translateY(0);
+    opacity: 1;
+  }
 }
 
-.btn-danger:hover {
-    background-color: #c82333;
+.confirm-modal-header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 2rem;
+  background: linear-gradient(135deg, rgba(220, 53, 69, 0.1) 0%, rgba(220, 53, 69, 0.05) 100%);
+  border-bottom: 2px solid rgba(220, 53, 69, 0.2);
 }
 
-/* 비밀번호 변경 섹션 - 모던 디자인 */
-.password-change-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: none !important;
+.confirm-modal-icon {
+  font-size: 3.5rem;
+  animation: bounce 1s ease infinite;
+  flex-shrink: 0;
 }
 
-/* 비밀번호 변경 섹션 안의 요소들 */
-.password-change-section .form-label {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 0.5rem;
+@keyframes bounce {
+  0%, 20%, 50%, 80%, 100% {
+    transform: translateY(0);
+  }
+  40% {
+    transform: translateY(-12px);
+  }
+  60% {
+    transform: translateY(-6px);
+  }
 }
 
-.password-hint {
-    font-size: 0.75rem;
-    color: var(--text-secondary);
-    font-weight: 400;
+.confirm-modal-title {
+  font-size: 1.75rem;
+  font-weight: 700;
+  color: var(--danger-color);
+  margin: 0;
 }
 
-.password-change-section .form-input {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    font-size: 1rem;
-    padding: 0.875rem 1rem;
+.confirm-modal-content {
+  padding: 2rem;
+  background: var(--bg-primary);
+  line-height: 1.7;
+  color: var(--text-primary);
 }
 
-.password-change-section .form-input:focus {
-    background-color: #fff;
-    border-color: var(--primary-color);
+.confirm-modal-content strong {
+  color: var(--danger-color);
+  font-weight: 700;
 }
 
-.btn-password-change {
-    width: 100%;
-    padding: 0.875rem;
-    background-color: #dc3545;
-    color: white;
-    border: none;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 1rem;
-    cursor: pointer;
-    transition: background-color 0.2s;
-    margin-top: 0.5rem;
+.confirm-modal-actions {
+  display: flex;
+  gap: 1rem;
+  padding: 1.5rem 2rem;
+  background: var(--bg-secondary);
+  border-top: 2px solid var(--border-color);
 }
 
-.btn-password-change:hover {
-    background-color: #c82333;
+.confirm-modal-actions .btn {
+  flex: 1;
 }
 
-/* 기타 섹션 모던 디자인 */
-.modern-section {
-    background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-    border: none !important;
-    padding: 2rem !important;
+/* ============================================
+   보안 섹션 강조
+   ============================================ */
+.settings-card[data-security="true"] {
+  border-left: 4px solid var(--brand-yellow);
+  position: relative;
 }
 
-.modern-section .form-input {
-    background-color: #fff;
-    border: 1px solid #dee2e6;
-    font-size: 1rem;
-    padding: 0.875rem 1rem;
+.settings-card[data-security="true"]::after {
+  content: '🔒';
+  position: absolute;
+  top: 2rem;
+  right: 2rem;
+  font-size: 2.5rem;
+  opacity: 0.15;
+  pointer-events: none;
 }
 
-.modern-section .form-input:focus {
-    background-color: #fff;
-    border-color: var(--primary-color);
-}
-
-/* 다크모드 지원 */
-[data-theme='dark'] .my-page-settings {
-    background-color: #111827;
-}
-
-[data-theme='dark'] .profile-card,
-[data-theme='dark'] .my-page-content {
-    background-color: #1f2937;
-    border: 1px solid #374151;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-[data-theme='dark'] .form-section {
-    background-color: #111827;
-    border-color: #374151;
-}
-
-[data-theme='dark'] .form-input {
-    background-color: #374151;
-    color: #f9fafb;
-    border-color: #4b5563;
-}
-
-[data-theme='dark'] .form-input:disabled {
-    background-color: #1f2937;
-    color: #6b7280;
-}
-
-[data-theme='dark'] .form-input:focus {
-    border-color: var(--primary-color);
-    box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
-}
-
-[data-theme='dark'] .btn-outline {
-    border-color: #4b5563;
-    color: #e5e7eb;
-}
-
-[data-theme='dark'] .btn-outline:hover {
-    background-color: #374151;
-}
-
-[data-theme='dark'] .danger-section {
-    background-color: rgba(220, 53, 69, 0.1);
-    border-color: rgba(220, 53, 69, 0.3);
-}
-
-/* 비밀번호 변경 및 기타 섹션 다크모드 */
-[data-theme='dark'] .password-change-section,
-[data-theme='dark'] .modern-section {
-    background: linear-gradient(135deg, #2d3748 0%, #1a202c 100%);
-    border: 1px solid #374151 !important;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
-}
-
-[data-theme='dark'] .password-change-section .form-input,
-[data-theme='dark'] .modern-section .form-input {
-    background-color: #374151;
-    border-color: #4b5563;
-    color: #f9fafb;
-}
-
-[data-theme='dark'] .password-change-section .form-input:focus,
-[data-theme='dark'] .modern-section .form-input:focus {
-    background-color: #374151;
-    border-color: var(--primary-color);
-}
-
-/* 모바일 반응형 */
+/* ============================================
+   반응형 디자인
+   ============================================ */
 @media (max-width: 968px) {
-    .my-page-layout {
-        grid-template-columns: 1fr;
-        padding: 0 1rem;
-    }
+  .settings-card-header {
+    padding: 1.5rem;
+  }
 
-    .my-page-sidebar {
-        order: 2;
-        position: static;
-    }
+  .settings-card-body {
+    padding: 1.5rem;
+  }
 
-    .my-page-content {
-        order: 1;
-        padding: 2rem;
-    }
+  .password-requirements {
+    grid-template-columns: 1fr;
+  }
 
-    .form-actions {
-        flex-direction: column;
-    }
+  .confirm-modal {
+    width: 95%;
+    padding: 0;
+  }
 
-    .btn {
-        width: 100%;
-    }
-}
+  .confirm-modal-actions {
+    flex-direction: column;
+  }
 
-@media (max-width: 768px) {
-    .my-page-settings {
-        padding: 1rem 0;
-    }
-
-    .my-page-layout {
-        padding: 0 1rem;
-    }
-
-    .my-page-content {
-        padding: 1.5rem;
-        border-radius: 12px;
-    }
-
-    .form-section {
-        padding: 1rem;
-    }
-
-    .section-with-title {
-        padding: 3rem 1.5rem 1.5rem !important;
-    }
-
-    .page-header h1 {
-        font-size: 1.5rem;
-    }
-
-    .profile-card {
-        padding: 1.5rem;
-    }
+  .confirm-modal-actions .btn {
+    width: 100%;
+  }
 }
 
 @media (max-width: 480px) {
-    .my-page-layout {
-        padding: 0 0.75rem;
-    }
+  .settings-card-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
 
-    .my-page-content {
-        padding: 1rem;
-        border-radius: 8px;
-    }
+  .settings-card-icon {
+    width: 48px;
+    height: 48px;
+    font-size: 1.75rem;
+  }
 
-    .form-section {
-        padding: 0.75rem;
-    }
+  .settings-card-title {
+    font-size: 1.2rem;
+  }
 
-    .section-with-title {
-        padding: 2.5rem 1rem 1.25rem !important;
-    }
+  .toggle-switch {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1.25rem;
+  }
 
-    .section-title {
-        font-size: 1.05rem;
-    }
+  .toggle-switch-input {
+    align-self: flex-end;
+  }
 
-    .btn {
-        padding: 0.65rem 1.2rem;
-        font-size: 0.9rem;
-    }
+  .danger-section::before {
+    font-size: 2.5rem;
+    top: 1rem;
+    right: 1rem;
+  }
 
-    .page-header h1 {
-        font-size: 1.3rem;
-    }
+  .settings-card[data-security="true"]::after {
+    font-size: 2rem;
+    top: 1.5rem;
+    right: 1.5rem;
+  }
 
-    .profile-card {
-        padding: 1rem;
-    }
+  .confirm-modal-header {
+    padding: 1.5rem;
+  }
+
+  .confirm-modal-content {
+    padding: 1.5rem;
+  }
+
+  .confirm-modal-actions {
+    padding: 1rem 1.5rem;
+  }
+}
+
+/* ============================================
+   추가 애니메이션
+   ============================================ */
+@keyframes warningPulse {
+  0%, 100% {
+    box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.5);
+  }
+  50% {
+    box-shadow: 0 0 0 12px rgba(220, 53, 69, 0);
+  }
+}
+
+.btn-danger:focus {
+  animation: warningPulse 1.5s ease infinite;
 }

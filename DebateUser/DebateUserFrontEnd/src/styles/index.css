@@ -15,6 +15,7 @@
    CSS 리셋 (Reset)
    ============================================ */
 /* 모든 요소의 기본 margin, padding을 제거하고 box-sizing을 border-box로 설정 */
+
 * {
   margin: 0;
   padding: 0;

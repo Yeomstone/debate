@@ -3,7 +3,7 @@ package com.debate.controller;
 import com.debate.dto.response.ApiResponse;
 import com.debate.dto.response.DebateResponse;
 import com.debate.dto.response.CommentResponse;
-import com.debate.entity.DebateOpinion;
+import com.debate.dto.response.DebateOpinionResponse;
 import com.debate.service.MyPageService;
 import com.debate.util.SecurityUtil;
 import io.swagger.v3.oas.annotations.Operation;
@@ -81,13 +81,13 @@ public class MyPageController {
     @Operation(summary = "참여한 토론 목록 조회", description = "현재 로그인한 사용자가 입장을 선택한 토론 목록을 조회합니다.")
     @SecurityRequirement(name = "JWT")
     @GetMapping("/opinions")
-    public ResponseEntity<ApiResponse<List<DebateOpinion>>> getMyOpinions() {
+    public ResponseEntity<ApiResponse<List<DebateOpinionResponse>>> getMyOpinions() {
         Long userId = securityUtil.getCurrentUserId();
         if (userId == null) {
             return ResponseEntity.status(401).body(ApiResponse.error("인증이 필요합니다"));
         }
         
-        List<DebateOpinion> opinions = myPageService.getMyOpinions(userId);
+        List<DebateOpinionResponse> opinions = myPageService.getMyOpinions(userId);
         return ResponseEntity.ok(ApiResponse.success(opinions));
     }
 

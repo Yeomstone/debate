@@ -6,6 +6,7 @@ import com.debate.entity.User;
 import com.debate.exception.ResourceNotFoundException;
 import com.debate.repository.DebateRepository;
 import com.debate.repository.LikeRepository;
+import com.debate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -15,7 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class LikeService {
     private final LikeRepository likeRepository;
     private final DebateRepository debateRepository;
-    private final com.debate.repository.UserRepository userRepository;
+    private final UserRepository userRepository;
+    private final NotificationService notificationService;
 
     @Transactional
     public void toggleLike(Long debateId, Long userId) {
@@ -23,7 +25,8 @@ public class LikeService {
                 .ifPresentOrElse(
                         likeRepository::delete,
                         () -> {
-                            Debate debate = debateRepository.getReferenceById(debateId);
+                            Debate debate = debateRepository.findById(debateId)
+                                    .orElseThrow(() -> new ResourceNotFoundException("토론을 찾을 수 없습니다"));
                             User user = userRepository.getReferenceById(userId);
                             
                             Like like = Like.builder()
@@ -31,6 +34,20 @@ public class LikeService {
                                     .user(user)
                                     .build();
                             likeRepository.save(like);
+
+                            // 알림 생성 로직 (본인이 아닐 경우)
+                            if (!debate.getUser().getId().equals(userId)) {
+                                try {
+                                    notificationService.createNotification(
+                                            debate.getUser(),
+                                            user.getNickname() + "님이 회원님의 토론을 좋아합니다: " + debate.getTitle(),
+                                            "LIKE",
+                                            "/debate/" + debate.getId()
+                                    );
+                                } catch (Exception e) {
+                                    System.err.println("알림 생성 실패: " + e.getMessage());
+                                }
+                            }
                         }
                 );
     }

@@ -76,7 +76,7 @@ const LoginPage = () => {
     } catch (err) {
       setError(
         err.response?.data?.message ||
-          "이메일 또는 비밀번호가 올바르지 않습니다."
+        "이메일 또는 비밀번호가 올바르지 않습니다."
       );
     } finally {
       setLoading(false);
@@ -101,9 +101,8 @@ const LoginPage = () => {
           </div>
 
           <div
-            className={`logo-characters ${
-              isPasswordFocus ? "password-active" : ""
-            }`}
+            className={`logo-characters ${isPasswordFocus ? "password-active" : ""
+              }`}
           >
             {/* ===== 왼쪽 캐릭터 (Left Debater) ===== */}
             <div className="debater-char left-char">
@@ -268,7 +267,7 @@ const LoginPage = () => {
                   <span className="checkbox-custom"></span>
                   로그인 유지
                 </label>
-                <Link to="/auth/forgot-password" class="link-forgot">
+                <Link to="/auth/forgot-password" className="link-forgot">
                   비밀번호 찾기
                 </Link>
               </div>

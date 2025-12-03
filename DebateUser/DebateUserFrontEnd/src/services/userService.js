@@ -42,6 +42,21 @@ export const userService = {
     });
     return response.data;
   },
+
+  /**
+   * 프로필 이미지 업로드
+   * 
+   * @param {File} file - 업로드할 이미지 파일
+   * @returns {Promise<string>} 업로드된 이미지 URL
+   */
+  async uploadImage(file) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await api.post('/upload/image', formData);
+    // ApiResponse<String> 구조에서 data 필드가 URL임
+    return response.data.data || response.data;
+  },
 };
 
 /**

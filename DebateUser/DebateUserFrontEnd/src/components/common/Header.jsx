@@ -17,7 +17,7 @@
  * - 현재 활성화된 페이지에 색상 표시 추가
  * - [수정] 사이드바 로그아웃 버튼 스타일 일관성 개선
  */
-
+import axios from "axios";
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
@@ -39,7 +39,9 @@ const Header = () => {
   const location = useLocation(); // 현재 경로 확인을 위한 location 훅
   const currentLogo = theme === "dark" ? debateLogoDark : debateLogoLight;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false); // 사이드바 열림/닫힘 상태
-
+  const [unreadCount, setUnreadCount] = useState(0); // 추가
+  const [isNotificationOpen, setIsNotificationOpen] = useState(false); // 추가
+  const [notifications, setNotifications] = useState([]); // 추가
   // ===== 프로필 드롭다운 상태 =====
   // 프로필(아바타)을 눌렀을 때 드롭다운 메뉴 열림/닫힘을 관리
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState(false);
@@ -62,6 +64,16 @@ const Header = () => {
   // 프로필 메뉴 닫기
   const closeProfileMenu = () => {
     setIsProfileMenuOpen(false);
+  };
+
+  // 알림 메뉴 토글
+  const toggleNotificationMenu = () => {
+    setIsNotificationOpen(!isNotificationOpen);
+  };
+
+  // 알림 메뉴 닫기
+  const closeNotificationMenu = () => {
+    setIsNotificationOpen(false);
   };
 
   /**
@@ -114,6 +126,56 @@ const Header = () => {
       document.body.style.overflow = "";
     };
   }, [isSidebarOpen]);
+
+  // 알람 개수 및 목록 fetch
+  useEffect(() => {
+    const fetchNotifications = async () => {
+      if (!isAuthenticated) return;
+
+      try {
+        // [수정됨] /api 제거 -> axios 기본 설정과 합쳐져서 /api/notifications 가 됨
+        const response = await axios.get('/notifications');
+
+        const { notifications, unreadCount } = response.data;
+
+        setNotifications(notifications || []);
+        setUnreadCount(unreadCount || 0);
+      } catch (error) {
+        console.error('알림 로딩 실패:', error);
+      }
+    };
+
+    fetchNotifications();
+
+    const interval = setInterval(fetchNotifications, 30000);
+
+    return () => clearInterval(interval);
+  }, [isAuthenticated]);
+
+  // 알림 클릭 처리 함수
+  const handleNotificationClick = async (notification) => {
+    closeNotificationMenu();
+
+    if (!notification.isRead) {
+      try {
+        // [수정됨] /api 제거
+        await axios.post(`/notifications/${notification.id}/read`);
+
+        setNotifications(prev =>
+          prev.map(n => n.id === notification.id ? { ...n, isRead: true } : n)
+        );
+        setUnreadCount(prev => Math.max(0, prev - 1));
+      } catch (error) {
+        console.error('알림 읽음 처리 실패:', error);
+      }
+    }
+
+    if (notification.url) {
+      navigate(notification.url);
+    } else {
+      console.warn('이동할 URL이 없습니다.');
+    }
+  };
 
   return (
     <>
@@ -248,22 +310,85 @@ const Header = () => {
             {isAuthenticated ? (
               <>
                 {/* 알림 아이콘 */}
-                <button className="icon-btn notification-btn" aria-label="알림">
-                  {/* 벨 아이콘 */}
-                  <svg
-                    width="20"
-                    height="20"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    strokeWidth="2"
+                <div className="notification-wrapper">
+                  <button
+                    className="icon-btn notification-btn"
+                    aria-label="알림"
+                    onClick={toggleNotificationMenu}
+                    aria-expanded={isNotificationOpen}
                   >
-                    <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
-                    <path d="M13.73 21a2 2 0 0 1-3.46 0" />
-                  </svg>
-                  {/* 알림 배지 (새 알림이 있을 때 표시) */}
-                  <span className="notification-badge">3</span>
-                </button>
+                    <svg
+                      width="20"
+                      height="20"
+                      viewBox="0 0 24 24"
+                      fill="none"
+                      stroke="currentColor"
+                      strokeWidth="2"
+                    >
+                      <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                      <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                    </svg>
+                    {unreadCount > 0 && (
+                      <span className="notification-badge">{unreadCount > 99 ? '99+' : unreadCount}</span>
+                    )}
+                  </button>
+
+                  {/* 알림 드롭다운 */}
+                  {isNotificationOpen && (
+                    <>
+                      <div
+                        className="dropdown-overlay"
+                        onClick={closeNotificationMenu}
+                      />
+                      <div className="notification-dropdown">
+                        <div className="notification-header">
+                          <h3>알림</h3>
+                          {notifications.length > 0 && (
+                            <button className="mark-all-read">모두 읽음</button>
+                          )}
+                        </div>
+                        <div className="notification-list">
+                          {notifications.length > 0 ? (
+                            notifications.map((notification) => (
+                              <div
+                                key={notification.id}
+                                className={`notification-item ${!notification.isRead ? 'unread' : ''}`}
+                                onClick={() => handleNotificationClick(notification)}
+                              >
+                                <div className="notification-icon">
+                                  {notification.type === 'comment' ? '💬' :
+                                    notification.type === 'like' ? '👍' :
+                                      notification.type === 'message' ? '📨' : '🔔'}
+                                </div>
+                                <div className="notification-content">
+                                  <p className="notification-text">{notification.message}</p>
+                                  <span className="notification-time">{notification.time}</span>
+                                </div>
+                                {!notification.isRead && <span className="unread-dot"></span>}
+                              </div>
+                            ))
+                          ) : (
+                            <div className="no-notifications">
+                              <svg
+                                width="48"
+                                height="48"
+                                viewBox="0 0 24 24"
+                                fill="none"
+                                stroke="currentColor"
+                                strokeWidth="1.5"
+                                opacity="0.3"
+                              >
+                                <path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9" />
+                                <path d="M13.73 21a2 2 0 0 1-3.46 0" />
+                              </svg>
+                              <p>알림이 비어있습니다</p>
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </>
+                  )}
+                </div>
 
                 {/* 사용자 아바타 (프로필 메뉴 토글) */}
                 <div className="user-avatar-wrapper">
@@ -416,12 +541,14 @@ const Header = () => {
             )}
           </div>
         </div>
-      </header>
+      </header >
 
       {/* ===== 사이드바 오버레이 (배경 클릭 시 닫기) ===== */}
-      {isSidebarOpen && (
-        <div className="sidebar-overlay" onClick={closeSidebar} />
-      )}
+      {
+        isSidebarOpen && (
+          <div className="sidebar-overlay" onClick={closeSidebar} />
+        )
+      }
 
       {/* ===== 사이드바 ===== */}
       <aside className={`sidebar ${isSidebarOpen ? "sidebar-open" : ""}`}>

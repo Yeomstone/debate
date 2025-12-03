@@ -136,5 +136,10 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다"));
     }
 
+    public User getUserByEmail(String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다: " + email));
+    }
+
 }
 
