@@ -4,6 +4,12 @@
 **/.gradle/
 **/.gradle/**
 
+# Gradle
+gradle-*.zip
+.gradle/
+build/
+**/gradle/wrapper/gradle-wrapper.jar
+
 # 특정 파일만 막기
 private_info/AWS/debate2025.pem
 

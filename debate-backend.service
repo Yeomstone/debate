@@ -1,0 +1,18 @@
+[Unit]
+Description=Debate User Backend Service
+After=network.target mysql.service
+
+[Service]
+Type=simple
+User=ubuntu
+WorkingDirectory=/home/ubuntu/opt/debate/backend
+# EnvironmentFile=/home/ubuntu/opt/debate/backend/.env
+ExecStart=/usr/bin/java -jar -Dspring.profiles.active=prod /home/ubuntu/opt/debate/backend/debate-user-1.0.0.jar
+Restart=always
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=debate-backend
+
+[Install]
+WantedBy=multi-user.target
