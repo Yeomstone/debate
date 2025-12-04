@@ -1321,3 +1321,235 @@
 [data-theme="dark"] .comment-actions .comment-like-btn:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
 }
+
+.reply-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+}
+
+.reply-btn:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+/* [추가] 수정/삭제 버튼 (텍스트 스타일) */
+.action-btn {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.8rem;
+  cursor: pointer;
+  padding: 0;
+  font-weight: 600;
+  margin-left: 0.5rem;
+}
+
+.action-btn:hover {
+  color: var(--primary-color);
+  text-decoration: underline;
+}
+
+.action-btn.delete:hover {
+  color: var(--danger-color);
+}
+
+/* 답글 입력 폼 컨테이너 */
+.reply-form-container {
+  display: flex;
+  align-items: center;
+  margin-top: 1rem;
+  padding-left: 1rem;
+}
+
+.reply-form {
+  flex: 1;
+  display: flex;
+  gap: 0.5rem;
+  /* 기존 스타일 초기화 */
+  margin-left: 0;
+  margin-bottom: 0;
+}
+
+.reply-form input {
+  flex: 1;
+  padding: 0.75rem;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: var(--bg-secondary);
+  color: var(--text-primary);
+}
+
+.reply-form button {
+  padding: 0 1rem;
+  background: var(--text-secondary);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.reply-form button:hover {
+  background: var(--text-primary);
+}
+
+/* 페이지네이션 */
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.pagination button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.pagination button:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.pagination button.active {
+  background: var(--primary-color);
+  color: #000;
+  border-color: var(--primary-color);
+}
+
+.pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.no-comments {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+[data-theme="dark"] .comment-input-area {
+  background-color: #111827;
+}
+
+[data-theme="dark"] .pagination button.active {
+  color: #fff;
+  /* 다크모드에서는 흰색 텍스트 */
+}
+
+[data-theme="dark"] .comment-input-area textarea {
+  background-color: #1f2937;
+  color: #f3f4f6;
+}
+
+[data-theme="dark"] .comment-row:hover {
+  background-color: #374151;
+}
+
+[data-theme="dark"] .vote-side {
+  background-color: #111827;
+}
+
+/* 다크모드 배경색 통일 */
+[data-theme="dark"] .debate-detail-page {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] .debate-article,
+[data-theme="dark"] .vote-section,
+[data-theme="dark"] .comment-section {
+  background-color: #1f2937;
+  border-color: #374151;
+}
+
+/* 다크모드 정렬 버튼 배경 제거 */
+[data-theme="dark"] .sort-tabs button,
+[data-theme="dark"] .sort-tabs button:hover,
+[data-theme="dark"] .sort-tabs button.active {
+  background-color: transparent;
+}
+
+[data-theme="dark"] .sort-tabs button {
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .sort-tabs button.active {
+  color: var(--primary-color);
+}
+
+/* 반응형 (모바일) */
+@media (max-width: 768px) {
+
+  .debate-article,
+  .vote-section,
+  .comment-section {
+    padding: 1.5rem;
+  }
+
+  .article-title {
+    font-size: 1.6rem;
+  }
+
+  .vote-board {
+    flex-direction: column;
+  }
+
+  .comment-input-area {
+    flex-direction: column;
+  }
+
+  .comment-input-area button {
+    width: 100%;
+    padding: 0.8rem;
+  }
+
+  /* 모바일 대댓글 들여쓰기 축소 */
+  .comment-row.reply {
+    margin-left: 1.5rem;
+  }
+
+  .reply-form {
+    margin-left: 1.5rem;
+  }
+}
+
+/* [긴급 수정] 댓글 좋아요 버튼 스타일 강제 적용 */
+.comment-actions .comment-like-btn {
+  background-color: transparent !important;
+  border: none !important;
+  box-shadow: none !important;
+  padding: 0.25rem 0.5rem !important;
+  margin-top: 0 !important;
+  /* 상단 여백 제거 */
+}
+
+.comment-actions .comment-like-btn:hover {
+  background-color: rgba(0, 0, 0, 0.05) !important;
+}
+
+[data-theme="dark"] .comment-actions .comment-like-btn:hover {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+}
+
+.debate-detail-page {
+  overflow-y: visible !important;
+  /* 세로는 부모가 스크롤 담당 */
+  overflow-x: hidden !important;
+  /* 가로는 넘치면 잘라서 헤더 안 잘리게 */
+}

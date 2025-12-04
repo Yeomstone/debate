@@ -504,29 +504,34 @@ const DebateDetailPage = () => {
                 </div>
               ) : (
                 <>
-                  <p className="comment-text">{comment.content}</p>
-                  <div className="comment-actions">
-                    <button
-                      className={`comment-like-btn ${comment.liked ? "active" : ""}`}
-                      onClick={() => handleCommentLike(comment.id)}
-                    >
-                      {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
-                    </button>
-                    <button
-                      className="reply-btn"
-                      onClick={() =>
-                        setReplyingTo(replyingTo === comment.id ? null : comment.id)
-                      }
-                    >
-                      답글 달기
-                    </button>
-                    {isMyComment && (
-                      <>
-                        <button className="action-btn" onClick={() => handleEditClick(comment)}>수정</button>
-                        <button className="action-btn delete" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
-                      </>
-                    )}
-                  </div>
+                  <p className={`comment-text ${comment.isDeleted ? "deleted" : ""}`}
+                    style={comment.isDeleted ? { color: "#999", fontStyle: "italic" } : {}}>
+                    {comment.content}
+                  </p>
+                  {!comment.isDeleted && (
+                    <div className="comment-actions">
+                      <button
+                        className={`comment-like-btn ${comment.liked ? "active" : ""}`}
+                        onClick={() => handleCommentLike(comment.id)}
+                      >
+                        {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
+                      </button>
+                      <button
+                        className="reply-btn"
+                        onClick={() =>
+                          setReplyingTo(replyingTo === comment.id ? null : comment.id)
+                        }
+                      >
+                        답글 달기
+                      </button>
+                      {isMyComment && (
+                        <>
+                          <button className="action-btn" onClick={() => handleEditClick(comment)}>수정</button>
+                          <button className="action-btn delete" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
+                        </>
+                      )}
+                    </div>
+                  )}
                 </>
               )}
             </div>
@@ -607,22 +612,27 @@ const DebateDetailPage = () => {
                         </div>
                       ) : (
                         <>
-                          <p className="comment-text">{reply.content}</p>
-                          <div className="comment-actions">
-                            <button
-                              className={`comment-like-btn ${reply.liked ? "active" : ""
-                                }`}
-                              onClick={() => handleCommentLike(reply.id)}
-                            >
-                              {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
-                            </button>
-                            {isMyReply && (
-                              <>
-                                <button className="action-btn" onClick={() => handleEditClick(reply)}>수정</button>
-                                <button className="action-btn delete" onClick={() => handleDeleteComment(reply.id)}>삭제</button>
-                              </>
-                            )}
-                          </div>
+                          <p className={`comment-text ${reply.isDeleted ? "deleted" : ""}`}
+                            style={reply.isDeleted ? { color: "#999", fontStyle: "italic" } : {}}>
+                            {reply.content}
+                          </p>
+                          {!reply.isDeleted && (
+                            <div className="comment-actions">
+                              <button
+                                className={`comment-like-btn ${reply.liked ? "active" : ""
+                                  }`}
+                                onClick={() => handleCommentLike(reply.id)}
+                              >
+                                {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
+                              </button>
+                              {isMyReply && (
+                                <>
+                                  <button className="action-btn" onClick={() => handleEditClick(reply)}>수정</button>
+                                  <button className="action-btn delete" onClick={() => handleDeleteComment(reply.id)}>삭제</button>
+                                </>
+                              )}
+                            </div>
+                          )}
                         </>
                       )}
                     </div>

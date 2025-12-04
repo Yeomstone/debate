@@ -12,4 +12,5 @@ public interface CommentLikeRepository extends JpaRepository<CommentLike, Long> 
     Optional<CommentLike> findByCommentIdAndUserId(Long commentId, Long userId);
     long countByCommentId(Long commentId);
     void deleteByCommentIdAndUserId(Long commentId, Long userId);
+    void deleteByCommentId(Long commentId);
 }

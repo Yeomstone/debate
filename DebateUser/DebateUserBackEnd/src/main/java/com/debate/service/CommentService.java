@@ -125,7 +125,23 @@ public class CommentService {
             throw new BadRequestException("댓글을 삭제할 권한이 없습니다");
         }
 
-        commentRepository.delete(comment);
+        // 1. 대댓글 존재 여부 확인
+        List<Comment> replies = commentRepository.findByParent(comment);
+        
+        if (!replies.isEmpty()) {
+            // 대댓글이 있으면 Soft Delete (삭제 상태로 변경)
+            comment.setIsDeleted(true);
+            commentRepository.save(comment);
+            
+            // 좋아요는 삭제 (선택 사항이나 깔끔하게 제거)
+            commentLikeRepository.deleteByCommentId(commentId);
+        } else {
+            // 대댓글이 없으면 Hard Delete (완전 삭제)
+            // 1. 댓글의 좋아요 삭제
+            commentLikeRepository.deleteByCommentId(commentId);
+            // 2. 댓글 삭제
+            commentRepository.delete(comment);
+        }
     }
 
     @Transactional

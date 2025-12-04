@@ -21,6 +21,7 @@ public class CommentResponse {
     private Long parentId;
     private String content;
     private Boolean isHidden;
+    private Boolean isDeleted;
     private List<CommentResponse> replies;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
@@ -28,14 +29,17 @@ public class CommentResponse {
     private boolean liked;
 
     public static CommentResponse from(Comment comment) {
+        boolean deleted = comment.getIsDeleted() != null && comment.getIsDeleted();
+        
         return CommentResponse.builder()
                 .id(comment.getId())
-                .userId(comment.getUser().getId())
-                .nickname(comment.getUser().getNickname())
+                .userId(deleted ? null : comment.getUser().getId())
+                .nickname(deleted ? "(삭제)" : comment.getUser().getNickname())
                 .debateId(comment.getDebate().getId())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
-                .content(comment.getContent())
+                .content(deleted ? "삭제된 댓글입니다." : comment.getContent())
                 .isHidden(comment.getIsHidden())
+                .isDeleted(deleted)
                 .createdAt(comment.getCreatedAt())
                 .updatedAt(comment.getUpdatedAt())
                 .likeCount(comment.getLikeCount())

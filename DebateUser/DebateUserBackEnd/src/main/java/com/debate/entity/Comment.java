@@ -75,6 +75,14 @@ public class Comment {
     private Boolean isHidden = false;
 
     /**
+     * 삭제 여부 (Soft Delete)
+     */
+    @Column(name = "is_deleted", nullable = false)
+    @org.hibernate.annotations.Comment("삭제 여부")
+    @Builder.Default
+    private Boolean isDeleted = false;
+
+    /**
      * 생성 일시
      */
     @CreatedDate
