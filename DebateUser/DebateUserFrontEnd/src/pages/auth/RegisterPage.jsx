@@ -25,6 +25,7 @@ import "./Auth.css";
 import "./AuthDarkMode.css";
 import api from "../../services/api"; // api 인스턴스 import
 import defaultProfile from "../../assets/default-profile.png"; // 기본 프로필 이미지 import
+import debateOnlyLogo from "../../assets/debate-onlylogo.png"; // DEBATE 로고 이미지 import
 
 const RegisterPage = () => {
   // ========================================
@@ -470,7 +471,7 @@ const RegisterPage = () => {
   // ========================================
 
   return (
-    <div className={`auth-page ${theme === 'dark' ? 'dark' : ''}`}>
+    <div className={`auth-page ${theme === "dark" ? "dark" : ""}`}>
       {/* ======================================== */}
       {/* 로고 섹션 - 브랜드 아이덴티티 표시 */}
       {/* ======================================== */}
@@ -482,11 +483,7 @@ const RegisterPage = () => {
             - 실제 경로: src/assets/debate-logo.png
             - Vite가 자동으로 처리하여 최적화된 URL로 변환
           */}
-          <img
-            src="/src/assets/debate-onlylogo.png"
-            alt="DEBATE Logo"
-            className="logo-image"
-          />
+          <img src={debateOnlyLogo} alt="DEBATE Logo" className="logo-image" />
         </div>
 
         {/* 브랜드 타이틀 */}
@@ -576,8 +573,9 @@ const RegisterPage = () => {
                 setFormData({ ...formData, email: e.target.value })
               }
               required
-              className={`form-input ${emailCheck.status === "error" ? "input-error" : ""
-                }`}
+              className={`form-input ${
+                emailCheck.status === "error" ? "input-error" : ""
+              }`}
               placeholder="example@email.com"
             />
             {/* [추가] 메시지 표시 영역 */}
@@ -601,8 +599,9 @@ const RegisterPage = () => {
                 setFormData({ ...formData, nickname: e.target.value })
               }
               required
-              className={`form-input ${nicknameCheck.status === "error" ? "input-error" : ""
-                }`}
+              className={`form-input ${
+                nicknameCheck.status === "error" ? "input-error" : ""
+              }`}
               placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
             />
             {/* [추가] 메시지 표시 영역 */}
@@ -664,10 +663,11 @@ const RegisterPage = () => {
             {/* 비밀번호 일치 여부 표시 (비밀번호 확인 입력 시) */}
             {formData.passwordConfirm && (
               <div
-                className={`password-match ${formData.password === formData.passwordConfirm
-                  ? "match"
-                  : "mismatch"
-                  }`}
+                className={`password-match ${
+                  formData.password === formData.passwordConfirm
+                    ? "match"
+                    : "mismatch"
+                }`}
               >
                 {formData.password === formData.passwordConfirm ? (
                   <span>✓ 비밀번호가 일치합니다</span>
