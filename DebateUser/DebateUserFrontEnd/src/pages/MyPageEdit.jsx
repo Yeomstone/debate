@@ -1,13 +1,22 @@
 /**
- * MyPageEdit 컴포넌트 - 간격 수정 버전
+ * MyPageEdit 컴포넌트 - 개선된 버전
+ *
+ * 프로필 수정 페이지
+ *
+ * 주요 기능:
+ * - 닉네임 수정
+ * - 자기소개 수정
+ * - 프로필 이미지 업로드 (드래그 앤 드롭 지원)
+ * - 실시간 유효성 검사
+ * - 토스트 알림
+ * - 변경사항 감지
  */
 
 import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../services/userService";
-import axios from "axios";
-import defaultProfileImage from "../assets/default-profile.png";
+import defaultProfileImage from "../assets/default-profile.png";  // 추가
 import "./MyPageEdit.css";
 
 const MyPageEdit = () => {
@@ -15,36 +24,20 @@ const MyPageEdit = () => {
   const navigate = useNavigate();
   const fileInputRef = useRef(null);
 
-  // ========================================
-  // 정규식 상수
-  // ========================================
-  const nicknameCharPattern = /^[가-힣a-zA-Z0-9]+$/; // 한글/영문/숫자만
-  const nicknameSpacePattern = /\s/; // 공백 여부
-
-  // ========================================
   // 상태 관리
-  // ========================================
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
-
   const [formData, setFormData] = useState({
     nickname: "",
     bio: "",
     profileImage: "",
   });
-
   const [originalData, setOriginalData] = useState(null);
   const [errors, setErrors] = useState({});
   const [isDragging, setIsDragging] = useState(false);
   const [uploadProgress, setUploadProgress] = useState(0);
   const [toast, setToast] = useState(null);
-
-  // 닉네임 검사 상태
-  const [nicknameCheck, setNicknameCheck] = useState({
-    status: "idle",
-    message: "",
-  });
 
   /**
    * 컴포넌트 마운트 시 프로필 정보 로딩
@@ -63,17 +56,13 @@ const MyPageEdit = () => {
       const response = await userService.getUserById(user.id);
       const data = response.data || response;
       setProfile(data);
-
       const initialData = {
         nickname: data.nickname || "",
         bio: data.bio || "",
         profileImage: data.profileImage || "",
       };
-
       setFormData(initialData);
       setOriginalData(initialData);
-
-      setNicknameCheck({ status: "success", message: "" });
     } catch (error) {
       console.error("프로필 로딩 실패:", error);
       showToast("프로필 로딩에 실패했습니다.", "error");
@@ -83,35 +72,7 @@ const MyPageEdit = () => {
   };
 
   /**
-   * 중복 확인 API 함수
-   */
-  const checkDuplicateAPI = async (type, value) => {
-    const endpoint = "/auth/check-nickname";
-    const paramName = type;
-
-    try {
-      await axios.get(`${endpoint}?${paramName}=${value}`);
-      return true;
-    } catch (error) {
-      let message = "";
-      if (error.response) {
-        if (error.response.status === 409) {
-          message =
-            error.response.data?.message || "이미 사용 중인 닉네임입니다.";
-        } else {
-          message = "확인 중 오류가 발생했습니다.";
-        }
-      } else if (error.request) {
-        message = "서버와 연결할 수 없습니다.";
-      } else {
-        message = "에러가 발생했습니다.";
-      }
-      throw new Error(message);
-    }
-  };
-
-  /**
-   * 토스트 알림
+   * 토스트 알림 표시
    */
   const showToast = (message, type = "info") => {
     setToast({ message, type });
@@ -119,7 +80,7 @@ const MyPageEdit = () => {
   };
 
   /**
-   * 변경사항 확인
+   * 변경사항 여부 확인
    */
   const hasChanges = () => {
     if (!originalData) return false;
@@ -139,108 +100,63 @@ const MyPageEdit = () => {
       ...prev,
       [name]: value,
     }));
-
-    if (name === "bio") {
-      if (value && value.length > 200) {
-        setErrors((prev) => ({
-          ...prev,
-          bio: "자기소개는 최대 200자까지 입력 가능합니다.",
-        }));
-      } else {
-        setErrors((prev) => {
-          const newErrors = { ...prev };
-          delete newErrors.bio;
-          return newErrors;
-        });
-      }
-    }
+    // 실시간 유효성 검사
+    validateField(name, value);
   };
 
   /**
-   * 닉네임 실시간 유효성 검사 Effect
+   * 필드별 실시간 유효성 검사
    */
-  useEffect(() => {
-    if (!originalData) return;
+  const validateField = (name, value) => {
+    const newErrors = { ...errors };
 
-    const timer = setTimeout(async () => {
-      const raw = formData.nickname;
-      const trimmed = raw.trim();
-
-      if (!trimmed) {
-        setNicknameCheck({ status: "idle", message: "" });
-        return;
+    if (name === "nickname") {
+      if (value && (value.length < 2 || value.length > 20)) {
+        newErrors.nickname = "닉네임은 2-20자 사이여야 합니다.";
+      } else {
+        delete newErrors.nickname;
       }
+    }
 
-      if (trimmed === originalData.nickname) {
-        setNicknameCheck({
-          status: "success",
-          message: "현재 사용 중인 닉네임입니다.",
-        });
-        return;
+    if (name === "bio") {
+      if (value && value.length > 200) {
+        newErrors.bio = "자기소개는 최대 200자까지 입력 가능합니다.";
+      } else {
+        delete newErrors.bio;
       }
+    }
 
-      if (nicknameSpacePattern.test(raw)) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임에 공백은 사용할 수 없습니다.",
-        });
-        return;
-      }
-
-      if (trimmed.length < 2) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 2자 이상 입력해주세요.",
-        });
-        return;
-      }
-
-      if (trimmed.length > 8) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 8자 이내로 입력해주세요.",
-        });
-        return;
-      }
-
-      if (!nicknameCharPattern.test(trimmed)) {
-        setNicknameCheck({
-          status: "error",
-          message: "닉네임은 한글/영문/숫자만 사용할 수 있습니다.",
-        });
-        return;
-      }
-
-      setNicknameCheck({ status: "loading", message: "확인 중..." });
-
-      try {
-        await checkDuplicateAPI("nickname", trimmed);
-        setNicknameCheck({
-          status: "success",
-          message: "사용 가능한 닉네임입니다.",
-        });
-      } catch (err) {
-        setNicknameCheck({ status: "error", message: err.message });
-      }
-    }, 500);
-
-    return () => clearTimeout(timer);
-  }, [formData.nickname, originalData]);
+    setErrors(newErrors);
+  };
 
   /**
-   * 폼 제출
+   * 폼 유효성 검사
+   */
+  const validateForm = () => {
+    const newErrors = {};
+
+    if (
+      formData.nickname &&
+      (formData.nickname.length < 2 || formData.nickname.length > 20)
+    ) {
+      newErrors.nickname = "닉네임은 2-20자 사이여야 합니다.";
+    }
+
+    if (formData.bio && formData.bio.length > 200) {
+      newErrors.bio = "자기소개는 최대 200자까지 입력 가능합니다.";
+    }
+
+    setErrors(newErrors);
+    return Object.keys(newErrors).length === 0;
+  };
+
+  /**
+   * 폼 제출 핸들러
    */
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (nicknameCheck.status !== "success" && nicknameCheck.status !== "idle") {
-      if (formData.nickname !== originalData.nickname) {
-        showToast(nicknameCheck.message || "닉네임을 확인해주세요.", "error");
-        return;
-      }
-    }
-
-    if (Object.keys(errors).length > 0) {
+    if (!validateForm()) {
       showToast("입력 내용을 확인해주세요.", "error");
       return;
     }
@@ -259,7 +175,6 @@ const MyPageEdit = () => {
       );
       showToast("프로필이 성공적으로 수정되었습니다!", "success");
       setOriginalData(formData);
-      setNicknameCheck({ status: "success", message: "" });
       setTimeout(() => navigate("/my"), 1500);
     } catch (error) {
       console.error("프로필 수정 실패:", error);
@@ -269,24 +184,35 @@ const MyPageEdit = () => {
     }
   };
 
-  // 이미지 관련 핸들러들
+  /**
+   * 이미지 파일 유효성 검사
+   */
   const validateImageFile = (file) => {
+    // 파일 크기 제한 (10MB)
     if (file.size > 10 * 1024 * 1024) {
       showToast("파일 크기는 10MB 이하여야 합니다.", "error");
       return false;
     }
+
+    // 이미지 파일 타입 확인
     if (!file.type.startsWith("image/")) {
       showToast("이미지 파일만 업로드 가능합니다.", "error");
       return false;
     }
+
     return true;
   };
 
+  /**
+   * 프로필 이미지 업로드 핸들러
+   */
   const handleImageUpload = async (file) => {
     if (!file || !validateImageFile(file)) return;
 
     try {
       setUploadProgress(0);
+
+      // 이미지 미리보기 (Base64)
       const reader = new FileReader();
       reader.onloadstart = () => setUploadProgress(20);
       reader.onprogress = (e) => {
@@ -297,17 +223,32 @@ const MyPageEdit = () => {
       };
       reader.onload = async (e) => {
         setUploadProgress(50);
-        setFormData((prev) => ({ ...prev, profileImage: e.target.result }));
+
+        // 임시 미리보기 설정
+        setFormData((prev) => ({
+          ...prev,
+          profileImage: e.target.result,
+        }));
+
+        // 실제 업로드
         try {
           setUploadProgress(70);
           const imageUrl = await userService.uploadImage(file);
           setUploadProgress(100);
-          setFormData((prev) => ({ ...prev, profileImage: imageUrl }));
+
+          // 최종 URL로 업데이트
+          setFormData((prev) => ({
+            ...prev,
+            profileImage: imageUrl,
+          }));
+
           showToast("이미지가 업로드되었습니다.", "success");
           setTimeout(() => setUploadProgress(0), 1000);
         } catch (uploadError) {
-          showToast("이미지 업로드 실패", "error");
+          console.error("이미지 업로드 실패:", uploadError);
+          showToast("이미지 업로드에 실패했습니다.", "error");
           setUploadProgress(0);
+          // 미리보기 이미지 제거
           setFormData((prev) => ({
             ...prev,
             profileImage: originalData?.profileImage || "",
@@ -316,40 +257,63 @@ const MyPageEdit = () => {
       };
       reader.readAsDataURL(file);
     } catch (error) {
-      showToast("이미지 처리 실패", "error");
+      console.error("이미지 처리 실패:", error);
+      showToast("이미지 처리에 실패했습니다.", "error");
+      setUploadProgress(0);
     }
   };
 
+  /**
+   * 파일 input 변경 핸들러
+   */
   const handleFileInputChange = (e) => {
     const file = e.target.files[0];
-    if (file) handleImageUpload(file);
+    if (file) {
+      handleImageUpload(file);
+    }
   };
+
+  /**
+   * 드래그 앤 드롭 핸들러
+   */
   const handleDragEnter = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(true);
   };
+
   const handleDragLeave = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
   };
+
   const handleDragOver = (e) => {
     e.preventDefault();
     e.stopPropagation();
   };
+
   const handleDrop = (e) => {
     e.preventDefault();
     e.stopPropagation();
     setIsDragging(false);
+
     const file = e.dataTransfer.files[0];
-    if (file) handleImageUpload(file);
+    if (file) {
+      handleImageUpload(file);
+    }
   };
+
+  /**
+   * 기본 이미지로 변경
+   */
   const handleRemoveImage = () => {
     setFormData((prev) => ({ ...prev, profileImage: defaultProfileImage }));
     showToast("기본 이미지로 변경되었습니다.", "info");
   };
-
+  /**
+   * 페이지 나가기 확인
+   */
   useEffect(() => {
     const handleBeforeUnload = (e) => {
       if (hasChanges()) {
@@ -357,6 +321,7 @@ const MyPageEdit = () => {
         e.returnValue = "";
       }
     };
+
     window.addEventListener("beforeunload", handleBeforeUnload);
     return () => window.removeEventListener("beforeunload", handleBeforeUnload);
   }, [formData, originalData]);
@@ -365,6 +330,7 @@ const MyPageEdit = () => {
     return (
       <div className="loading-container">
         <div className="loading-spinner"></div>
+        <p className="loading-text">프로필 로딩 중...</p>
       </div>
     );
   }
@@ -398,6 +364,8 @@ const MyPageEdit = () => {
                   마이페이지로
                 </button>
               </div>
+
+              {/* 변경사항 알림 */}
               {hasChanges() && (
                 <div className="changes-indicator">
                   <span className="changes-dot"></span>
@@ -417,13 +385,12 @@ const MyPageEdit = () => {
             </div>
 
             <form className="profile-edit-form" onSubmit={handleSubmit}>
-              {/* 프로필 사진 섹션 */}
+              {/* 프로필 사진 */}
               <div className="form-section">
                 <div className="profile-photo-section">
                   <h3 className="section-title-centered">프로필 사진</h3>
                   <div
-                    className={`profile-photo-preview ${isDragging ? "dragging" : ""
-                      }`}
+                    className={`profile-photo-preview ${isDragging ? "dragging" : ""}`}
                     onDragEnter={handleDragEnter}
                     onDragOver={handleDragOver}
                     onDragLeave={handleDragLeave}
@@ -479,113 +446,70 @@ const MyPageEdit = () => {
                 </div>
               </div>
 
-              {/* [수정됨] 닉네임 섹션 (간격 문제 해결) */}
-              <div
-                className="form-section form-section-narrow"
-                style={{
-                  flex: "none", // 높이가 불필요하게 늘어나는 것 방지
-                  height: "auto", // 콘텐츠 크기에 맞춤
-                  marginBottom: "2rem", // 하단 여백 적절하게 조정
-                }}
-              >
+              {/* 닉네임 */}
+              <div className="form-section form-section-narrow">
                 <div className="nickname-input-wrapper">
-                  <label htmlFor="nickname" className="form-label">
-                    닉네임
-                  </label>
+                  <label htmlFor="nickname" className="form-label">닉네임</label>
                   <input
                     type="text"
                     id="nickname"
                     name="nickname"
-                    className={`form-input form-input-nickname ${nicknameCheck.status === "error" ? "error" : ""
-                      } ${nicknameCheck.status === "success" ? "valid" : ""}`}
+                    className={`form-input form-input-nickname ${errors.nickname ? "error" : ""} ${formData.nickname && !errors.nickname ? "valid" : ""}`}
                     value={formData.nickname}
                     onChange={handleChange}
-                    placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
+                    placeholder="2-20자 사이의 닉네임을 입력하세요"
                   />
                 </div>
-
-                {/* 메시지 영역: 메시지가 있을 때만 렌더링되지만 높이를 차지하지 않도록 조정 */}
-                <div
-                  className="nickname-footer"
-                  style={{ minHeight: "auto", marginTop: "0.5rem" }}
-                >
-                  {nicknameCheck.message && (
-                    <span
-                      className={`validation-message ${nicknameCheck.status === "error"
-                          ? "form-error"
-                          : nicknameCheck.status === "success"
-                            ? "form-success"
-                            : "form-info"
-                        }`}
-                    >
-                      {nicknameCheck.status === "error"
-                        ? "⚠️ "
-                        : nicknameCheck.status === "success"
-                          ? "✓ "
-                          : ""}
-                      {nicknameCheck.message}
-                    </span>
+                <div className="nickname-footer">
+                  {errors.nickname && (
+                    <span className="form-error">⚠️ {errors.nickname}</span>
+                  )}
+                  {!errors.nickname && formData.nickname && (
+                    <span className="form-success">✓ 사용 가능한 닉네임입니다</span>
                   )}
                 </div>
               </div>
 
-              {/* 소개 섹션 */}
+              {/* 소개 */}
               <div className="form-section form-section-wide">
-                <div
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    marginBottom: "0.75rem",
-                  }}
-                >
-                  <label
-                    htmlFor="bio"
-                    className="form-label"
-                    style={{ marginBottom: 0, marginRight: "0.5rem" }}
-                  >
+                <div style={{ display: 'flex', alignItems: 'center', marginBottom: '0.75rem' }}>
+                  <label htmlFor="bio" className="form-label" style={{ marginBottom: 0, marginRight: '0.5rem' }}>
                     소개
                   </label>
                 </div>
                 <textarea
                   id="bio"
                   name="bio"
-                  className={`form-textarea form-textarea-bio ${errors.bio ? "error" : ""
-                    }`}
+                  className={`form-textarea form-textarea-bio ${errors.bio ? "error" : ""} ${formData.bio && !errors.bio ? "valid" : ""}`}
                   rows="4"
                   value={formData.bio}
                   onChange={handleChange}
                   maxLength={200}
                   placeholder="자신을 표현하는 한마디를 적어주세요 (최대 200자)"
                 />
+
                 <div className="textarea-footer">
                   {errors.bio && (
                     <span className="form-error">⚠️ {errors.bio}</span>
                   )}
                   <span
-                    className={`character-count ${formData.bio.length >= 180 ? "warning" : ""
-                      } ${formData.bio.length >= 200 ? "error" : ""}`}
+                    className={`character-count ${formData.bio.length >= 180 ? "warning" : ""} ${formData.bio.length >= 200 ? "error" : ""}`}
                   >
                     {formData.bio.length} / 200자
                   </span>
                 </div>
               </div>
-
-              {/* 버튼 영역 */}
+              {/* 저장 버튼 */}
               <div className="form-actions">
                 <button
                   type="submit"
                   className="btn btn-primary"
-                  disabled={
-                    saving ||
-                    !hasChanges() ||
-                    Object.keys(errors).length > 0 ||
-                    nicknameCheck.status === "error" ||
-                    nicknameCheck.status === "loading"
-                  }
+                  disabled={saving || !hasChanges() || Object.keys(errors).length > 0}
                 >
                   {saving ? (
                     <>
-                      <span className="btn-spinner"></span>저장 중...
+                      <span className="btn-spinner"></span>
+                      저장 중...
                     </>
                   ) : (
                     <>💾 저장하기</>
@@ -600,8 +524,9 @@ const MyPageEdit = () => {
                       !window.confirm(
                         "변경사항이 저장되지 않았습니다. 정말 나가시겠습니까?"
                       )
-                    )
+                    ) {
                       return;
+                    }
                     navigate("/my");
                   }}
                 >
@@ -613,10 +538,12 @@ const MyPageEdit = () => {
         </div>
       </div>
 
+      {/* 토스트 알림 */}
       {toast && (
         <div className={`toast toast-${toast.type}`}>
           <div className="toast-icon">
-            {toast.type === "success" && "✓"} {toast.type === "error" && "✕"}{" "}
+            {toast.type === "success" && "✓"}
+            {toast.type === "error" && "✕"}
             {toast.type === "info" && "ℹ"}
           </div>
           <div className="toast-message">{toast.message}</div>
