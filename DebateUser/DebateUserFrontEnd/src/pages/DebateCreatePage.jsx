@@ -11,7 +11,6 @@ import { categoryService } from "../services/categoryService";
 import { fileUploadService } from "../services/fileUploadService";
 import ImageUploadModal from "../components/common/ImageUploadModal";
 import { registerQuillModules } from "../utils/quillConfig";
-import { processImageUrl } from "../utils/urlUtils";
 import "./DebateCreatePage.css";
 
 const DebateCreatePage = () => {
@@ -140,8 +139,15 @@ const DebateCreatePage = () => {
   const handleImageFileSelect = async (file) => {
     try {
       const imageUrl = await fileUploadService.uploadImage(file);
-      // 이미지 URL을 안전하게 처리 (상대 경로를 절대 경로로 변환하고 HTTP를 HTTPS로 변환)
-      const finalImageUrl = processImageUrl(imageUrl);
+      let finalImageUrl = imageUrl;
+      if (
+        imageUrl &&
+        !imageUrl.startsWith("http://") &&
+        !imageUrl.startsWith("https://") &&
+        !imageUrl.startsWith("data:")
+      ) {
+        finalImageUrl = `${window.location.origin}${imageUrl}`;
+      }
       const quill = quillRef.current?.getEditor();
       if (quill) {
         const range = quill.getSelection(true);

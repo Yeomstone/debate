@@ -7,7 +7,6 @@ import { opinionService } from "../services/opinionService";
 import { likeService } from "../services/likeService";
 import { reportService } from "../services/reportService";
 import { format } from "date-fns";
-import { convertHttpImagesToHttps } from "../utils/urlUtils";
 import "./DebateDetailPage.css";
 
 const DebateDetailPage = () => {
@@ -100,7 +99,7 @@ const DebateDetailPage = () => {
         try {
           const liked = await likeService.isLiked(id);
           setIsLiked(liked.data || liked);
-        } catch {}
+        } catch { }
       }
     } catch (err) {
       console.error(err);
@@ -118,12 +117,7 @@ const DebateDetailPage = () => {
       if (sort === "oldest") sortParam = "createdAt,asc";
       else if (sort === "replies") sortParam = "replyCount,desc";
 
-      const response = await commentService.getCommentsByDebate(
-        id,
-        page,
-        7,
-        sortParam
-      ); // 7개씩
+      const response = await commentService.getCommentsByDebate(id, page, 7, sortParam); // 7개씩
       const data = response.data || response;
 
       setComments(data.content || []);
@@ -212,9 +206,9 @@ const DebateDetailPage = () => {
     setCommentContent("");
 
     // [수정] 댓글 수 즉시 업데이트
-    setDebate((prev) => ({
+    setDebate(prev => ({
       ...prev,
-      commentCount: (prev.commentCount || 0) + 1,
+      commentCount: (prev.commentCount || 0) + 1
     }));
 
     try {
@@ -228,9 +222,9 @@ const DebateDetailPage = () => {
         setComments((prev) => prev.filter((c) => c.id !== newComment.id));
       }
       // 실패 시 댓글 수 롤백
-      setDebate((prev) => ({
+      setDebate(prev => ({
         ...prev,
-        commentCount: Math.max(0, (prev.commentCount || 0) - 1),
+        commentCount: Math.max(0, (prev.commentCount || 0) - 1)
       }));
       alert("댓글 등록 실패");
     }
@@ -323,6 +317,7 @@ const DebateDetailPage = () => {
       setComments((prev) => updateLike(prev));
       alert("좋아요 처리에 실패했습니다.");
     }
+
   };
 
   // [추가] 댓글 수정 모드 진입
@@ -349,11 +344,7 @@ const DebateDetailPage = () => {
     const updateContent = (list) => {
       return list.map((c) => {
         if (c.id === commentId) {
-          return {
-            ...c,
-            content: editContent,
-            updatedAt: new Date().toISOString(),
-          };
+          return { ...c, content: editContent, updatedAt: new Date().toISOString() };
         }
         if (c.replies && c.replies.length > 0) {
           return { ...c, replies: updateContent(c.replies) };
@@ -445,8 +436,7 @@ const DebateDetailPage = () => {
       const replies = comment.replies || [];
       const isMyComment = user && String(user.id) === String(comment.userId);
       const isEditing = editingCommentId === comment.id;
-      const isModified =
-        comment.updatedAt && comment.updatedAt !== comment.createdAt;
+      const isModified = comment.updatedAt && comment.updatedAt !== comment.createdAt;
 
       return (
         <div key={comment.id} className="comment-block">
@@ -464,13 +454,7 @@ const DebateDetailPage = () => {
 
               {isEditing ? (
                 <div className="edit-form">
-                  <div
-                    style={{
-                      display: "flex",
-                      flexDirection: "column",
-                      width: "100%",
-                    }}
-                  >
+                  <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                     <textarea
                       value={editContent}
                       onChange={(e) => setEditContent(e.target.value)}
@@ -483,28 +467,14 @@ const DebateDetailPage = () => {
                         border: "1px solid var(--border-color)",
                         resize: "none",
                         minHeight: "60px",
-                        marginBottom: "0.5rem",
+                        marginBottom: "0.5rem"
                       }}
                     />
-                    <span
-                      className="char-counter"
-                      style={{
-                        textAlign: "right",
-                        fontSize: "0.8rem",
-                        color: "var(--text-secondary)",
-                      }}
-                    >
+                    <span className="char-counter" style={{ textAlign: "right", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                       {editContent.length} / 500
                     </span>
                   </div>
-                  <div
-                    className="edit-actions"
-                    style={{
-                      display: "flex",
-                      gap: "0.5rem",
-                      marginTop: "0.5rem",
-                    }}
-                  >
+                  <div className="edit-actions" style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
                     <button
                       onClick={() => handleUpdateComment(comment.id)}
                       style={{
@@ -513,7 +483,7 @@ const DebateDetailPage = () => {
                         border: "none",
                         borderRadius: "4px",
                         fontWeight: "bold",
-                        cursor: "pointer",
+                        cursor: "pointer"
                       }}
                     >
                       저장
@@ -525,7 +495,7 @@ const DebateDetailPage = () => {
                         background: "var(--bg-tertiary)",
                         border: "none",
                         borderRadius: "4px",
-                        cursor: "pointer",
+                        cursor: "pointer"
                       }}
                     >
                       취소
@@ -534,24 +504,14 @@ const DebateDetailPage = () => {
                 </div>
               ) : (
                 <>
-                  <p
-                    className={`comment-text ${
-                      comment.isDeleted ? "deleted" : ""
-                    }`}
-                    style={
-                      comment.isDeleted
-                        ? { color: "#999", fontStyle: "italic" }
-                        : {}
-                    }
-                  >
+                  <p className={`comment-text ${comment.isDeleted ? "deleted" : ""}`}
+                    style={comment.isDeleted ? { color: "#999", fontStyle: "italic" } : {}}>
                     {comment.content}
                   </p>
                   {!comment.isDeleted && (
                     <div className="comment-actions">
                       <button
-                        className={`comment-like-btn ${
-                          comment.liked ? "active" : ""
-                        }`}
+                        className={`comment-like-btn ${comment.liked ? "active" : ""}`}
                         onClick={() => handleCommentLike(comment.id)}
                       >
                         {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
@@ -559,27 +519,15 @@ const DebateDetailPage = () => {
                       <button
                         className="reply-btn"
                         onClick={() =>
-                          setReplyingTo(
-                            replyingTo === comment.id ? null : comment.id
-                          )
+                          setReplyingTo(replyingTo === comment.id ? null : comment.id)
                         }
                       >
                         답글 달기
                       </button>
                       {isMyComment && (
                         <>
-                          <button
-                            className="action-btn"
-                            onClick={() => handleEditClick(comment)}
-                          >
-                            수정
-                          </button>
-                          <button
-                            className="action-btn delete"
-                            onClick={() => handleDeleteComment(comment.id)}
-                          >
-                            삭제
-                          </button>
+                          <button className="action-btn" onClick={() => handleEditClick(comment)}>수정</button>
+                          <button className="action-btn delete" onClick={() => handleDeleteComment(comment.id)}>삭제</button>
                         </>
                       )}
                     </div>
@@ -593,11 +541,9 @@ const DebateDetailPage = () => {
           {replies.length > 0 && (
             <div className="replies-container">
               {replies.map((reply) => {
-                const isMyReply =
-                  user && String(user.id) === String(reply.userId);
+                const isMyReply = user && String(user.id) === String(reply.userId);
                 const isReplyEditing = editingCommentId === reply.id;
-                const isReplyModified =
-                  reply.updatedAt && reply.updatedAt !== reply.createdAt;
+                const isReplyModified = reply.updatedAt && reply.updatedAt !== reply.createdAt;
 
                 return (
                   <div key={reply.id} className="comment-row reply">
@@ -616,13 +562,7 @@ const DebateDetailPage = () => {
 
                       {isReplyEditing ? (
                         <div className="edit-form">
-                          <div
-                            style={{
-                              display: "flex",
-                              flexDirection: "column",
-                              width: "100%",
-                            }}
-                          >
+                          <div style={{ display: "flex", flexDirection: "column", width: "100%" }}>
                             <textarea
                               value={editContent}
                               onChange={(e) => setEditContent(e.target.value)}
@@ -635,28 +575,14 @@ const DebateDetailPage = () => {
                                 border: "1px solid var(--border-color)",
                                 resize: "none",
                                 minHeight: "60px",
-                                marginBottom: "0.5rem",
+                                marginBottom: "0.5rem"
                               }}
                             />
-                            <span
-                              className="char-counter"
-                              style={{
-                                textAlign: "right",
-                                fontSize: "0.8rem",
-                                color: "var(--text-secondary)",
-                              }}
-                            >
+                            <span className="char-counter" style={{ textAlign: "right", fontSize: "0.8rem", color: "var(--text-secondary)" }}>
                               {editContent.length} / 500
                             </span>
                           </div>
-                          <div
-                            className="edit-actions"
-                            style={{
-                              display: "flex",
-                              gap: "0.5rem",
-                              marginTop: "0.5rem",
-                            }}
-                          >
+                          <div className="edit-actions" style={{ display: "flex", gap: "0.5rem", marginTop: "0.5rem" }}>
                             <button
                               onClick={() => handleUpdateComment(reply.id)}
                               style={{
@@ -665,7 +591,7 @@ const DebateDetailPage = () => {
                                 border: "none",
                                 borderRadius: "4px",
                                 fontWeight: "bold",
-                                cursor: "pointer",
+                                cursor: "pointer"
                               }}
                             >
                               저장
@@ -677,7 +603,7 @@ const DebateDetailPage = () => {
                                 background: "var(--bg-tertiary)",
                                 border: "none",
                                 borderRadius: "4px",
-                                cursor: "pointer",
+                                cursor: "pointer"
                               }}
                             >
                               취소
@@ -686,45 +612,23 @@ const DebateDetailPage = () => {
                         </div>
                       ) : (
                         <>
-                          <p
-                            className={`comment-text ${
-                              reply.isDeleted ? "deleted" : ""
-                            }`}
-                            style={
-                              reply.isDeleted
-                                ? { color: "#999", fontStyle: "italic" }
-                                : {}
-                            }
-                          >
+                          <p className={`comment-text ${reply.isDeleted ? "deleted" : ""}`}
+                            style={reply.isDeleted ? { color: "#999", fontStyle: "italic" } : {}}>
                             {reply.content}
                           </p>
                           {!reply.isDeleted && (
                             <div className="comment-actions">
                               <button
-                                className={`comment-like-btn ${
-                                  reply.liked ? "active" : ""
-                                }`}
+                                className={`comment-like-btn ${reply.liked ? "active" : ""
+                                  }`}
                                 onClick={() => handleCommentLike(reply.id)}
                               >
-                                {reply.liked ? "❤️" : "🤍"}{" "}
-                                {reply.likeCount || 0}
+                                {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
                               </button>
                               {isMyReply && (
                                 <>
-                                  <button
-                                    className="action-btn"
-                                    onClick={() => handleEditClick(reply)}
-                                  >
-                                    수정
-                                  </button>
-                                  <button
-                                    className="action-btn delete"
-                                    onClick={() =>
-                                      handleDeleteComment(reply.id)
-                                    }
-                                  >
-                                    삭제
-                                  </button>
+                                  <button className="action-btn" onClick={() => handleEditClick(reply)}>수정</button>
+                                  <button className="action-btn delete" onClick={() => handleDeleteComment(reply.id)}>삭제</button>
                                 </>
                               )}
                             </div>
@@ -743,9 +647,7 @@ const DebateDetailPage = () => {
             <div className="reply-form-container">
               <div className="reply-line"></div>
               <div className="reply-form">
-                <div
-                  style={{ display: "flex", flexDirection: "column", flex: 1 }}
-                >
+                <div style={{ display: "flex", flexDirection: "column", flex: 1 }}>
                   <input
                     type="text"
                     placeholder="답글을 입력하세요..."
@@ -806,8 +708,8 @@ const DebateDetailPage = () => {
                 {debate.status === "ACTIVE"
                   ? "진행중"
                   : debate.status === "ENDED"
-                  ? "종료됨"
-                  : "예정"}
+                    ? "종료됨"
+                    : "예정"}
               </span>
             </div>
 
@@ -863,9 +765,7 @@ const DebateDetailPage = () => {
 
           <div
             className="article-content ql-editor"
-            dangerouslySetInnerHTML={{
-              __html: convertHttpImagesToHttps(debate.content),
-            }}
+            dangerouslySetInnerHTML={{ __html: debate.content }}
           />
 
           <div className="article-footer">
@@ -1001,14 +901,16 @@ const DebateDetailPage = () => {
             </button>
           </form>
 
-          <div className="comment-list">{renderComments()}</div>
+          <div className="comment-list">
+            {renderComments()}
+          </div>
 
           {/* [추가] 페이지네이션 */}
           {totalPages > 1 && (
             <div className="pagination">
               <button
                 disabled={page === 0}
-                onClick={() => setPage((p) => Math.max(0, p - 1))}
+                onClick={() => setPage(p => Math.max(0, p - 1))}
               >
                 &lt;
               </button>
@@ -1023,7 +925,7 @@ const DebateDetailPage = () => {
               ))}
               <button
                 disabled={page === totalPages - 1}
-                onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
+                onClick={() => setPage(p => Math.min(totalPages - 1, p + 1))}
               >
                 &gt;
               </button>
