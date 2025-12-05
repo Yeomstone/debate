@@ -146,7 +146,25 @@ const DebateCreatePage = () => {
         !imageUrl.startsWith("https://") &&
         !imageUrl.startsWith("data:")
       ) {
-        finalImageUrl = `${window.location.origin}${imageUrl}`;
+        // 현재 페이지의 프로토콜과 일치시키기 (HTTPS 페이지에서는 HTTPS 사용)
+        const protocol = window.location.protocol;
+        const origin = window.location.origin;
+        finalImageUrl = `${origin}${imageUrl}`;
+
+        // HTTP로 시작하는 경우 HTTPS로 변경 (Mixed Content 방지)
+        if (
+          finalImageUrl.startsWith("http://") &&
+          window.location.protocol === "https:"
+        ) {
+          finalImageUrl = finalImageUrl.replace("http://", "https://");
+        }
+      } else if (
+        imageUrl &&
+        imageUrl.startsWith("http://") &&
+        window.location.protocol === "https:"
+      ) {
+        // HTTP URL을 HTTPS로 변환 (Mixed Content 방지)
+        finalImageUrl = imageUrl.replace("http://", "https://");
       }
       const quill = quillRef.current?.getEditor();
       if (quill) {
