@@ -154,7 +154,7 @@ const DebateDetailPage = () => {
         try {
           const liked = await likeService.isLiked(id);
           setIsLiked(liked.data || liked);
-        } catch {}
+        } catch { }
       }
     } catch (err) {
       console.error(err);
@@ -433,20 +433,61 @@ const DebateDetailPage = () => {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm("댓글을 정말로 삭제하시겠습니까?")) return;
 
+    // 삭제 대상 댓글 찾기 (대댓글 유무 확인)
+    const findComment = (list, targetId) => {
+      for (const c of list) {
+        if (c.id === targetId) return c;
+        if (c.replies && c.replies.length > 0) {
+          const found = findComment(c.replies, targetId);
+          if (found) return found;
+        }
+      }
+      return null;
+    };
+
+    const targetComment = findComment(comments, commentId);
+    const hasReplies = targetComment && targetComment.replies && targetComment.replies.length > 0;
+
     // 낙관적 업데이트
-    const deleteFromList = (list) => {
+    const softDeleteOrRemove = (list) => {
       return list
-        .filter((c) => c.id !== commentId)
         .map((c) => {
+          // 대상 댓글 처리
+          if (c.id === commentId) {
+            // 대댓글이 있는 부모 댓글: soft delete (삭제된 댓글입니다로 표시)
+            if (hasReplies) {
+              return {
+                ...c,
+                isDeleted: true,
+                content: "삭제된 댓글입니다.",
+                nickname: "(삭제)",
+              };
+            }
+            // 대댓글이 없는 경우: 완전 삭제 (null 반환 후 filter)
+            return null;
+          }
+          // 대댓글 내부에서 삭제 대상 찾기
           if (c.replies && c.replies.length > 0) {
-            return { ...c, replies: deleteFromList(c.replies) };
+            return {
+              ...c,
+              replies: c.replies
+                .map((reply) => {
+                  if (reply.id === commentId) {
+                    // 대댓글 삭제: 완전 삭제
+                    return null;
+                  }
+                  return reply;
+                })
+                .filter(Boolean),
+            };
           }
           return c;
-        });
+        })
+        .filter(Boolean); // null 제거 (완전 삭제된 댓글)
     };
 
     const prevComments = [...comments];
-    setComments((prev) => deleteFromList(prev));
+    setComments((prev) => softDeleteOrRemove(prev));
 
     // 댓글 수 감소 (화면상)
     setDebate((prev) => ({
@@ -499,8 +540,9 @@ const DebateDetailPage = () => {
       const replies = comment.replies || [];
       const isMyComment = user && String(user.id) === String(comment.userId);
       const isEditing = editingCommentId === comment.id;
+      // 삭제된 댓글이 아닌 경우에만 (수정됨) 표시
       const isModified =
-        comment.updatedAt && comment.updatedAt !== comment.createdAt;
+        !comment.isDeleted && comment.updatedAt && comment.updatedAt !== comment.createdAt;
 
       return (
         <div key={comment.id} className="comment-block">
@@ -589,9 +631,8 @@ const DebateDetailPage = () => {
               ) : (
                 <>
                   <p
-                    className={`comment-text ${
-                      comment.isDeleted ? "deleted" : ""
-                    }`}
+                    className={`comment-text ${comment.isDeleted ? "deleted" : ""
+                      }`}
                     style={
                       comment.isDeleted
                         ? { color: "#999", fontStyle: "italic" }
@@ -603,9 +644,8 @@ const DebateDetailPage = () => {
                   {!comment.isDeleted && (
                     <div className="comment-actions">
                       <button
-                        className={`comment-like-btn ${
-                          comment.liked ? "active" : ""
-                        }`}
+                        className={`comment-like-btn ${comment.liked ? "active" : ""
+                          }`}
                         onClick={() => handleCommentLike(comment.id)}
                       >
                         {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
@@ -650,8 +690,9 @@ const DebateDetailPage = () => {
                 const isMyReply =
                   user && String(user.id) === String(reply.userId);
                 const isReplyEditing = editingCommentId === reply.id;
+                // 삭제된 댓글이 아닌 경우에만 (수정됨) 표시
                 const isReplyModified =
-                  reply.updatedAt && reply.updatedAt !== reply.createdAt;
+                  !reply.isDeleted && reply.updatedAt && reply.updatedAt !== reply.createdAt;
 
                 return (
                   <div key={reply.id} className="comment-row reply">
@@ -741,9 +782,8 @@ const DebateDetailPage = () => {
                       ) : (
                         <>
                           <p
-                            className={`comment-text ${
-                              reply.isDeleted ? "deleted" : ""
-                            }`}
+                            className={`comment-text ${reply.isDeleted ? "deleted" : ""
+                              }`}
                             style={
                               reply.isDeleted
                                 ? { color: "#999", fontStyle: "italic" }
@@ -755,9 +795,8 @@ const DebateDetailPage = () => {
                           {!reply.isDeleted && (
                             <div className="comment-actions">
                               <button
-                                className={`comment-like-btn ${
-                                  reply.liked ? "active" : ""
-                                }`}
+                                className={`comment-like-btn ${reply.liked ? "active" : ""
+                                  }`}
                                 onClick={() => handleCommentLike(reply.id)}
                               >
                                 {reply.liked ? "❤️" : "🤍"}{" "}
@@ -860,8 +899,8 @@ const DebateDetailPage = () => {
                 {debate.status === "ACTIVE"
                   ? "진행중"
                   : debate.status === "ENDED"
-                  ? "종료됨"
-                  : "예정"}
+                    ? "종료됨"
+                    : "예정"}
               </span>
             </div>
 
@@ -877,11 +916,18 @@ const DebateDetailPage = () => {
                   {isMenuOpen && (
                     <div className="dropdown-menu">
                       <button
-                        onClick={() =>
-                          canEdit && navigate(`/debate/${id}/edit`)
-                        }
-                        disabled={!canEdit}
-                        className={!canEdit ? "disabled" : ""}
+                        onClick={() => {
+                          if (canEdit) {
+                            navigate(`/debate/${id}/edit`);
+                          } else {
+                            // 수정 불가 이유 표시
+                            if (debate.status === "ACTIVE") {
+                              alert("진행중인 토론은 수정할 수 없습니다.\n토론이 시작되기 전(예정 상태)에만 수정이 가능합니다.");
+                            } else if (debate.status === "ENDED") {
+                              alert("종료된 토론은 수정할 수 없습니다.");
+                            }
+                          }
+                        }}
                       >
                         수정하기
                       </button>

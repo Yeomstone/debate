@@ -7,7 +7,7 @@
   padding: 4rem 0 6rem;
   /* [변경] 배경색을 로고 색상(Primary)으로 변경 */
   background-color: var(--primary-color);
-  overflow-x: hidden;
+  /* overflow 속성 제거 - 브라우저 기본 스크롤만 사용 */
 }
 
 /* 은은한 배경 효과 (Glassmorphism 느낌을 위한 블러) */
@@ -1545,11 +1545,4 @@
 
 [data-theme="dark"] .comment-actions .comment-like-btn:hover {
   background-color: rgba(255, 255, 255, 0.1) !important;
-}
-
-.debate-detail-page {
-  overflow-y: visible !important;
-  /* 세로는 부모가 스크롤 담당 */
-  overflow-x: hidden !important;
-  /* 가로는 넘치면 잘라서 헤더 안 잘리게 */
 }
