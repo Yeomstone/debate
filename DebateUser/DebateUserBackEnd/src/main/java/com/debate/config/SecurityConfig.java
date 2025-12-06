@@ -88,6 +88,10 @@ public class SecurityConfig {
                         .requestMatchers("/api-docs/**", "/v3/api-docs/**").permitAll()     // API 문서 허용
                         // Actuator 엔드포인트: 개발 환경에서는 허용
                         .requestMatchers("/actuator/health", "/actuator/info", "/actuator/loggers/**").permitAll()
+                        // WebSocket 엔드포인트 허용 (실시간 채팅)
+                        .requestMatchers("/ws/**").permitAll()
+                        // 채팅 메시지 조회 API 허용
+                        .requestMatchers(HttpMethod.GET, "/api/chat/**").permitAll()
                         .anyRequest().authenticated()                       // 그 외 모든 요청은 인증 필요
                 )
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);  // JWT 필터를 인증 필터 전에 추가

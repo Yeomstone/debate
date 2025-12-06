@@ -421,10 +421,10 @@ const MyPage = () => {
                     )}
                   </button>
                   <button
-                    onClick={() => handleTabChange('activity')}
-                    className={`nav-item ${activeTab === 'activity' ? 'active' : ''}`}
+                    onClick={() => handleTabChange('blocked')}
+                    className={`nav-item ${activeTab === 'blocked' ? 'active' : ''}`}
                   >
-                    📋 활동 내역
+                    🚫 차단 관리
                   </button>
                 </nav>
               </>
@@ -810,19 +810,56 @@ const MyPage = () => {
               </>
             )}
 
-            {/* 활동 내역 탭 */}
-            {activeTab === 'activity' && (
+            {/* 차단 관리 탭 */}
+            {activeTab === 'blocked' && (
               <>
                 <div className="page-header">
-                  <h1>활동 내역</h1>
-                  <p className="page-description">나의 모든 활동을 확인하세요</p>
+                  <h1>차단 관리</h1>
+                  <p className="page-description">채팅에서 차단한 사용자를 관리합니다</p>
                 </div>
 
-                <div className="no-data">
-                  활동 내역 기능은 준비 중입니다
-                </div>
+                {(() => {
+                  const blockedUsers = JSON.parse(localStorage.getItem('blockedChatUsers') || '[]');
+
+                  const handleUnblock = (userId) => {
+                    if (window.confirm('이 사용자의 차단을 해제하시겠습니까?')) {
+                      const updated = blockedUsers.filter(u => u.id !== userId);
+                      localStorage.setItem('blockedChatUsers', JSON.stringify(updated));
+                      window.location.reload();
+                    }
+                  };
+
+                  return blockedUsers.length > 0 ? (
+                    <div className="my-debate-list">
+                      {blockedUsers.map((blockedUser) => (
+                        <div key={blockedUser.id} className="my-debate-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div>
+                            <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
+                              🚫 {blockedUser.nickname}
+                            </div>
+                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                              차단일: {blockedUser.blockedAt ? new Date(blockedUser.blockedAt).toLocaleDateString('ko-KR') : '알 수 없음'}
+                            </div>
+                          </div>
+                          <button
+                            onClick={() => handleUnblock(blockedUser.id)}
+                            className="btn btn-outline"
+                            style={{ padding: '0.5rem 1rem', fontSize: '0.9rem' }}
+                          >
+                            차단 해제
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-data">
+                      차단한 사용자가 없습니다
+                    </div>
+                  );
+                })()}
               </>
             )}
+
           </div>
         </div>
 

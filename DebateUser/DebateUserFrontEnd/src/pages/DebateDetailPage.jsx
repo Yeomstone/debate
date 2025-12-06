@@ -8,6 +8,7 @@ import { likeService } from "../services/likeService";
 import { reportService } from "../services/reportService";
 import { format } from "date-fns";
 import "./DebateDetailPage.css";
+import ChatWidget from "../components/ChatWidget";
 
 const DebateDetailPage = () => {
   const { id } = useParams();
@@ -137,7 +138,7 @@ const DebateDetailPage = () => {
         try {
           const liked = await likeService.isLiked(id);
           setIsLiked(liked.data || liked);
-        } catch {}
+        } catch { }
       }
     } catch (err) {
       console.error(err);
@@ -572,9 +573,8 @@ const DebateDetailPage = () => {
               ) : (
                 <>
                   <p
-                    className={`comment-text ${
-                      comment.isDeleted ? "deleted" : ""
-                    }`}
+                    className={`comment-text ${comment.isDeleted ? "deleted" : ""
+                      }`}
                     style={
                       comment.isDeleted
                         ? { color: "#999", fontStyle: "italic" }
@@ -586,9 +586,8 @@ const DebateDetailPage = () => {
                   {!comment.isDeleted && (
                     <div className="comment-actions">
                       <button
-                        className={`comment-like-btn ${
-                          comment.liked ? "active" : ""
-                        }`}
+                        className={`comment-like-btn ${comment.liked ? "active" : ""
+                          }`}
                         onClick={() => handleCommentLike(comment.id)}
                       >
                         {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
@@ -724,9 +723,8 @@ const DebateDetailPage = () => {
                       ) : (
                         <>
                           <p
-                            className={`comment-text ${
-                              reply.isDeleted ? "deleted" : ""
-                            }`}
+                            className={`comment-text ${reply.isDeleted ? "deleted" : ""
+                              }`}
                             style={
                               reply.isDeleted
                                 ? { color: "#999", fontStyle: "italic" }
@@ -738,9 +736,8 @@ const DebateDetailPage = () => {
                           {!reply.isDeleted && (
                             <div className="comment-actions">
                               <button
-                                className={`comment-like-btn ${
-                                  reply.liked ? "active" : ""
-                                }`}
+                                className={`comment-like-btn ${reply.liked ? "active" : ""
+                                  }`}
                                 onClick={() => handleCommentLike(reply.id)}
                               >
                                 {reply.liked ? "❤️" : "🤍"}{" "}
@@ -843,8 +840,8 @@ const DebateDetailPage = () => {
                 {debate.status === "ACTIVE"
                   ? "진행중"
                   : debate.status === "ENDED"
-                  ? "종료됨"
-                  : "예정"}
+                    ? "종료됨"
+                    : "예정"}
               </span>
             </div>
 
@@ -1066,8 +1063,10 @@ const DebateDetailPage = () => {
           )}
         </section>
       </div>
+
+      {/* 실시간 채팅 위젯 */}
+      <ChatWidget debateId={parseInt(id)} debateTitle={debate ? debate.title : ''} />
     </div>
   );
 };
-
 export default DebateDetailPage;

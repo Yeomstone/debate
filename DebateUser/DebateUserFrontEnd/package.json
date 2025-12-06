@@ -12,6 +12,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0"
   },
   "dependencies": {
+    "@stomp/stompjs": "^7.2.1",
     "axios": "^1.6.2",
     "date-fns": "^2.30.0",
     "quill-better-table": "^1.2.10",
@@ -19,7 +20,8 @@
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-quill": "^2.0.0",
-    "react-router-dom": "^6.20.0"
+    "react-router-dom": "^6.20.0",
+    "sockjs-client": "^1.6.1"
   },
   "devDependencies": {
     "@types/react": "^18.2.43",
@@ -32,4 +34,3 @@
     "vite": "^5.0.8"
   }
 }
-

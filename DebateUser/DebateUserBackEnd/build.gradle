@@ -68,6 +68,9 @@ dependencies {
 
     // Spring Boot Actuator - 애플리케이션 모니터링 및 관리 엔드포인트 제공
     implementation 'org.springframework.boot:spring-boot-starter-actuator'
+
+    // Spring Boot WebSocket - 실시간 채팅을 위한 WebSocket 지원
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
 }
 
 // 테스트 태스크 설정

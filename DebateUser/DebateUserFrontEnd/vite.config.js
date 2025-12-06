@@ -23,6 +23,11 @@ export default defineConfig({
   // React 플러그인: JSX 변환 및 Fast Refresh 지원
   plugins: [react()],
   
+  // SockJS-client를 위한 global 변수 정의 (Node.js 호환성)
+  define: {
+    global: 'globalThis',
+  },
+  
   // 개발 서버 설정
   server: {
     // 개발 서버 포트 번호
@@ -64,6 +69,13 @@ export default defineConfig({
         target: 'http://localhost:9001',
         changeOrigin: true,
         secure: false,
+      },
+      // WebSocket 프록시 설정 (실시간 채팅)
+      '/ws': {
+        target: 'http://localhost:9001',
+        changeOrigin: true,
+        secure: false,
+        ws: true,  // WebSocket 지원 활성화
       }
     }
   }
