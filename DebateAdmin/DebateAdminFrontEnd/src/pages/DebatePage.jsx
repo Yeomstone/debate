@@ -334,7 +334,11 @@ const DebatePage = () => {
         !imageUrl.startsWith("data:")
       ) {
         // 상대 경로인 경우 현재 origin과 결합
-        const origin = window.location.origin;
+        // IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
+        let origin = window.location.origin;
+        if (origin.includes("13.209.254.24")) {
+          origin = origin.replace("13.209.254.24", "debate.me.kr");
+        }
         finalImageUrl = `${origin}${imageUrl}`;
 
         // HTTP로 시작하는 경우 HTTPS로 변경 (Mixed Content 방지)
@@ -351,6 +355,15 @@ const DebatePage = () => {
       ) {
         // HTTP URL을 HTTPS로 변환 (Mixed Content 방지)
         finalImageUrl = imageUrl.replace("http://", "https://");
+      }
+
+      // IP 주소를 도메인으로 변환 (SSL 인증서 경고 방지)
+      if (finalImageUrl && finalImageUrl.includes("13.209.254.24")) {
+        finalImageUrl = finalImageUrl.replace("13.209.254.24", "debate.me.kr");
+        // HTTPS로 변환
+        if (finalImageUrl.startsWith("http://")) {
+          finalImageUrl = finalImageUrl.replace("http://", "https://");
+        }
       }
 
       // 업로드된 이미지 URL을 에디터에 삽입

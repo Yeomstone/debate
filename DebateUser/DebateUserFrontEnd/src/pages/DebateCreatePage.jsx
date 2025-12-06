@@ -148,7 +148,11 @@ const DebateCreatePage = () => {
       ) {
         // 현재 페이지의 프로토콜과 일치시키기 (HTTPS 페이지에서는 HTTPS 사용)
         const protocol = window.location.protocol;
-        const origin = window.location.origin;
+        // IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
+        let origin = window.location.origin;
+        if (origin.includes("13.209.254.24")) {
+          origin = origin.replace("13.209.254.24", "debate.me.kr");
+        }
         finalImageUrl = `${origin}${imageUrl}`;
 
         // HTTP로 시작하는 경우 HTTPS로 변경 (Mixed Content 방지)
@@ -165,6 +169,15 @@ const DebateCreatePage = () => {
       ) {
         // HTTP URL을 HTTPS로 변환 (Mixed Content 방지)
         finalImageUrl = imageUrl.replace("http://", "https://");
+      }
+
+      // IP 주소를 도메인으로 변환 (SSL 인증서 경고 방지)
+      if (finalImageUrl && finalImageUrl.includes("13.209.254.24")) {
+        finalImageUrl = finalImageUrl.replace("13.209.254.24", "debate.me.kr");
+        // HTTPS로 변환
+        if (finalImageUrl.startsWith("http://")) {
+          finalImageUrl = finalImageUrl.replace("http://", "https://");
+        }
       }
       const quill = quillRef.current?.getEditor();
       if (quill) {

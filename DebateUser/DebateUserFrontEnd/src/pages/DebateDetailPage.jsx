@@ -83,12 +83,22 @@ const DebateDetailPage = () => {
   /**
    * HTML 콘텐츠의 이미지 URL을 현재 프로토콜에 맞게 변환
    * HTTPS 페이지에서 HTTP 이미지를 로드하는 Mixed Content 문제 방지
+   * IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
    */
   const convertImageUrls = (htmlContent) => {
     if (!htmlContent) return htmlContent;
 
+    const currentOrigin = window.location.origin;
+    const currentHost = window.location.host;
+
     // 현재 페이지가 HTTPS인 경우
     if (window.location.protocol === "https:") {
+      // IP 주소를 도메인으로 변환 (13.209.254.24 -> debate.me.kr)
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="https://debate.me.kr$1"`
+      );
+
       // HTTP 이미지 URL을 HTTPS로 변환
       htmlContent = htmlContent.replace(
         /src="http:\/\/([^"]+)"/g,
@@ -98,13 +108,19 @@ const DebateDetailPage = () => {
       // 상대 경로 이미지를 절대 경로로 변환 (프로토콜 포함)
       htmlContent = htmlContent.replace(
         /src="(\/[^"]+)"/g,
-        `src="${window.location.origin}$1"`
+        `src="${currentOrigin}$1"`
       );
     } else {
-      // HTTP 페이지에서도 상대 경로를 절대 경로로 변환
+      // HTTP 페이지에서도 IP 주소를 도메인으로 변환
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="http://debate.me.kr$1"`
+      );
+
+      // 상대 경로를 절대 경로로 변환
       htmlContent = htmlContent.replace(
         /src="(\/[^"]+)"/g,
-        `src="${window.location.origin}$1"`
+        `src="${currentOrigin}$1"`
       );
     }
 
@@ -138,7 +154,7 @@ const DebateDetailPage = () => {
         try {
           const liked = await likeService.isLiked(id);
           setIsLiked(liked.data || liked);
-        } catch { }
+        } catch {}
       }
     } catch (err) {
       console.error(err);
@@ -573,8 +589,9 @@ const DebateDetailPage = () => {
               ) : (
                 <>
                   <p
-                    className={`comment-text ${comment.isDeleted ? "deleted" : ""
-                      }`}
+                    className={`comment-text ${
+                      comment.isDeleted ? "deleted" : ""
+                    }`}
                     style={
                       comment.isDeleted
                         ? { color: "#999", fontStyle: "italic" }
@@ -586,8 +603,9 @@ const DebateDetailPage = () => {
                   {!comment.isDeleted && (
                     <div className="comment-actions">
                       <button
-                        className={`comment-like-btn ${comment.liked ? "active" : ""
-                          }`}
+                        className={`comment-like-btn ${
+                          comment.liked ? "active" : ""
+                        }`}
                         onClick={() => handleCommentLike(comment.id)}
                       >
                         {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
@@ -723,8 +741,9 @@ const DebateDetailPage = () => {
                       ) : (
                         <>
                           <p
-                            className={`comment-text ${reply.isDeleted ? "deleted" : ""
-                              }`}
+                            className={`comment-text ${
+                              reply.isDeleted ? "deleted" : ""
+                            }`}
                             style={
                               reply.isDeleted
                                 ? { color: "#999", fontStyle: "italic" }
@@ -736,8 +755,9 @@ const DebateDetailPage = () => {
                           {!reply.isDeleted && (
                             <div className="comment-actions">
                               <button
-                                className={`comment-like-btn ${reply.liked ? "active" : ""
-                                  }`}
+                                className={`comment-like-btn ${
+                                  reply.liked ? "active" : ""
+                                }`}
                                 onClick={() => handleCommentLike(reply.id)}
                               >
                                 {reply.liked ? "❤️" : "🤍"}{" "}
@@ -840,8 +860,8 @@ const DebateDetailPage = () => {
                 {debate.status === "ACTIVE"
                   ? "진행중"
                   : debate.status === "ENDED"
-                    ? "종료됨"
-                    : "예정"}
+                  ? "종료됨"
+                  : "예정"}
               </span>
             </div>
 
@@ -1065,7 +1085,10 @@ const DebateDetailPage = () => {
       </div>
 
       {/* 실시간 채팅 위젯 */}
-      <ChatWidget debateId={parseInt(id)} debateTitle={debate ? debate.title : ''} />
+      <ChatWidget
+        debateId={parseInt(id)}
+        debateTitle={debate ? debate.title : ""}
+      />
     </div>
   );
 };
