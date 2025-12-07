@@ -22,6 +22,12 @@
   box-sizing: border-box;
 }
 
+/* 가로 스크롤 방지 */
+html,
+body {
+  overflow-x: hidden;
+}
+
 /* ============================================
    CSS 변수 정의 (Light Mode)
    ============================================ */
@@ -168,7 +174,8 @@ body {
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: #000; /* Yellow 배경에는 검은 글씨가 가독성이 좋음 */
+  color: #000;
+  /* Yellow 배경에는 검은 글씨가 가독성이 좋음 */
 }
 
 .btn-primary:hover {
@@ -275,12 +282,15 @@ body {
 .mt-1 {
   margin-top: 0.5rem;
 }
+
 .mt-2 {
   margin-top: 1rem;
 }
+
 .mt-3 {
   margin-top: 1.5rem;
 }
+
 .mt-4 {
   margin-top: 2rem;
 }
@@ -288,12 +298,15 @@ body {
 .mb-1 {
   margin-bottom: 0.5rem;
 }
+
 .mb-2 {
   margin-bottom: 1rem;
 }
+
 .mb-3 {
   margin-bottom: 1.5rem;
 }
+
 .mb-4 {
   margin-bottom: 2rem;
 }
@@ -301,12 +314,15 @@ body {
 .p-1 {
   padding: 0.5rem;
 }
+
 .p-2 {
   padding: 1rem;
 }
+
 .p-3 {
   padding: 1.5rem;
 }
+
 .p-4 {
   padding: 2rem;
 }
