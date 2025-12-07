@@ -527,7 +527,7 @@ const Header = () => {
             ) : (
               /* 로그인되지 않은 경우: 로그인 + 회원가입 버튼 */
               <div className="auth-buttons">
-                <Link to="/auth/login" className="btn btn-secondary">
+                <Link to="/auth/login" className="btn btn-primary">
                   로그인
                 </Link>
                 <Link to="/auth/register" className="btn btn-primary">
