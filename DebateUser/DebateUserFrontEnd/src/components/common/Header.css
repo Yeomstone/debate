@@ -11,14 +11,17 @@
 
 /* ===== 고정 헤더 ===== */
 .header-fixed {
-  position: fixed; /* 스크롤 시에도 상단 고정 */
+  position: fixed;
+  /* 스크롤 시에도 상단 고정 */
   top: 0;
   left: 0;
   right: 0;
-  height: 64px; /* 헤더 높이 */
+  height: 64px;
+  /* 헤더 높이 */
   background-color: var(--header-bg);
   border-bottom: 1px solid var(--border-color);
-  z-index: 1000; /* 다른 요소 위에 표시 */
+  z-index: 1000;
+  /* 다른 요소 위에 표시 */
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
 }
 
@@ -43,7 +46,8 @@
 
 /* 햄버거 버튼 - 모바일에서만 표시 */
 .hamburger-btn {
-  display: none; /* 기본적으로 숨김 */
+  display: none;
+  /* 기본적으로 숨김 */
   align-items: center;
   justify-content: center;
   width: 40px;
@@ -171,6 +175,7 @@
 .icon-btn:hover {
   background-color: var(--hover-bg);
 }
+
 /* 알림 버튼 */
 .notification-btn {
   position: relative;
@@ -197,10 +202,13 @@
 }
 
 @keyframes pulse-badge {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: scale(1);
     opacity: 1;
   }
+
   50% {
     transform: scale(1.1);
     opacity: 0.9;
@@ -233,6 +241,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -439,6 +448,7 @@
     opacity: 0;
     transform: translateY(-10px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -553,9 +563,12 @@
 
 /* 헤더 로그인/회원가입 버튼 크기 + 글자색 (PC용) */
 .auth-buttons .btn {
-  padding: 4px 10px; /* 세로·가로 여백 더 줄이기 */
-  font-size: 0.8rem; /* 글자 크기도 더 줄이기 */
-  color: #000 !important; /* 글자는 계속 검정 */
+  padding: 4px 10px;
+  /* 세로·가로 여백 더 줄이기 */
+  font-size: 0.8rem;
+  /* 글자 크기도 더 줄이기 */
+  color: #000 !important;
+  /* 글자는 계속 검정 */
 }
 
 /* ===== 사이드바 오버레이 ===== */
@@ -574,6 +587,7 @@
   from {
     opacity: 0;
   }
+
   to {
     opacity: 1;
   }
@@ -583,7 +597,8 @@
 .sidebar {
   position: fixed;
   top: 0;
-  left: -300px; /* 초기 위치: 화면 밖 왼쪽 */
+  left: -300px;
+  /* 초기 위치: 화면 밖 왼쪽 */
   width: 300px;
   height: 100vh;
   background-color: var(--card-bg);
@@ -591,13 +606,16 @@
   z-index: 1200;
   display: flex;
   flex-direction: column;
-  transition: left 0.3s ease; /* 슬라이드 애니메이션 */
-  overflow-y: auto; /* 내용이 많을 경우 스크롤 */
+  transition: left 0.3s ease;
+  /* 슬라이드 애니메이션 */
+  overflow-y: auto;
+  /* 내용이 많을 경우 스크롤 */
 }
 
 /* 사이드바 열림 상태 */
 .sidebar-open {
-  left: 0; /* 화면 안으로 이동 */
+  left: 0;
+  /* 화면 안으로 이동 */
 }
 
 /* ===== 사이드바 헤더 ===== */
@@ -638,7 +656,8 @@
 
 /* ===== 사이드바 네비게이션 ===== */
 .sidebar-nav {
-  flex: 1; /* 남은 공간 모두 차지 */
+  flex: 1;
+  /* 남은 공간 모두 차지 */
   padding: 20px 0;
 }
 
@@ -654,7 +673,8 @@
   font-size: 0.75rem;
   font-weight: 600;
   color: var(--text-tertiary);
-  text-transform: uppercase; /* 대문자로 표시 */
+  text-transform: uppercase;
+  /* 대문자로 표시 */
   letter-spacing: 0.5px;
 }
 
@@ -726,14 +746,18 @@
 
 /* 네비게이션 아이콘 */
 .nav-icon {
-  flex-shrink: 0; /* 아이콘 크기 고정 */
-  margin-right: 8px; /* 아이콘과 텍스트 사이 간격 */
+  flex-shrink: 0;
+  /* 아이콘 크기 고정 */
+  margin-right: 8px;
+  /* 아이콘과 텍스트 사이 간격 */
 }
 
 .nav-item span {
   display: inline-block;
-  line-height: 1; /* 글자 박스 높이 줄이기 */
-  transform: translateY(-4px); /* 필요하면 -2px, -3px로 조금씩 조정 */
+  line-height: 1;
+  /* 글자 박스 높이 줄이기 */
+  transform: translateY(-4px);
+  /* 필요하면 -2px, -3px로 조금씩 조정 */
 }
 
 /* ===== 사이드바 푸터 ===== */
@@ -754,12 +778,15 @@
   .header-container {
     padding: 0 16px;
   }
+
   .hamburger-btn {
     display: flex;
   }
+
   .header-nav {
     display: none;
   }
+
   .logo-text {
     display: none;
   }
@@ -773,9 +800,12 @@
 
   /* 모바일에서 헤더 버튼 크기 */
   .auth-buttons .btn {
-    height: 28px; /* 32 → 28로 살짝 줄임 */
-    padding: 0 10px; /* 가로 여백 줄이기 */
-    font-size: 0.75rem; /* 모바일은 PC보다 조금 더 작게 */
+    height: 28px;
+    /* 32 → 28로 살짝 줄임 */
+    padding: 0 10px;
+    /* 가로 여백 줄이기 */
+    font-size: 0.75rem;
+    /* 모바일은 PC보다 조금 더 작게 */
     line-height: 1;
     white-space: nowrap;
     display: flex;
@@ -803,9 +833,11 @@
     width: 280px;
     left: -280px;
   }
+
   .sidebar.sidebar-open {
     left: 0;
   }
+
   .sidebar-overlay {
     background-color: rgba(0, 0, 0, 0.6);
   }
