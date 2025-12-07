@@ -110,6 +110,17 @@ const RegisterPage = () => {
   const [error, setError] = useState("");
 
   /**
+   * 필드별 에러 메시지 상태
+   * @type {Object}
+   */
+  const [fieldErrors, setFieldErrors] = useState({
+    email: "",
+    nickname: "",
+    password: "",
+    passwordConfirm: "",
+  });
+
+  /**
    * 로딩 상태 (회원가입 처리 중 여부)
    * @type {boolean}
    */
@@ -374,58 +385,89 @@ const RegisterPage = () => {
     e.preventDefault(); // 폼 기본 제출 동작 방지
     setError(""); // 이전 에러 메시지 초기화
 
-    // [추가] 중복 확인 통과 여부 체크
-    if (emailCheck.status !== "success" || nicknameCheck.status !== "success") {
-      setError("이메일과 닉네임을 확인해주세요.");
-      return;
-    }
+    // 필드별 에러 초기화
+    const errors = {
+      email: "",
+      nickname: "",
+      password: "",
+      passwordConfirm: "",
+    };
+
+    let hasError = false;
 
     // ========================================
-    // 유효성 검사
+    // 유효성 검사 (모든 필드 한번에 검사)
     // ========================================
 
     // 1. 이메일 형식 검증
-    if (!emailPattern.test(formData.email)) {
-      setError(emailRuleMessage);
-      return;
+    if (!formData.email) {
+      errors.email = "이메일을 입력해주세요.";
+      hasError = true;
+    } else if (!emailPattern.test(formData.email)) {
+      errors.email = emailRuleMessage;
+      hasError = true;
+    } else if (emailCheck.status !== "success") {
+      errors.email = emailCheck.message || "이메일을 확인해주세요.";
+      hasError = true;
     }
 
-    // 사용자가 입력한 닉네임 원본 (앞/뒤/중간 공백 그대로 있는 상태)
+    // 2. 닉네임 검증
     const rawNickname = formData.nickname;
-
-    // 앞뒤 공백만 제거한 닉네임 (중간 공백은 그대로 남음)
-    // 예: "  홍 길동  " -> "홍 길동"
     const trimmedNickname = rawNickname.trim();
 
-    if (
-      // 1) 닉네임 안에 공백(스페이스, 탭, 줄바꿈 등)이 하나라도 있으면 true
-      //    예: "홍 길동", "심 연 의 군주" -> 조건 만족 (에러)
-      nicknameSpacePattern.test(rawNickname) ||
-      // 2) 공백 제거 후 길이가 2자보다 짧으면 에러
-      //    예: "홍" -> 조건 만족 (에러)
-      trimmedNickname.length < 2 ||
-      // 3) 공백 제거 후 길이가 8자를 넘으면 에러
-      //    예: "챗지피티제미나이클로드" -> 조건 만족 (에러)
-      trimmedNickname.length > 8 ||
-      // 4) 허용된 문자(한글/영문/숫자)만으로 이루어지지 않은 경우 에러
-      //    예: "홍길동!", "심연의_군주", "테스트★" -> 조건 만족 (에러)
-      !nicknameCharPattern.test(trimmedNickname)
-    ) {
-      // 위 조건들 중 하나라도 걸리면, 공통 닉네임 규칙 에러 메시지 출력
-      // nicknameRuleMessage 예: "닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
-      setError(nicknameRuleMessage);
-      return; // 에러니까 여기서 함수 종료, 회원가입 진행 안 함
+    if (!formData.nickname) {
+      errors.nickname = "닉네임을 입력해주세요.";
+      hasError = true;
+    } else if (nicknameSpacePattern.test(rawNickname)) {
+      errors.nickname = "닉네임에 공백은 사용할 수 없습니다.";
+      hasError = true;
+    } else if (trimmedNickname.length < 2) {
+      errors.nickname = "닉네임은 2자 이상 입력해주세요.";
+      hasError = true;
+    } else if (trimmedNickname.length > 8) {
+      errors.nickname = "닉네임은 8자 이내로 입력해주세요.";
+      hasError = true;
+    } else if (!nicknameCharPattern.test(trimmedNickname)) {
+      errors.nickname = "닉네임은 한글/영문/숫자만 사용할 수 있습니다.";
+      hasError = true;
+    } else if (nicknameCheck.status !== "success") {
+      errors.nickname = nicknameCheck.message || "닉네임을 확인해주세요.";
+      hasError = true;
     }
 
-    // 3. 비밀번호 일치 확인
-    if (formData.password !== formData.passwordConfirm) {
-      setError("비밀번호가 일치하지 않습니다.");
-      return;
+    // 3. 비밀번호 강도 검증
+    if (!formData.password) {
+      errors.password = "비밀번호를 입력해주세요.";
+      hasError = true;
+    } else if (!passwordPattern.test(formData.password)) {
+      errors.password = passwordRuleMessage;
+      hasError = true;
     }
 
-    // 4. 비밀번호 강도 검증
-    if (!passwordPattern.test(formData.password)) {
-      setError(passwordRuleMessage);
+    // 4. 비밀번호 일치 확인
+    if (!formData.passwordConfirm) {
+      errors.passwordConfirm = "비밀번호 확인을 입력해주세요.";
+      hasError = true;
+    } else if (formData.password !== formData.passwordConfirm) {
+      errors.passwordConfirm = "비밀번호가 일치하지 않습니다.";
+      hasError = true;
+    }
+
+    // 에러가 있으면 필드별 에러 표시하고 중단
+    setFieldErrors(errors);
+    if (hasError) {
+      // 첫 번째 오류가 있는 필드로 스크롤하고 포커스
+      const fieldOrder = ["email", "nickname", "password", "passwordConfirm"];
+      for (const field of fieldOrder) {
+        if (errors[field]) {
+          const element = document.getElementById(field);
+          if (element) {
+            element.scrollIntoView({ behavior: "smooth", block: "center" });
+            element.focus();
+          }
+          break;
+        }
+      }
       return;
     }
 
@@ -573,15 +615,20 @@ const RegisterPage = () => {
                 setFormData({ ...formData, email: e.target.value })
               }
               required
-              className={`form-input ${
-                emailCheck.status === "error" ? "input-error" : ""
-              }`}
+              className={`form-input ${emailCheck.status === "error" || fieldErrors.email ? "input-error" : ""
+                }`}
               placeholder="example@email.com"
             />
-            {/* [추가] 메시지 표시 영역 */}
+            {/* 실시간 메시지 표시 영역 */}
             {emailCheck.message && (
               <div className={`validation-message ${emailCheck.status}`}>
                 {emailCheck.message}
+              </div>
+            )}
+            {/* 제출 시 오류 메시지 */}
+            {fieldErrors.email && !emailCheck.message && (
+              <div className="validation-message error">
+                {fieldErrors.email}
               </div>
             )}
           </div>
@@ -599,15 +646,20 @@ const RegisterPage = () => {
                 setFormData({ ...formData, nickname: e.target.value })
               }
               required
-              className={`form-input ${
-                nicknameCheck.status === "error" ? "input-error" : ""
-              }`}
+              className={`form-input ${nicknameCheck.status === "error" || fieldErrors.nickname ? "input-error" : ""
+                }`}
               placeholder="닉네임은 2~8자, 공백 없이 한글/영문/숫자만 가능합니다."
             />
-            {/* [추가] 메시지 표시 영역 */}
+            {/* 실시간 메시지 표시 영역 */}
             {nicknameCheck.message && (
               <div className={`validation-message ${nicknameCheck.status}`}>
                 {nicknameCheck.message}
+              </div>
+            )}
+            {/* 제출 시 오류 메시지 */}
+            {fieldErrors.nickname && !nicknameCheck.message && (
+              <div className="validation-message error">
+                {fieldErrors.nickname}
               </div>
             )}
           </div>
@@ -623,7 +675,7 @@ const RegisterPage = () => {
               value={formData.password}
               onChange={handlePasswordChange}
               required
-              className="form-input"
+              className={`form-input ${fieldErrors.password ? "input-error" : ""}`}
               placeholder="대소문자, 숫자, 특수문자 포함 8자 이상"
             />
             {/* 비밀번호 강도 표시 (비밀번호 입력 시) */}
@@ -642,6 +694,12 @@ const RegisterPage = () => {
                 </span>
               </div>
             )}
+            {/* 제출 시 오류 메시지 */}
+            {fieldErrors.password && (
+              <div className="validation-message error">
+                {fieldErrors.password}
+              </div>
+            )}
           </div>
 
           {/* 비밀번호 확인 입력 필드 */}
@@ -657,23 +715,28 @@ const RegisterPage = () => {
                 setFormData({ ...formData, passwordConfirm: e.target.value })
               }
               required
-              className="form-input"
+              className={`form-input ${fieldErrors.passwordConfirm ? "input-error" : ""}`}
               placeholder="비밀번호를 다시 입력하세요"
             />
             {/* 비밀번호 일치 여부 표시 (비밀번호 확인 입력 시) */}
             {formData.passwordConfirm && (
               <div
-                className={`password-match ${
-                  formData.password === formData.passwordConfirm
-                    ? "match"
-                    : "mismatch"
-                }`}
+                className={`password-match ${formData.password === formData.passwordConfirm
+                  ? "match"
+                  : "mismatch"
+                  }`}
               >
                 {formData.password === formData.passwordConfirm ? (
                   <span>✓ 비밀번호가 일치합니다</span>
                 ) : (
                   <span>✗ 비밀번호가 일치하지 않습니다</span>
                 )}
+              </div>
+            )}
+            {/* 제출 시 오류 메시지 */}
+            {fieldErrors.passwordConfirm && !formData.passwordConfirm && (
+              <div className="validation-message error">
+                {fieldErrors.passwordConfirm}
               </div>
             )}
           </div>

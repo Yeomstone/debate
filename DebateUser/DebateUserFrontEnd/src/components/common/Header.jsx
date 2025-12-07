@@ -224,9 +224,8 @@ const Header = () => {
               {/* 토론 목록 */}
               <Link
                 to="/debate"
-                className={`header-nav-item ${
-                  isActive("/debate") ? "active" : ""
-                }`}
+                className={`header-nav-item ${isActive("/debate") ? "active" : ""
+                  }`}
               >
                 토론목록
               </Link>
@@ -234,9 +233,8 @@ const Header = () => {
               {/* 토론 작성 (항상 표시, 클릭 시 로그인 필요 시 로그인 페이지로 이동) */}
               <Link
                 to="/debate/create"
-                className={`header-nav-item ${
-                  isActive("/debate/create") ? "active" : ""
-                }`}
+                className={`header-nav-item ${isActive("/debate/create") ? "active" : ""
+                  }`}
               >
                 토론작성
               </Link>
@@ -244,9 +242,8 @@ const Header = () => {
               {/* 카테고리 */}
               <Link
                 to="/categories"
-                className={`header-nav-item ${
-                  isActive("/categories") ? "active" : ""
-                }`}
+                className={`header-nav-item ${isActive("/categories") ? "active" : ""
+                  }`}
               >
                 카테고리
               </Link>
@@ -254,9 +251,8 @@ const Header = () => {
               {/* 랭킹 */}
               <Link
                 to="/ranking"
-                className={`header-nav-item ${
-                  isActive("/ranking") ? "active" : ""
-                }`}
+                className={`header-nav-item ${isActive("/ranking") ? "active" : ""
+                  }`}
               >
                 랭킹
               </Link>
@@ -624,12 +620,10 @@ const Header = () => {
               <span>토론목록</span>
             </Link>
 
-            {/* 토론 작성 메뉴 (강조) */}
+            {/* 토론 작성 메뉴 */}
             <Link
               to="/debate/create"
-              className={`nav-item nav-item-primary ${
-                isActive("/debate/create") ? "active" : ""
-              }`}
+              className={`nav-item ${isActive("/debate/create") ? "active" : ""}`}
               onClick={closeSidebar}
             >
               <svg
