@@ -555,7 +555,12 @@
 .auth-buttons .btn {
   padding: 4px 10px; /* 세로·가로 여백 더 줄이기 */
   font-size: 0.8rem; /* 글자 크기도 더 줄이기 */
-  color: #000 !important; /* 글자는 계속 검정 */
+  color: #000; /* 기본 글자색: 검정 */
+}
+
+/* 다크모드에서 로그인 버튼 글자색: 흰색 */
+[data-theme="dark"] .auth-buttons .btn {
+  color: #ffffff !important;
 }
 
 /* ===== 사이드바 오버레이 ===== */

@@ -240,6 +240,52 @@ const DebateDetailPage = () => {
     } catch (err) {
       alert("신고 실패");
     }
+    setIsMenuOpen(false);
+  };
+
+  // 북마크
+  const handleBookmark = () => {
+    const bookmarks = JSON.parse(localStorage.getItem('bookmarkedDebates') || '[]');
+    const isBookmarked = bookmarks.some(b => b.id === parseInt(id));
+
+    if (isBookmarked) {
+      const updated = bookmarks.filter(b => b.id !== parseInt(id));
+      localStorage.setItem('bookmarkedDebates', JSON.stringify(updated));
+      alert('북마크가 해제되었습니다.');
+    } else {
+      bookmarks.push({
+        id: parseInt(id),
+        title: debate.title,
+        categoryName: debate.categoryName,
+        nickname: debate.nickname,
+        createdAt: debate.createdAt,
+        bookmarkedAt: new Date().toISOString()
+      });
+      localStorage.setItem('bookmarkedDebates', JSON.stringify(bookmarks));
+      alert('북마크에 추가되었습니다.');
+    }
+    setIsMenuOpen(false);
+  };
+
+  // 작성자 차단
+  const handleBlockAuthor = () => {
+    if (!debate.userId) {
+      alert('작성자 정보를 찾을 수 없습니다.');
+      return;
+    }
+    if (window.confirm(`${debate.nickname}님을 차단하시겠습니까?\n차단된 사용자의 글과 댓글은 표시되지 않습니다.`)) {
+      const blockedUsers = JSON.parse(localStorage.getItem('blockedChatUsers') || '[]');
+      if (!blockedUsers.some(u => u.id === debate.userId)) {
+        blockedUsers.push({
+          id: debate.userId,
+          nickname: debate.nickname,
+          blockedAt: new Date().toISOString()
+        });
+        localStorage.setItem('blockedChatUsers', JSON.stringify(blockedUsers));
+      }
+      alert(`${debate.nickname}님이 차단되었습니다.\n차단 해제는 마이페이지 > 차단 관리에서 가능합니다.`);
+    }
+    setIsMenuOpen(false);
   };
 
   // 댓글 등록 (Optimistic UI 적용)
@@ -937,11 +983,29 @@ const DebateDetailPage = () => {
                     </div>
                   )}
                 </div>
-              ) : (
-                <button onClick={handleReport} className="report-text-btn">
-                  🚨 신고
-                </button>
-              )}
+              ) : isAuthenticated ? (
+                <div className="menu-wrapper">
+                  <button
+                    className="icon-btn"
+                    onClick={() => setIsMenuOpen(!isMenuOpen)}
+                  >
+                    ⋮
+                  </button>
+                  {isMenuOpen && (
+                    <div className="dropdown-menu">
+                      <button onClick={handleBookmark}>
+                        🔖 북마크
+                      </button>
+                      <button onClick={handleBlockAuthor}>
+                        🚫 차단하기
+                      </button>
+                      <button onClick={handleReport} className="delete-btn">
+                        🚨 신고하기
+                      </button>
+                    </div>
+                  )}
+                </div>
+              ) : null}
             </div>
           </div>
 

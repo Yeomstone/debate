@@ -1,31 +1,90 @@
 /**
- * HomePage.css - 메인 홈페이지 스타일시트 (수정버전)
+ * HomePage.css - 메인 홈페이지 스타일시트 (롯데 스타일 풀페이지)
  * 
  * DEBATE 브랜딩: 노란색(#FFC107) + 검은색(#000000)
- * 말풍선 모양의 버튼 디자인
  * 
- * 수정사항:
- * 1. 검색 박스 스타일 추가
- * 2. 카테고리 그리드 스타일 추가
- * 3. 통합 게시글 섹션 스타일 추가
+ * 추가사항:
+ * ✨ JavaScript 기반 풀페이지 스크롤 (롯데 스타일)
+ * 🎯 페이지네이션 점 (우측 고정)
+ * 📑 탭 형식 토론 섹션 (최근/HOT 전환)
  */
 
-/* ===== 전역 스타일 리셋 ===== */
+/* ===== 풀페이지 레이아웃 ===== */
 .home-page {
-  min-height: 100vh;
+  height: 100vh;
   width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+/* 섹션 래퍼 - transform으로 이동 */
+.fullpage-wrapper {
+  height: 100%;
+  transition: transform 0.8s cubic-bezier(0.645, 0.045, 0.355, 1);
+  will-change: transform;
+}
+
+/* 각 섹션은 100vh 높이 */
+.fullpage-section {
+  height: 100vh;
+  width: 100%;
+  overflow: hidden;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1800px;
   margin: 0 auto;
   padding: 0 2rem;
+}
+
+/* ===== 페이지네이션 점 (롯데 스타일) ===== */
+.page-indicators {
+  position: fixed;
+  right: 2rem;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 1000;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.page-dot {
+  background: transparent;
+  border: none;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.dot-inner {
+  display: block;
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  background: rgba(0, 0, 0, 0.3);
+  border: 2px solid rgba(0, 0, 0, 0.5);
+  transition: all 0.3s ease;
+}
+
+.page-dot:hover .dot-inner {
+  background: rgba(255, 193, 7, 0.6);
+  border-color: #ffc107;
+  transform: scale(1.2);
+}
+
+.page-dot.active .dot-inner {
+  background: #ffc107;
+  border-color: #000000;
+  border-width: 3px;
+  transform: scale(1.3);
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.5);
 }
 
 /* ===== Hero Section ===== */
 .hero-section {
   position: relative;
-  min-height: 90vh;
+  height: 100vh;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -47,7 +106,6 @@
     opacity: 0;
     transform: translateY(30px);
   }
-
   to {
     opacity: 1;
     transform: translateY(0);
@@ -69,12 +127,9 @@
 }
 
 @keyframes float {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translateY(0);
   }
-
   50% {
     transform: translateY(-15px);
   }
@@ -100,7 +155,7 @@
   line-height: 1.6;
 }
 
-/* ===== 검색 박스 (새로 추가) ===== */
+/* ===== 검색 박스 ===== */
 .hero-search-form {
   width: 100%;
   max-width: 650px;
@@ -222,379 +277,31 @@
 }
 
 @keyframes floatBubble {
-
-  0%,
-  100% {
+  0%, 100% {
     transform: translate(0, 0) scale(1);
   }
-
   33% {
     transform: translate(30px, -30px) scale(1.1);
   }
-
   66% {
     transform: translate(-20px, 20px) scale(0.9);
   }
 }
 
-/* ===== 카테고리 섹션 (기존 Stats 자리) ===== */
-.categories-section {
-  padding: 5rem 0;
-  background: #ffffff;
-}
-
-.section-header {
-  text-align: center;
-  margin-bottom: 3rem;
-}
-
-.section-title {
-  font-size: 3rem;
-  font-weight: 900;
-  color: #000000;
-  margin: 0 0 1rem 0;
-  letter-spacing: 0.05em;
-}
-
-.section-subtitle {
-  font-size: 1.25rem;
-  color: #666666;
-  margin: 0;
-  font-weight: 400;
-}
-
-/* 카테고리 그리드 - 동적 레이아웃 */
-/* 기본: 4열 그리드 (짝수 개수) */
-.categories-grid {
-  display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 2rem;
-  animation: fadeIn 0.6s ease-out;
-}
-
-/* 홀수 개수일 때: 5열 그리드 */
-.categories-grid[data-count="1"],
-.categories-grid[data-count="3"],
-.categories-grid[data-count="5"],
-.categories-grid[data-count="7"],
-.categories-grid[data-count="9"],
-.categories-grid[data-count="11"],
-.categories-grid[data-count="13"],
-.categories-grid[data-count="15"] {
-  grid-template-columns: repeat(5, 1fr);
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-  }
-
-  to {
-    opacity: 1;
-  }
-}
-
-.category-card {
-  background: #ffffff;
-  border: 4px solid #000000;
-  border-radius: 20px;
-  padding: 1.25rem;
-  /* 2rem → 1.25rem */
-  text-align: center;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 4px 4px 0px #000000;
-  position: relative;
-  overflow: hidden;
-}
-
-.category-card::before {
-  content: "";
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 5px;
-  background: var(--category-color, #ffc107);
-  transform: scaleX(0);
-  transition: transform 0.3s ease;
-}
-
-.category-card:hover::before {
-  transform: scaleX(1);
-}
-
-.category-card:hover {
-  transform: translateY(-4px);
-  /* -8px → -4px */
-  box-shadow: 5px 6px 0px #000000;
-  /* 6px 10px → 5px 6px */
-}
-
-.category-card:active {
-  transform: translateY(-1px);
-  /* -2px → -1px */
-  box-shadow: 2px 3px 0px #000000;
-  /* 3px 5px → 2px 3px */
-}
-
-.category-icon {
-  font-size: 2.5rem;
-  /* 3rem → 2.5rem */
-  margin-bottom: 0.75rem;
-  /* 1rem → 0.75rem */
-  display: inline-block;
-  animation: bounce 2s ease-in-out infinite;
-}
-
-@keyframes bounce {
-
-  0%,
-  100% {
-    transform: translateY(0);
-  }
-
-  50% {
-    transform: translateY(-10px);
-  }
-}
-
-.category-name {
-  font-size: 1.25rem;
-  /* 1.5rem → 1.25rem */
-  font-weight: 700;
-  color: #000000;
-  margin: 0 0 0.35rem 0;
-  /* 0.5rem → 0.35rem */
-  letter-spacing: 0.03em;
-}
-
-.category-count {
-  font-size: 0.9rem;
-  /* 1rem → 0.9rem */
-  color: #666666;
-  margin: 0;
-  font-weight: 500;
-}
-
-/* ===== 게시글 섹션 (최근 + 핫 좌우 분할) ===== */
-.debates-section {
-  padding: 5rem 0;
-  background: #f8f9fa;
-}
-
-/* 좌우 2열 그리드 */
-.debates-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 3rem;
-  margin-bottom: 3rem;
-}
-
-/* 각 컬럼 스타일 */
-.debates-column {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-}
-
-/* 컬럼 헤더 */
-.column-header {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  padding: 1.25rem 1.5rem;
-  background: #ffffff;
-  border: 3px solid #000000;
-  border-radius: 20px;
-  box-shadow: 3px 3px 0px #000000;
-}
-
-.column-header svg {
-  width: 24px;
-  height: 24px;
-  color: #000000;
-}
-
-.column-header h3 {
-  font-size: 1.5rem;
-  font-weight: 700;
-  color: #000000;
-  margin: 0;
-  letter-spacing: 0.03em;
-}
-
-.column-header.hot {
-  background: #ffc107;
-}
-
-.column-header.hot svg {
-  color: #ff5722;
-}
-
-/* 게시글 리스트 */
-.debates-list {
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  animation: fadeIn 0.6s ease-out;
-}
-
-.debate-card {
-  background: #ffffff;
-  border: 4px solid #000000;
-  border-radius: 20px;
-  padding: 1rem 1.25rem;
-  /* 2rem → 1rem으로 축소 */
-  cursor: pointer;
-  transition: all 0.3s ease;
-  box-shadow: 4px 4px 0px #000000;
-}
-
-.debate-card:hover {
-  transform: translateY(-4px);
-  /* -8px → -4px로 축소 */
-  box-shadow: 5px 6px 0px #000000;
-  /* 축소 */
-}
-
-.debate-card:active {
-  transform: translateY(-1px);
-  /* -2px → -1px */
-  box-shadow: 2px 3px 0px #000000;
-}
-
-.debate-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  /* 1rem → 0.5rem */
-}
-
-.debate-category {
-  padding: 0.35rem 0.75rem;
-  /* 0.5rem 1rem → 0.35rem 0.75rem */
-  background: #ffc107;
-  border: 2px solid #000000;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  /* 0.9rem → 0.8rem */
-  color: #000000;
-  letter-spacing: 0.03em;
-}
-
-.debate-status {
-  padding: 0.35rem 0.75rem;
-  /* 0.5rem 1rem → 0.35rem 0.75rem */
-  border: 2px solid #000000;
-  border-radius: 20px;
-  font-weight: 700;
-  font-size: 0.8rem;
-  /* 0.9rem → 0.8rem */
-  letter-spacing: 0.03em;
-}
-
-.status-active {
-  background: #4caf50;
-  color: #ffffff;
-}
-
-.status-ended {
-  background: #9e9e9e;
-  color: #ffffff;
-}
-
-.debate-title {
-  font-size: 1rem;
-  /* 1.25rem → 1rem */
-  font-weight: 700;
-  color: #000000;
-  margin: 0 0 0.75rem 0;
-  /* 1rem → 0.75rem */
-  line-height: 1.4;
-  display: -webkit-box;
-  -webkit-line-clamp: 1;
-  /* 2줄 → 1줄 */
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  letter-spacing: 0.02em;
-}
-
-.debate-meta {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 0.5rem;
-  /* 1rem → 0.5rem */
-  padding-bottom: 0.5rem;
-  /* 1rem → 0.5rem */
-  border-bottom: 2px solid #e0e0e0;
-}
-
-.debate-author {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  /* 0.5rem → 0.35rem */
-  color: #666666;
-  font-size: 0.85rem;
-  /* 0.95rem → 0.85rem */
-  font-weight: 600;
-}
-
-.debate-author svg {
-  width: 14px;
-  /* 16px → 14px */
-  height: 14px;
-}
-
-.debate-date {
-  color: #999999;
-  font-size: 0.8rem;
-  /* 0.9rem → 0.8rem */
-  font-weight: 500;
-}
-
-.debate-stats {
-  display: flex;
-  gap: 1rem;
-  /* 1.5rem → 1rem */
-  flex-wrap: wrap;
-}
-
-.stat-item {
-  display: flex;
-  align-items: center;
-  gap: 0.35rem;
-  /* 0.5rem → 0.35rem */
-  color: #666666;
-  font-size: 0.85rem;
-  /* 0.95rem → 0.85rem */
-  font-weight: 600;
-}
-
-.stat-item svg {
-  width: 14px;
-  /* 16px → 14px */
-  height: 14px;
-}
-
-.debates-footer {
-  text-align: center;
-  margin-top: 3rem;
-}
-
-/* ===== CTA Section ===== */
+/* ===== CTA Section - 애니메이션 배경 ===== */
 .cta-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 6rem 0;
-  background: linear-gradient(135deg, #000000 0%, #1a1a1a 100%);
+  background: linear-gradient(160deg, #0a0a0a 0%, #151515 40%, #0a0a0a 100%);
   text-align: center;
   position: relative;
   overflow: hidden;
 }
 
+/* 움직이는 그라데이션 배경 */
 .cta-section::before {
   content: "";
   position: absolute;
@@ -602,24 +309,169 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: radial-gradient(circle,
-      rgba(255, 193, 7, 0.1) 0%,
-      transparent 70%);
-  animation: pulse 15s ease-in-out infinite;
+  background: 
+    radial-gradient(ellipse 30% 40% at 20% 30%, rgba(255, 193, 7, 0.12) 0%, transparent 50%),
+    radial-gradient(ellipse 25% 35% at 80% 70%, rgba(255, 152, 0, 0.08) 0%, transparent 50%),
+    radial-gradient(ellipse 35% 25% at 50% 90%, rgba(255, 215, 0, 0.06) 0%, transparent 50%);
+  animation: floatGradient 20s ease-in-out infinite;
+  z-index: 0;
 }
 
-@keyframes pulse {
+@keyframes floatGradient {
+  0%, 100% { transform: translate(0, 0) rotate(0deg); }
+  25% { transform: translate(3%, 2%) rotate(2deg); }
+  50% { transform: translate(-2%, 4%) rotate(-1deg); }
+  75% { transform: translate(2%, -2%) rotate(1deg); }
+}
 
-  0%,
-  100% {
-    transform: scale(1);
+/* 떠다니는 글로우 오브 1 */
+.cta-section::after {
+  content: "";
+  position: absolute;
+  width: 400px;
+  height: 400px;
+  top: 10%;
+  right: 5%;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.15) 0%, transparent 70%);
+  border-radius: 50%;
+  animation: floatOrb1 12s ease-in-out infinite;
+  z-index: 0;
+  filter: blur(40px);
+}
+
+@keyframes floatOrb1 {
+  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
+  50% { transform: translate(-30px, 40px) scale(1.1); opacity: 0.4; }
+}
+
+/* 파티클 컨테이너 - 활성화 */
+.cta-particles {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
+  overflow: hidden;
+  z-index: 0;
+}
+
+/* 떠다니는 파티클 */
+.particle {
+  position: absolute;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.8) 0%, rgba(255, 152, 0, 0.4) 50%, transparent 70%);
+  border-radius: 50%;
+  animation: floatParticle 15s ease-in-out infinite;
+  filter: blur(1px);
+}
+
+.particle:nth-child(1) {
+  width: 8px;
+  height: 8px;
+  top: 15%;
+  left: 10%;
+  animation-delay: 0s;
+  animation-duration: 18s;
+}
+
+.particle:nth-child(2) {
+  width: 6px;
+  height: 6px;
+  top: 25%;
+  left: 85%;
+  animation-delay: -3s;
+  animation-duration: 16s;
+}
+
+.particle:nth-child(3) {
+  width: 10px;
+  height: 10px;
+  top: 70%;
+  left: 15%;
+  animation-delay: -6s;
+  animation-duration: 20s;
+}
+
+.particle:nth-child(4) {
+  width: 5px;
+  height: 5px;
+  top: 80%;
+  left: 75%;
+  animation-delay: -9s;
+  animation-duration: 14s;
+}
+
+.particle:nth-child(5) {
+  width: 7px;
+  height: 7px;
+  top: 45%;
+  left: 5%;
+  animation-delay: -2s;
+  animation-duration: 17s;
+}
+
+.particle:nth-child(6) {
+  width: 9px;
+  height: 9px;
+  top: 35%;
+  left: 90%;
+  animation-delay: -5s;
+  animation-duration: 19s;
+}
+
+.particle:nth-child(7) {
+  width: 4px;
+  height: 4px;
+  top: 60%;
+  left: 50%;
+  animation-delay: -8s;
+  animation-duration: 15s;
+}
+
+.particle:nth-child(8) {
+  width: 12px;
+  height: 12px;
+  top: 10%;
+  left: 60%;
+  animation-delay: -4s;
+  animation-duration: 22s;
+}
+
+@keyframes floatParticle {
+  0%, 100% {
+    transform: translateY(0) translateX(0) scale(1);
+    opacity: 0.6;
+  }
+  25% {
+    transform: translateY(-30px) translateX(20px) scale(1.2);
     opacity: 1;
   }
-
   50% {
-    transform: scale(1.2);
+    transform: translateY(-50px) translateX(-10px) scale(0.8);
+    opacity: 0.5;
+  }
+  75% {
+    transform: translateY(-20px) translateX(-30px) scale(1.1);
     opacity: 0.8;
   }
+}
+
+/* 추가 글로우 레이어 */
+.cta-glow {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  bottom: 10%;
+  left: 10%;
+  background: radial-gradient(circle, rgba(255, 152, 0, 0.12) 0%, transparent 60%);
+  border-radius: 50%;
+  animation: floatOrb2 15s ease-in-out infinite;
+  z-index: 0;
+  filter: blur(50px);
+}
+
+@keyframes floatOrb2 {
+  0%, 100% { transform: translate(0, 0) scale(1); }
+  50% { transform: translate(40px, -30px) scale(1.2); }
 }
 
 .cta-content {
@@ -642,6 +494,559 @@
   margin: 0 0 2.5rem 0;
   font-weight: 400;
   line-height: 1.6;
+}
+
+/* ===== 인기 토론 섹션 (컴팩트 라이트) ===== */
+.debates-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1.5rem 0;
+  
+  /* 🎨 밝은 배경 */
+  background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
+  position: relative;
+  overflow: hidden;
+}
+
+/* 배경 장식 */
+.debates-section::before {
+  content: "";
+  position: absolute;
+  top: -30%;
+  right: -15%;
+  width: 500px;
+  height: 500px;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.06) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.debates-section::after {
+  content: "";
+  position: absolute;
+  bottom: -30%;
+  left: -15%;
+  width: 400px;
+  height: 400px;
+  background: radial-gradient(circle, rgba(255, 193, 7, 0.04) 0%, transparent 70%);
+  pointer-events: none;
+}
+
+.debates-section > .container {
+  max-width: 800px;
+  width: 100%;
+  padding: 0 1.5rem;
+  display: flex;
+  flex-direction: column;
+  height: auto;
+  max-height: calc(100vh - 3rem);
+  position: relative;
+  z-index: 1;
+}
+
+/* 섹션 헤더 */
+.debates-section .section-header {
+  text-align: center;
+  margin-bottom: 1rem;
+  flex-shrink: 0;
+}
+
+.section-title {
+  font-size: 1.75rem;
+  font-weight: 800;
+  color: #1a1a1a;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: -0.02em;
+}
+
+.section-title::after {
+  content: "";
+  display: block;
+  width: 40px;
+  height: 3px;
+  background: linear-gradient(90deg, #ffc107, #ffb300);
+  margin: 0.4rem auto 0;
+  border-radius: 2px;
+}
+
+.section-subtitle {
+  font-size: 0.9rem;
+  color: #888888;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* ✨ 탭 버튼 */
+.debate-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+  flex-shrink: 0;
+}
+
+.tab-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.5rem 1rem;
+  background: #ffffff;
+  border: 1.5px solid #e0e0e0;
+  border-radius: 8px;
+  font-weight: 600;
+  font-size: 0.8rem;
+  color: #666666;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.tab-button svg {
+  width: 14px;
+  height: 14px;
+}
+
+.tab-button:hover {
+  border-color: #ffc107;
+  color: #333333;
+}
+
+.tab-button.active {
+  background: #ffc107;
+  border-color: #ffc107;
+  color: #000000;
+  font-weight: 700;
+}
+
+/* 🎴 토론 리스트 */
+.debates-grid-compact {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* 🃏 토론 아이템 - 심플 로우 */
+.debate-card-compact {
+  background: #ffffff;
+  border: 1px solid #e5e5e5;
+  border-radius: 10px;
+  padding: 0.65rem 0.75rem 0.65rem 2.5rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  position: relative;
+}
+
+.debate-card-compact:hover {
+  background: #fffdf5;
+  border-color: #ffc107;
+  transform: translateX(2px);
+}
+
+/* 다크 모드 토론 카드 */
+[data-theme="dark"] .debate-card-compact {
+  background: #2a2a2a;
+  border-color: #3a3a3a;
+}
+
+[data-theme="dark"] .debate-card-compact:hover {
+  background: #3a3a3a;
+  border-color: #ffc107;
+}
+
+/* 랭킹 번호 */
+.debate-card-compact::before {
+  content: attr(data-rank);
+  position: absolute;
+  left: 0.75rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  height: 22px;
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  border-radius: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 0.7rem;
+  color: #000000;
+}
+
+/* 카테고리 태그 */
+.debate-card-header {
+  flex-shrink: 0;
+}
+
+.debate-category {
+  padding: 0.2rem 0.5rem;
+  background: #fff3e0;
+  border-radius: 4px;
+  font-weight: 700;
+  font-size: 0.6rem;
+  color: #e65100;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+[data-theme="dark"] .debate-category {
+  background: #4a3a2a;
+  color: #ffc107;
+}
+
+.debate-status {
+  display: none;
+}
+
+/* 타이틀 & 메타 */
+.debate-card-content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.debate-title {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #333333;
+  margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+}
+
+[data-theme="dark"] .debate-title {
+  color: #e0e0e0;
+}
+
+.debate-card-compact:hover .debate-title {
+  color: #e65100;
+}
+
+[data-theme="dark"] .debate-card-compact:hover .debate-title {
+  color: #ffc107;
+}
+
+.debate-meta {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  flex-shrink: 0;
+  margin: 0;
+  padding: 0;
+  border: none;
+}
+
+.debate-author {
+  display: flex;
+  align-items: center;
+  gap: 0.2rem;
+  color: #999999;
+  font-size: 0.7rem;
+  font-weight: 500;
+}
+
+.debate-author svg {
+  display: none;
+}
+
+.debate-date {
+  color: #bbbbbb;
+  font-size: 0.65rem;
+}
+
+/* 통계 - 가로 인라인 */
+.debate-stats {
+  display: flex;
+  gap: 0.6rem;
+  flex-shrink: 0;
+}
+
+.stat-item {
+  display: flex;
+  align-items: center;
+  gap: 0.15rem;
+}
+
+.stat-item svg {
+  width: 12px;
+  height: 12px;
+  color: #cccccc;
+}
+
+.stat-item span {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #888888;
+}
+
+.debate-card-compact:hover .stat-item svg {
+  color: #ffc107;
+}
+
+/* 푸터 버튼 */
+.debates-footer {
+  text-align: center;
+  flex-shrink: 0;
+  margin-top: 0.75rem;
+}
+
+.debates-section .btn-debate-secondary {
+  background: #1a1a1a;
+  color: #ffffff;
+  border: none;
+  padding: 0.6rem 1.5rem;
+  font-size: 0.85rem;
+  border-radius: 8px;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: none;
+}
+
+.debates-section .btn-debate-secondary:hover {
+  background: #ffc107;
+  color: #000000;
+  transform: translateY(-1px);
+}
+
+.debates-section .btn-debate-secondary:active {
+  transform: translateY(0);
+}
+
+/* 로딩/빈 메시지 */
+.loading-message,
+.empty-message {
+  text-align: center;
+  padding: 1.5rem;
+  color: #999999;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+/* ===== 카테고리 섹션 ===== */
+.categories-section {
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem 0;
+  background: #ffffff;
+}
+
+.categories-section > .categories-content {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.categories-section .container {
+  max-width: 1400px;
+  width: 100%;
+  padding: 0 2rem;
+  margin: 0 auto;
+}
+
+/* 카테고리 섹션 헤더 */
+.categories-section .section-header {
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.categories-section .section-title {
+  font-size: 2rem;
+  font-weight: 900;
+  color: #000000;
+  margin: 0 0 0.5rem 0;
+  letter-spacing: 0.05em;
+}
+
+.categories-section .section-title::after {
+  display: none;
+}
+
+.categories-section .section-subtitle {
+  font-size: 1rem;
+  color: #666666;
+  margin: 0;
+  font-weight: 400;
+}
+
+/* 카테고리 그리드 - 5x5 고정 레이아웃 */
+.categories-grid {
+  display: grid;
+  grid-template-columns: repeat(5, 1fr);
+  gap: 1rem;
+  animation: fadeIn 0.6s ease-out;
+}
+
+.category-card {
+  background: #ffffff;
+  border: 3px solid #000000;
+  border-radius: 16px;
+  padding: 1rem;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 3px 3px 0px #000000;
+  position: relative;
+  overflow: hidden;
+  min-height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.category-card::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 4px;
+  background: var(--category-color, #ffc107);
+  transform: scaleX(0);
+  transition: transform 0.3s ease;
+}
+
+.category-card:hover::before {
+  transform: scaleX(1);
+}
+
+.category-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 5px 0px #000000;
+}
+
+.category-card:active {
+  transform: translateY(-1px);
+  box-shadow: 2px 3px 0px #000000;
+}
+
+.category-icon {
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+  display: inline-block;
+  animation: bounce 2s ease-in-out infinite;
+}
+
+@keyframes bounce {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
+.category-name {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #000000;
+  margin: 0 0 0.25rem 0;
+  letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+}
+
+.category-count {
+  font-size: 0.8rem;
+  color: #666666;
+  margin: 0;
+  font-weight: 500;
+}
+
+/* ===== 홈페이지 푸터 (풀페이지 밖) ===== */
+.home-footer {
+  background: #1a1a1a;
+  color: #ffffff;
+  padding: 3rem 0 2rem;
+}
+
+/* 라이트 모드 푸터 */
+[data-theme="light"] .home-footer {
+  background: #ffffff;
+  color: #1a1a1a;
+  border-top: 1px solid #e0e0e0;
+}
+
+.footer-content-fullpage {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 3rem;
+  margin-bottom: 3rem;
+}
+
+.footer-section-item h4 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #ffc107;
+  margin-bottom: 1rem;
+}
+
+[data-theme="light"] .footer-section-item h4 {
+  color: #e65100;
+}
+
+.footer-section-item p {
+  color: #999999;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+}
+
+[data-theme="light"] .footer-section-item p {
+  color: #666666;
+}
+
+.footer-section-item a {
+  display: block;
+  color: #999999;
+  text-decoration: none;
+  margin-bottom: 0.5rem;
+  font-size: 0.95rem;
+  transition: color 0.3s;
+}
+
+[data-theme="light"] .footer-section-item a {
+  color: #666666;
+}
+
+.footer-section-item a:hover {
+  color: #ffc107;
+}
+
+[data-theme="light"] .footer-section-item a:hover {
+  color: #e65100;
+}
+
+.footer-bottom-fullpage {
+  text-align: center;
+  padding-top: 2rem;
+  border-top: 1px solid #333333;
+}
+
+.footer-bottom-fullpage p {
+  color: #666666;
+  font-size: 0.9rem;
+}
+
+/* HomePage에서 기존 Footer 숨기기 */
+.home-page ~ .footer,
+.home-page + footer,
+body:has(.home-page) .footer {
+  display: none !important;
 }
 
 /* ===== 버튼 스타일 ===== */
@@ -707,13 +1112,29 @@
 
 /* ===== 반응형 디자인 ===== */
 @media (max-width: 1024px) {
+  /* 태블릿에서는 스크롤 스냅 해제 */
+  .home-page {
+    scroll-snap-type: none;
+  }
+  
+  .hero-section,
+  .cta-section,
+  .debates-section,
+  .categories-section {
+    scroll-snap-align: none;
+    min-height: auto;
+  }
+  
+  .page-indicators {
+    display: none;
+  }
+  
   .categories-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-
-  .debates-grid {
+  
+  .debates-grid-compact {
     grid-template-columns: 1fr;
-    gap: 2rem;
   }
 }
 
@@ -739,28 +1160,18 @@
     font-size: 0.95rem;
   }
 
-  /* 카테고리 그리드 - 태블릿 반응형 */
-  /* 기본: 2열 (짝수) */
   .categories-grid {
-    grid-template-columns: repeat(2, 1fr);
-    gap: 1rem;
-  }
-
-  /* 홀수 개수일 때: 3열 */
-  .categories-grid[data-count="1"],
-  .categories-grid[data-count="3"],
-  .categories-grid[data-count="5"],
-  .categories-grid[data-count="7"],
-  .categories-grid[data-count="9"] {
     grid-template-columns: repeat(3, 1fr);
+    gap: 0.75rem;
   }
 
   .category-card {
-    padding: 1.5rem;
+    padding: 0.75rem;
+    min-height: 100px;
   }
 
   .category-icon {
-    font-size: 2.5rem;
+    font-size: 1.75rem;
   }
 
   .section-title {
@@ -775,18 +1186,12 @@
     font-size: 1.1rem;
   }
 
-  .categories-section,
-  .debates-section,
-  .cta-section {
-    padding: 3rem 0;
+  .debate-tabs {
+    flex-direction: column;
   }
 
-  .column-header {
-    padding: 1rem;
-  }
-
-  .column-header h3 {
-    font-size: 1.25rem;
+  .tab-button {
+    justify-content: center;
   }
 }
 
@@ -817,28 +1222,24 @@
   .search-button {
     width: 100%;
     padding: 0.75rem;
-    border: 3px solid #000000;
-    border-radius: 50px;
   }
 
   .categories-grid {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
   }
 
   .category-card {
-    padding: 1rem;
+    padding: 0.75rem;
+    min-height: 90px;
   }
 
   .category-icon {
-    font-size: 2rem;
+    font-size: 1.5rem;
   }
 
   .category-name {
-    font-size: 1.25rem;
-  }
-
-  .debate-card {
-    padding: 1.5rem;
+    font-size: 0.85rem;
   }
 
   .btn-debate {
@@ -850,79 +1251,19 @@
     padding: 1rem 2rem;
     font-size: 1.1rem;
   }
-
-  .column-header {
-    padding: 0.875rem 1rem;
-    font-size: 1rem;
-  }
-
-  .column-header h3 {
-    font-size: 1.1rem;
-  }
-
-  .column-header svg {
-    width: 20px;
-    height: 20px;
-  }
 }
 
 /* ===== 애니메이션 딜레이 ===== */
-.category-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
+.category-card:nth-child(1) { animation-delay: 0.1s; }
+.category-card:nth-child(2) { animation-delay: 0.15s; }
+.category-card:nth-child(3) { animation-delay: 0.2s; }
+.category-card:nth-child(4) { animation-delay: 0.25s; }
+.category-card:nth-child(5) { animation-delay: 0.3s; }
+.category-card:nth-child(6) { animation-delay: 0.35s; }
+.category-card:nth-child(7) { animation-delay: 0.4s; }
+.category-card:nth-child(8) { animation-delay: 0.45s; }
 
-.category-card:nth-child(2) {
-  animation-delay: 0.15s;
-}
-
-.category-card:nth-child(3) {
-  animation-delay: 0.2s;
-}
-
-.category-card:nth-child(4) {
-  animation-delay: 0.25s;
-}
-
-.category-card:nth-child(5) {
-  animation-delay: 0.3s;
-}
-
-.category-card:nth-child(6) {
-  animation-delay: 0.35s;
-}
-
-.category-card:nth-child(7) {
-  animation-delay: 0.4s;
-}
-
-.category-card:nth-child(8) {
-  animation-delay: 0.45s;
-}
-
-.debate-card {
-  animation: fadeIn 0.6s ease-out;
-}
-
-.debates-column:nth-child(1) .debate-card:nth-child(1) {
-  animation-delay: 0.1s;
-}
-
-.debates-column:nth-child(1) .debate-card:nth-child(2) {
-  animation-delay: 0.2s;
-}
-
-.debates-column:nth-child(1) .debate-card:nth-child(3) {
-  animation-delay: 0.3s;
-}
-
-.debates-column:nth-child(2) .debate-card:nth-child(1) {
-  animation-delay: 0.15s;
-}
-
-.debates-column:nth-child(2) .debate-card:nth-child(2) {
-  animation-delay: 0.25s;
-}
-
-.debates-column:nth-child(2) .debate-card:nth-child(3) {
-  animation-delay: 0.35s;
-}
+.debate-card-compact:nth-child(1) { animation-delay: 0.1s; }
+.debate-card-compact:nth-child(2) { animation-delay: 0.2s; }
+.debate-card-compact:nth-child(3) { animation-delay: 0.3s; }
+.debate-card-compact:nth-child(4) { animation-delay: 0.4s; }

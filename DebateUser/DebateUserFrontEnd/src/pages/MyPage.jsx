@@ -725,9 +725,45 @@ const MyPage = () => {
                   <p className="page-description">북마크한 토론 목록입니다</p>
                 </div>
 
-                <div className="no-data">
-                  북마크 기능은 준비 중입니다
-                </div>
+                {(() => {
+                  const bookmarks = JSON.parse(localStorage.getItem('bookmarkedDebates') || '[]');
+
+                  const handleRemoveBookmark = (debateId) => {
+                    if (window.confirm('이 북마크를 삭제하시겠습니까?')) {
+                      const updated = bookmarks.filter(b => b.id !== debateId);
+                      localStorage.setItem('bookmarkedDebates', JSON.stringify(updated));
+                      window.location.reload();
+                    }
+                  };
+
+                  return bookmarks.length > 0 ? (
+                    <div className="my-debate-list">
+                      {bookmarks.map((bookmark) => (
+                        <div key={bookmark.id} className="my-debate-item" style={{ display: 'flex', alignItems: 'center' }}>
+                          <Link to={`/debate/${bookmark.id}`} style={{ textDecoration: 'none', color: 'inherit', flex: 1 }}>
+                            <div className="debate-item-header">
+                              <span className="category-badge">{bookmark.categoryName || '카테고리'}</span>
+                            </div>
+                            <h3 style={{ margin: '0.5rem 0' }}>{bookmark.title}</h3>
+                            <div className="debate-item-meta">
+                              <span>{bookmark.nickname}</span>
+                              <span className="date">{formatRelativeTime(bookmark.bookmarkedAt)}</span>
+                            </div>
+                          </Link>
+                          <button
+                            onClick={() => handleRemoveBookmark(bookmark.id)}
+                            className="btn btn-outline"
+                            style={{ padding: '0.5rem 1rem', fontSize: '0.9rem', marginLeft: '1rem' }}
+                          >
+                            삭제
+                          </button>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="no-data">북마크한 토론이 없습니다</div>
+                  );
+                })()}
               </>
             )}
 
