@@ -7,13 +7,18 @@ $LOCAL_PROJECT = Join-Path $PSScriptRoot "DebateAdmin\DebateAdminBackEnd"
 $REMOTE_PATH = "opt/debate/backendAdmin"
 $JAR_NAME = "debate-admin-1.0.0.jar"
 $SERVICE_NAME = "debate-admin-backend"
-$GRADLE_EXEC = Join-Path $PSScriptRoot "temp_gradle\gradle-8.5\bin\gradle.bat"
+$GRADLE_EXEC = Join-Path $LOCAL_PROJECT "gradlew.bat"
 
 Write-Host "=== DebateAdminBackEnd Deployment Start ===" -ForegroundColor Green
 
 # 1. Build
 Write-Host "`n[1/4] Building project..." -ForegroundColor Yellow
 Push-Location $LOCAL_PROJECT
+if (-not (Test-Path $GRADLE_EXEC)) {
+    Write-Host "Gradle Wrapper not found at: $GRADLE_EXEC" -ForegroundColor Red
+    Pop-Location
+    exit 1
+}
 & $GRADLE_EXEC build -x test
 if ($LASTEXITCODE -ne 0) {
     Write-Host "Build failed!" -ForegroundColor Red
