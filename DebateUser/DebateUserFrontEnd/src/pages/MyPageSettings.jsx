@@ -15,6 +15,7 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../services/userService";
+import UserAvatar from "../components/common/UserAvatar";
 import "./MyPageSettings.css";
 
 const MyPageSettings = () => {
@@ -288,11 +289,11 @@ const MyPageSettings = () => {
           <aside className="my-page-sidebar">
             <div className="profile-card">
               <div className="profile-avatar">
-                {profile?.profileImage ? (
-                  <img src={profile.profileImage} alt="프로필" />
-                ) : (
-                  <span>👤</span>
-                )}
+                <UserAvatar
+                  src={profile?.profileImage}
+                  alt="프로필"
+                  size="large"
+                />
               </div>
               <h2 className="profile-name">
                 {profile?.nickname || "이름 없음"}
@@ -397,8 +398,8 @@ const MyPageSettings = () => {
                               <div
                                 key={level}
                                 className={`password-strength-segment ${level <= passwordStrength.strength
-                                    ? `active ${passwordStrength.level}`
-                                    : ""
+                                  ? `active ${passwordStrength.level}`
+                                  : ""
                                   }`}
                               ></div>
                             ))}

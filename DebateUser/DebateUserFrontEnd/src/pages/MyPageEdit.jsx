@@ -16,7 +16,7 @@ import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
 import { userService } from "../services/userService";
-import defaultProfileImage from "../assets/default-profile.png";  // 추가
+import UserAvatar from "../components/common/UserAvatar";
 import "./MyPageEdit.css";
 
 const MyPageEdit = () => {
@@ -308,7 +308,7 @@ const MyPageEdit = () => {
    * 기본 이미지로 변경
    */
   const handleRemoveImage = () => {
-    setFormData((prev) => ({ ...prev, profileImage: defaultProfileImage }));
+    setFormData((prev) => ({ ...prev, profileImage: "" }));
     showToast("기본 이미지로 변경되었습니다.", "info");
   };
   /**
@@ -343,11 +343,11 @@ const MyPageEdit = () => {
           <aside className="my-page-sidebar">
             <div className="profile-card">
               <div className="profile-avatar">
-                {formData.profileImage ? (
-                  <img src={formData.profileImage} alt="프로필" />
-                ) : (
-                  <span>👤</span>
-                )}
+                <UserAvatar
+                  src={formData.profileImage}
+                  alt="프로필"
+                  size="large"
+                />
               </div>
               <h2 className="profile-name">
                 {formData.nickname || "이름 없음"}
@@ -397,11 +397,11 @@ const MyPageEdit = () => {
                     onDrop={handleDrop}
                   >
                     <div className="profile-avatar-large">
-                      {formData.profileImage ? (
-                        <img src={formData.profileImage} alt="프로필" />
-                      ) : (
-                        <span>👤</span>
-                      )}
+                      <UserAvatar
+                        src={formData.profileImage}
+                        alt="프로필"
+                        size="xlarge"
+                      />
                     </div>
                     {uploadProgress > 0 && uploadProgress < 100 && (
                       <div className="upload-progress">

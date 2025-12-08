@@ -9,6 +9,7 @@ import { reportService } from "../services/reportService";
 import { format } from "date-fns";
 import "./DebateDetailPage.css";
 import ChatWidget from "../components/ChatWidget";
+import UserAvatar from "../components/common/UserAvatar";
 
 const DebateDetailPage = () => {
   const { id } = useParams();
@@ -594,7 +595,13 @@ const DebateDetailPage = () => {
         <div key={comment.id} className="comment-block">
           {/* 부모 댓글 */}
           <div className="comment-row root">
-            <div className="comment-avatar">{comment.nickname?.charAt(0)}</div>
+            <div className="comment-avatar">
+              <UserAvatar
+                src={comment.profileImage}
+                alt={comment.nickname}
+                size="medium"
+              />
+            </div>
             <div className="comment-main">
               <div className="comment-header">
                 <span className="name">{comment.nickname}</span>
@@ -744,7 +751,11 @@ const DebateDetailPage = () => {
                   <div key={reply.id} className="comment-row reply">
                     <div className="reply-line"></div>
                     <div className="comment-avatar small">
-                      {reply.nickname?.charAt(0)}
+                      <UserAvatar
+                        src={reply.profileImage}
+                        alt={reply.nickname}
+                        size="small"
+                      />
                     </div>
                     <div className="comment-main">
                       <div className="comment-header">

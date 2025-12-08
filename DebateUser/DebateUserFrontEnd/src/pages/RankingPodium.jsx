@@ -10,6 +10,7 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTheme } from '../context/ThemeContext';
+import UserAvatar from '../components/common/UserAvatar';
 import './RankingPodium.css';
 
 const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
@@ -94,7 +95,7 @@ const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
   };
 
   const getCriteriaLabel = (c) => {
-    switch(c) {
+    switch (c) {
       case 'likes': return '좋아요';
       case 'votes': return '투표 수';
       case 'comments': return '댓글 좋아요';
@@ -150,8 +151,8 @@ const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
           </svg>
         </div>
       );
-    } 
-    
+    }
+
     // 2위, 3위: 왼쪽 캐릭터 (망토가 왼쪽으로 날림)
     // 3위는 좌우 반전하여 서로 바라보게 연출할 수도 있음
     return (
@@ -228,10 +229,10 @@ const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
         {podiumOrder.map((user, index) => {
           const rankClass = getRankClass(index);
           const rankNumber = getRankNumber(index);
-          
+
           return (
-            <div 
-              key={index} 
+            <div
+              key={index}
               className={`podium-item ${rankClass} ${user ? '' : 'empty'}`}
             >
               {user ? (
@@ -260,13 +261,11 @@ const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
                   {/* 사용자 정보 (단상 아래로 이동) */}
                   <div className="user-info">
                     <div className="user-avatar">
-                      {user.profileImage ? (
-                        <img src={user.profileImage} alt={user.nickname} />
-                      ) : (
-                        <div className="avatar-placeholder">
-                          {user.nickname?.[0]?.toUpperCase() || 'U'}
-                        </div>
-                      )}
+                      <UserAvatar
+                        src={user.profileImage}
+                        alt={user.nickname}
+                        size="medium"
+                      />
                     </div>
                     <h3 className="user-nickname">{user.nickname}</h3>
                     <div className="user-stats">

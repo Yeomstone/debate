@@ -16,6 +16,7 @@ import { userService } from '../services/userService'
 import { myPageService } from '../services/myPageService'
 import { messageService } from '../services/messageService'
 import { Link } from 'react-router-dom'
+import UserAvatar from '../components/common/UserAvatar'
 import './MyPage.css'
 import '../styles/MessageBox.css'
 
@@ -325,11 +326,11 @@ const MyPage = () => {
                 {/* 프로필 카드 */}
                 <div className="profile-card">
                   <div className="profile-avatar">
-                    {profile.profileImage ? (
-                      <img src={profile.profileImage} alt={profile.nickname} />
-                    ) : (
-                      <span>👤</span>
-                    )}
+                    <UserAvatar
+                      src={profile.profileImage}
+                      alt={profile.nickname}
+                      size="large"
+                    />
                   </div>
                   <h2 className="profile-name">{profile.nickname || '이름 없음'}</h2>
                   <p className="profile-bio">{profile.bio || '자기소개를 입력하세요'}</p>
@@ -958,11 +959,11 @@ const MyPage = () => {
               </div>
               <div className="profile-modal-content">
                 <div className="profile-modal-avatar">
-                  {profile.profileImage ? (
-                    <img src={profile.profileImage} alt={profile.nickname} />
-                  ) : (
-                    '👤'
-                  )}
+                  <UserAvatar
+                    src={profile.profileImage}
+                    alt={profile.nickname}
+                    size="large"
+                  />
                 </div>
                 <h2 className="profile-modal-name">{profile.nickname || '이름 없음'}</h2>
                 {profile.bio && <p className="profile-modal-bio">{profile.bio}</p>}

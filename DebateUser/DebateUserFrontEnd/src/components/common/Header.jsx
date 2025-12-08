@@ -23,6 +23,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useAuth } from "../../context/AuthContext";
 import { useTheme } from "../../context/ThemeContext";
 import "./Header.css";
+import UserAvatar from "./UserAvatar";
 import debateLogoLight from "../../assets/debate-onlylogo.png";
 import debateLogoDark from "../../assets/debate-logo-dark.png";
 
@@ -395,25 +396,11 @@ const Header = () => {
                     aria-expanded={isProfileMenuOpen}
                   >
                     {/* 프로필 이미지가 있으면 표시, 없으면 기본 아이콘 */}
-                    {user?.profileImage ? (
-                      <img
-                        src={user.profileImage}
-                        alt={user.nickname || "사용자"}
-                        className="avatar-image"
-                      />
-                    ) : (
-                      <svg
-                        width="20"
-                        height="20"
-                        viewBox="0 0 24 24"
-                        fill="none"
-                        stroke="currentColor"
-                        strokeWidth="2"
-                      >
-                        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
-                        <circle cx="12" cy="7" r="4" />
-                      </svg>
-                    )}
+                    <UserAvatar
+                      src={user?.profileImage}
+                      alt={user?.nickname || "사용자"}
+                      size="medium"
+                    />
                   </button>
 
                   {/* 프로필 드롭다운 메뉴 */}
