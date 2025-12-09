@@ -6,6 +6,7 @@ import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import { adminDashboardService } from '../services/adminDashboardService'
 import { format } from 'date-fns'
+import UserAvatar from '../components/common/UserAvatar'
 import './DashboardPage.css'
 
 const DashboardPage = () => {
@@ -127,7 +128,16 @@ const DashboardPage = () => {
                   <tr key={user.id}>
                     <td>{user.id}</td>
                     <td>{user.email}</td>
-                    <td>{user.nickname}</td>
+                    <td>
+                      <div className="author-cell">
+                        <UserAvatar
+                          src={user.profileImage}
+                          alt={user.nickname || "회원"}
+                          size="small"
+                        />
+                        <span>{user.nickname}</span>
+                      </div>
+                    </td>
                     <td>
                       {format(
                         new Date(user.createdAt),
@@ -202,9 +212,18 @@ const DashboardPage = () => {
                     {format(new Date(report.createdAt), 'yyyy-MM-dd HH:mm')}
                   </td>
                   <td>
-                    {report.reporter?.nickname ||
-                      report.reporter?.email ||
-                      'N/A'}
+                    <div className="author-cell">
+                      <UserAvatar
+                        src={report.reporter?.profileImage}
+                        alt={report.reporter?.nickname || report.reporterId || "신고자"}
+                        size="small"
+                      />
+                      <span>
+                        {report.reporter?.nickname ||
+                        report.reporter?.email ||
+                        'N/A'}
+                      </span>
+                    </div>
                   </td>
                   <td>{report.targetType}</td>
                   <td>{report.reason}</td>

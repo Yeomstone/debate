@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { adminCommentService } from '../services/adminCommentService'
 import { format } from 'date-fns'
+import UserAvatar from '../components/common/UserAvatar'
 import './CommentsPage.css'
 
 const CommentsPage = () => {
@@ -171,7 +172,16 @@ const CommentsPage = () => {
                           </span>
                         </div>
                       </td>
-                      <td>{comment.user?.nickname || comment.userId || '-'}</td>
+                      <td>
+                        <div className="author-cell">
+                          <UserAvatar
+                            src={comment.user?.profileImage}
+                            alt={comment.user?.nickname || comment.userId || "작성자"}
+                            size="small"
+                          />
+                          <span>{comment.user?.nickname || comment.userId || '-'}</span>
+                        </div>
+                      </td>
                       <td>{comment.debateId || '-'}</td>
                       <td>
                         {comment.parentId ? (
@@ -272,9 +282,16 @@ const CommentsPage = () => {
               </div>
               <div className="detail-row">
                 <label>작성자:</label>
-                <span>
-                  {selectedComment.user?.nickname || selectedComment.userId || '-'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserAvatar
+                    src={selectedComment.user?.profileImage}
+                    alt={selectedComment.user?.nickname || selectedComment.userId || "작성자"}
+                    size="medium"
+                  />
+                  <span>
+                    {selectedComment.user?.nickname || selectedComment.userId || '-'}
+                  </span>
+                </div>
               </div>
               <div className="detail-row">
                 <label>토론 ID:</label>

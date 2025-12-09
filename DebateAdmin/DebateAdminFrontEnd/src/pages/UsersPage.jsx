@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { adminUserService } from '../services/adminUserService'
 import { format } from 'date-fns'
+import UserAvatar from '../components/common/UserAvatar'
 import './UsersPage.css'
 
 const UsersPage = () => {
@@ -179,7 +180,16 @@ const UsersPage = () => {
                     <tr key={user.id}>
                       <td>{user.id}</td>
                       <td>{user.email}</td>
-                      <td>{user.nickname}</td>
+                      <td>
+                        <div className="author-cell">
+                          <UserAvatar
+                            src={user.profileImage}
+                            alt={user.nickname || "회원"}
+                            size="small"
+                          />
+                          <span>{user.nickname}</span>
+                        </div>
+                      </td>
                       <td>
                         <span className={`status-badge ${getStatusBadgeClass(user.status)}`}>
                           {getStatusLabel(user.status)}
@@ -281,7 +291,14 @@ const UsersPage = () => {
               </div>
               <div className="detail-row">
                 <label>닉네임:</label>
-                <span>{selectedUser.nickname}</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserAvatar
+                    src={selectedUser.profileImage}
+                    alt={selectedUser.nickname || "회원"}
+                    size="medium"
+                  />
+                  <span>{selectedUser.nickname}</span>
+                </div>
               </div>
               <div className="detail-row">
                 <label>상태:</label>
@@ -346,7 +363,14 @@ const UsersPage = () => {
             <div className="modal-body">
               <div className="detail-row">
                 <label>회원:</label>
-                <span>{selectedUser.nickname} ({selectedUser.email})</span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserAvatar
+                    src={selectedUser.profileImage}
+                    alt={selectedUser.nickname || "회원"}
+                    size="small"
+                  />
+                  <span>{selectedUser.nickname} ({selectedUser.email})</span>
+                </div>
               </div>
               <div className="detail-row">
                 <label>현재 상태:</label>

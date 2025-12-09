@@ -7,6 +7,7 @@
 import { useEffect, useState } from 'react'
 import { adminReportService } from '../services/adminReportService'
 import { format } from 'date-fns'
+import UserAvatar from '../components/common/UserAvatar'
 import './ReportsPage.css'
 
 const ReportsPage = () => {
@@ -175,7 +176,14 @@ const ReportsPage = () => {
                           : '-'}
                       </td>
                       <td>
-                        {report.reporter?.nickname || report.reporterId || '-'}
+                        <div className="author-cell">
+                          <UserAvatar
+                            src={report.reporter?.profileImage}
+                            alt={report.reporter?.nickname || report.reporterId || "신고자"}
+                            size="small"
+                          />
+                          <span>{report.reporter?.nickname || report.reporterId || '-'}</span>
+                        </div>
                       </td>
                       <td>{getTargetTypeLabel(report.targetType)}</td>
                       <td>{report.targetId}</td>
@@ -274,9 +282,16 @@ const ReportsPage = () => {
               </div>
               <div className="detail-row">
                 <label>신고자:</label>
-                <span>
-                  {selectedReport.reporter?.nickname || selectedReport.reporterId || '-'}
-                </span>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <UserAvatar
+                    src={selectedReport.reporter?.profileImage}
+                    alt={selectedReport.reporter?.nickname || selectedReport.reporterId || "신고자"}
+                    size="medium"
+                  />
+                  <span>
+                    {selectedReport.reporter?.nickname || selectedReport.reporterId || '-'}
+                  </span>
+                </div>
               </div>
               <div className="detail-row">
                 <label>대상 타입:</label>

@@ -199,3 +199,10 @@ body {
   transform: none !important;
 }
 
+/* 작성자 셀 스타일 (프로필 이미지 + 닉네임) */
+.author-cell {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
