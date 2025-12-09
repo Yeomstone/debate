@@ -58,14 +58,58 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true) // 로딩 상태
 
   /**
+   * JWT 토큰 만료 시간 확인
+   * @param {string} token JWT 토큰
+   * @returns {boolean} 토큰이 유효하면 true, 만료되었으면 false
+   */
+  const isTokenValid = (token) => {
+    if (!token) return false
+    
+    try {
+      // JWT 토큰은 Base64로 인코딩된 3부분으로 구성: header.payload.signature
+      const parts = token.split('.')
+      if (parts.length !== 3) return false
+      
+      // payload 부분 디코딩
+      const payload = JSON.parse(atob(parts[1]))
+      
+      // 만료 시간 확인 (exp는 초 단위 Unix timestamp)
+      if (payload.exp) {
+        const expirationTime = payload.exp * 1000 // 밀리초로 변환
+        const currentTime = Date.now()
+        
+        // 만료 시간이 현재 시간보다 작으면 만료됨
+        if (expirationTime < currentTime) {
+          return false
+        }
+      }
+      
+      return true
+    } catch (error) {
+      // 토큰 파싱 실패 시 유효하지 않음
+      return false
+    }
+  }
+
+  /**
    * 컴포넌트 마운트 시 토큰이 있으면 관리자 정보 복원
+   * 토큰 유효성 검증 포함
    */
   useEffect(() => {
     if (token) {
-      // 토큰이 있으면 저장된 관리자 정보 복원
-      const storedAdmin = getStoredAdmin()
-      if (storedAdmin) {
-        setAdmin(storedAdmin)
+      // 토큰 유효성 검증
+      if (isTokenValid(token)) {
+        // 토큰이 유효하면 저장된 관리자 정보 복원
+        const storedAdmin = getStoredAdmin()
+        if (storedAdmin) {
+          setAdmin(storedAdmin)
+        }
+      } else {
+        // 토큰이 만료되었거나 유효하지 않으면 제거
+        localStorage.removeItem('adminToken')
+        localStorage.removeItem('adminInfo')
+        setToken(null)
+        setAdmin(null)
       }
       setLoading(false)
     } else {

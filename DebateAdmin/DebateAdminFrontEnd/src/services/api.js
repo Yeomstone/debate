@@ -65,7 +65,7 @@ api.interceptors.request.use(
  * 
  * 모든 API 응답 후에 실행됩니다.
  * - BackEnd의 ApiResponse 구조를 처리
- * - 인증 실패(401) 시 자동 로그아웃 처리
+ * - 인증 실패(401, 403) 시 자동 로그아웃 처리
  */
 api.interceptors.response.use(
   (response) => {
@@ -82,10 +82,11 @@ api.interceptors.response.use(
     return response.data
   },
   (error) => {
-    // 401 Unauthorized 에러 처리 (인증 실패)
-    if (error.response?.status === 401) {
+    // 401 Unauthorized 또는 403 Forbidden 에러 처리 (인증 실패 또는 권한 없음)
+    if (error.response?.status === 401 || error.response?.status === 403) {
       // 토큰 제거
       localStorage.removeItem('adminToken')
+      localStorage.removeItem('adminInfo')
       // 로그인 페이지로 리다이렉트
       window.location.href = '/login'
     }
