@@ -7,11 +7,15 @@
 import { useEffect, useState, useRef, useMemo } from "react";
 import { adminDebateService } from "../services/adminDebateService";
 import { fileUploadService } from "../services/fileUploadService";
+import { adminCommentService } from "../services/adminCommentService";
 import { format } from "date-fns";
 import ReactQuill, { Quill } from "react-quill";
 import "react-quill/dist/quill.snow.css";
 import ImageUploadModal from "../components/common/ImageUploadModal";
+import UserAvatar from "../components/common/UserAvatar";
 import "./DebatePage.css";
+// 유저 사이트 스타일을 위한 추가 import
+import "../styles/debate-detail-modal.css";
 
 const DebatePage = () => {
   const [debates, setDebates] = useState([]);
@@ -33,6 +37,12 @@ const DebatePage = () => {
   });
   const quillRef = useRef(null); // React Quill ref
   const [isImageModalOpen, setIsImageModalOpen] = useState(false); // 이미지 업로드 모달 상태
+  
+  // 댓글 관련 상태
+  const [comments, setComments] = useState([]);
+  const [commentPage, setCommentPage] = useState(0);
+  const [commentTotalPages, setCommentTotalPages] = useState(0);
+  const [commentSort, setCommentSort] = useState("latest"); // latest, oldest, replies
 
   useEffect(() => {
     loadDebates();
@@ -80,12 +90,294 @@ const DebatePage = () => {
     try {
       const response = await adminDebateService.getDebateDetail(id);
       const data = response.data?.data || response.data || response;
+      
+      // 이미지 URL 변환 (HTTPS 페이지에서 HTTP 이미지 로드 방지)
+      if (data && data.content) {
+        data.content = convertImageUrls(data.content);
+      }
+      
       setSelectedDebate(data);
       setShowDetailModal(true);
+      
+      // 댓글 상태 초기화
+      setCommentPage(0);
+      setCommentSort("latest");
+      
+      // 댓글 로드
+      await fetchComments(id);
     } catch (error) {
       console.error("토론 상세 조회 실패:", error);
       alert("토론 정보를 불러오는데 실패했습니다.");
     }
+  };
+
+  // 댓글 가져오기 (관리자 API 사용 - 숨김 댓글 포함)
+  const fetchComments = async (debateId) => {
+    if (!debateId) return;
+    
+    try {
+      let sortParam = "createdAt,desc"; // 기본: 최신순
+      if (commentSort === "oldest") sortParam = "createdAt,asc";
+      else if (commentSort === "replies") sortParam = "replyCount,desc";
+
+      const response = await adminCommentService.getCommentsByDebate(
+        debateId,
+        commentPage,
+        7,
+        sortParam
+      );
+      
+      // ApiResponse 구조: { success, message, data: { content, totalPages, ... } }
+      const data = response.data || response;
+      
+      if (data && data.content) {
+        setComments(data.content || []);
+        setCommentTotalPages(data.totalPages || 0);
+      } else if (Array.isArray(data)) {
+        // 배열로 직접 반환된 경우
+        setComments(data);
+        setCommentTotalPages(1);
+      } else {
+        console.warn("예상하지 못한 댓글 응답 형식:", data);
+        setComments([]);
+        setCommentTotalPages(0);
+      }
+    } catch (error) {
+      console.error("댓글 로딩 실패:", error);
+      // 댓글 로딩 실패해도 모달은 표시
+      setComments([]);
+      setCommentTotalPages(0);
+    }
+  };
+
+  // 댓글 숨김 처리
+  const handleToggleCommentHidden = async (commentId) => {
+    try {
+      await adminCommentService.toggleCommentHidden(commentId);
+      alert("댓글 숨김 상태가 변경되었습니다.");
+      // 댓글 다시 로드
+      if (selectedDebate?.id) {
+        await fetchComments(selectedDebate.id);
+      }
+    } catch (error) {
+      console.error("댓글 숨김 처리 실패:", error);
+      alert("댓글 숨김 처리에 실패했습니다.");
+    }
+  };
+
+  // 댓글 삭제
+  const handleDeleteComment = async (commentId) => {
+    if (!window.confirm("정말 이 댓글을 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.")) {
+      return;
+    }
+
+    try {
+      await adminCommentService.deleteComment(commentId);
+      alert("댓글이 삭제되었습니다.");
+      // 댓글 다시 로드
+      if (selectedDebate?.id) {
+        await fetchComments(selectedDebate.id);
+      }
+    } catch (error) {
+      console.error("댓글 삭제 실패:", error);
+      alert("댓글 삭제에 실패했습니다.");
+    }
+  };
+
+  // 댓글 렌더링
+  const renderComments = () => {
+    if (comments.length === 0) {
+      return <div className="debate-detail-no-comments">댓글이 없습니다.</div>;
+    }
+
+    return comments.map((comment) => {
+      const replies = comment.replies || [];
+      const isModified =
+        !comment.isDeleted && comment.updatedAt && comment.updatedAt !== comment.createdAt;
+
+      return (
+        <div 
+          key={comment.id} 
+          className={`debate-detail-comment-block ${comment.isHidden ? 'hidden' : ''}`}
+        >
+          {/* 부모 댓글 */}
+          <div className="debate-detail-comment-row debate-detail-comment-root">
+            <div className="debate-detail-comment-avatar">
+              {comment.profileImage ? (
+                <img src={comment.profileImage} alt={comment.nickname} />
+              ) : (
+                <span>{comment.nickname?.[0] || "?"}</span>
+              )}
+            </div>
+            <div className="debate-detail-comment-main">
+              <div className="debate-detail-comment-header">
+                <span className="debate-detail-comment-name">{comment.nickname}</span>
+                <span className="debate-detail-comment-time">
+                  {format(new Date(comment.createdAt), "MM.dd HH:mm")}
+                  {isModified && " (수정됨)"}
+                  {comment.isHidden && (
+                    <span className="debate-detail-comment-hidden-badge"> [숨김]</span>
+                  )}
+                </span>
+              </div>
+              <p
+                className={`debate-detail-comment-text ${comment.isDeleted ? "deleted" : ""}`}
+                style={
+                  comment.isDeleted
+                    ? { color: "#999", fontStyle: "italic" }
+                    : {}
+                }
+              >
+                {comment.content}
+              </p>
+              {!comment.isDeleted && (
+                <div className="debate-detail-comment-actions">
+                  <span className="debate-detail-comment-like">
+                    {comment.liked ? "❤️" : "🤍"} {comment.likeCount || 0}
+                  </span>
+                  {/* 관리자 액션 버튼 */}
+                  <div className="debate-detail-comment-admin-actions">
+                    <button
+                      className="debate-detail-comment-action-btn"
+                      onClick={() => handleToggleCommentHidden(comment.id)}
+                      title={comment.isHidden ? "공개하기" : "숨기기"}
+                    >
+                      {comment.isHidden ? "👁️ 공개" : "🙈 숨김"}
+                    </button>
+                    <button
+                      className="debate-detail-comment-action-btn debate-detail-comment-delete-btn"
+                      onClick={() => handleDeleteComment(comment.id)}
+                      title="삭제하기"
+                    >
+                      🗑️ 삭제
+                    </button>
+                  </div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* 자식 댓글 (답글) */}
+          {replies.length > 0 && (
+            <div className="debate-detail-replies-container">
+              {replies.map((reply) => {
+                const isReplyModified =
+                  !reply.isDeleted && reply.updatedAt && reply.updatedAt !== reply.createdAt;
+
+                return (
+                  <div 
+                    key={reply.id} 
+                    className={`debate-detail-comment-row debate-detail-comment-reply ${reply.isHidden ? 'hidden' : ''}`}
+                  >
+                    <div className="debate-detail-reply-line"></div>
+                    <div className="debate-detail-comment-avatar debate-detail-comment-avatar-small">
+                      {reply.profileImage ? (
+                        <img src={reply.profileImage} alt={reply.nickname} />
+                      ) : (
+                        <span>{reply.nickname?.[0] || "?"}</span>
+                      )}
+                    </div>
+                    <div className="debate-detail-comment-main">
+                      <div className="debate-detail-comment-header">
+                        <span className="debate-detail-comment-name">{reply.nickname}</span>
+                        <span className="debate-detail-comment-time">
+                          {format(new Date(reply.createdAt), "MM.dd HH:mm")}
+                          {isReplyModified && " (수정됨)"}
+                          {reply.isHidden && (
+                            <span className="debate-detail-comment-hidden-badge"> [숨김]</span>
+                          )}
+                        </span>
+                      </div>
+                      <p
+                        className={`debate-detail-comment-text ${reply.isDeleted ? "deleted" : ""}`}
+                        style={
+                          reply.isDeleted
+                            ? { color: "#999", fontStyle: "italic" }
+                            : {}
+                        }
+                      >
+                        {reply.content}
+                      </p>
+                      {!reply.isDeleted && (
+                        <div className="debate-detail-comment-actions">
+                          <span className="debate-detail-comment-like">
+                            {reply.liked ? "❤️" : "🤍"} {reply.likeCount || 0}
+                          </span>
+                          {/* 관리자 액션 버튼 */}
+                          <div className="debate-detail-comment-admin-actions">
+                            <button
+                              className="debate-detail-comment-action-btn"
+                              onClick={() => handleToggleCommentHidden(reply.id)}
+                              title={reply.isHidden ? "공개하기" : "숨기기"}
+                            >
+                              {reply.isHidden ? "👁️ 공개" : "🙈 숨김"}
+                            </button>
+                            <button
+                              className="debate-detail-comment-action-btn debate-detail-comment-delete-btn"
+                              onClick={() => handleDeleteComment(reply.id)}
+                              title="삭제하기"
+                            >
+                              🗑️ 삭제
+                            </button>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+          )}
+        </div>
+      );
+    });
+  };
+
+  /**
+   * HTML 콘텐츠의 이미지 URL을 현재 프로토콜에 맞게 변환
+   * HTTPS 페이지에서 HTTP 이미지를 로드하는 Mixed Content 문제 방지
+   * IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
+   */
+  const convertImageUrls = (htmlContent) => {
+    if (!htmlContent) return htmlContent;
+
+    const currentOrigin = window.location.origin;
+    const currentHost = window.location.host;
+
+    // 현재 페이지가 HTTPS인 경우
+    if (window.location.protocol === "https:") {
+      // IP 주소를 도메인으로 변환 (13.209.254.24 -> debate.me.kr)
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="https://debate.me.kr$1"`
+      );
+
+      // HTTP 이미지 URL을 HTTPS로 변환
+      htmlContent = htmlContent.replace(
+        /src="http:\/\/([^"]+)"/g,
+        'src="https://$1"'
+      );
+
+      // 상대 경로 이미지를 절대 경로로 변환 (프로토콜 포함)
+      htmlContent = htmlContent.replace(
+        /src="(\/[^"]+)"/g,
+        `src="${currentOrigin}$1"`
+      );
+    } else {
+      // HTTP 페이지에서도 IP 주소를 도메인으로 변환
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="http://debate.me.kr$1"`
+      );
+
+      // 상대 경로를 절대 경로로 변환
+      htmlContent = htmlContent.replace(
+        /src="(\/[^"]+)"/g,
+        `src="${currentOrigin}$1"`
+      );
+    }
+
+    return htmlContent;
   };
 
   const handleEdit = (debate) => {
@@ -461,7 +753,16 @@ const DebatePage = () => {
                           {debate.title}
                         </div>
                       </td>
-                      <td>{debate.user?.nickname || debate.userId || "-"}</td>
+                      <td>
+                        <div className="author-cell">
+                          <UserAvatar
+                            src={debate.user?.profileImage}
+                            alt={debate.user?.nickname || debate.userId || "작성자"}
+                            size="small"
+                          />
+                          <span>{debate.user?.nickname || debate.userId || "-"}</span>
+                        </div>
+                      </td>
                       <td>
                         <span
                           className={`status-badge ${getStatusBadgeClass(
@@ -558,105 +859,223 @@ const DebatePage = () => {
         )}
       </div>
 
-      {/* 토론 상세 모달 */}
+      {/* 토론 상세 모달 - 유저 사이트 스타일 */}
       {showDetailModal && selectedDebate && (
         <div
-          className="modal-overlay"
-          onClick={() => setShowDetailModal(false)}
+          className="debate-detail-modal-overlay"
+          onClick={() => {
+            setShowDetailModal(false);
+            setComments([]);
+            setCommentPage(0);
+            setCommentSort("latest");
+          }}
         >
           <div
-            className="modal-content modal-large"
+            className="debate-detail-modal-content"
             onClick={(e) => e.stopPropagation()}
           >
-            <div className="modal-header">
-              <h2>토론 상세 정보</h2>
-              <button
-                className="modal-close"
-                onClick={() => setShowDetailModal(false)}
-              >
-                ×
-              </button>
-            </div>
-            <div className="modal-body">
-              <div className="detail-row">
-                <label>ID:</label>
-                <span>{selectedDebate.id}</span>
+            <button
+              className="debate-detail-modal-close"
+              onClick={() => {
+                setShowDetailModal(false);
+                setComments([]);
+                setCommentPage(0);
+                setCommentSort("latest");
+              }}
+            >
+              ×
+            </button>
+            <div className="debate-detail-modal-body">
+              <div className="debate-detail-animated-bg"></div>
+              <div className="debate-detail-container">
+                <article className="debate-detail-article">
+                  <div className="debate-detail-article-top-bar">
+                    <div className="debate-detail-top-left">
+                      <span className="debate-detail-badge debate-detail-category-badge">
+                        {selectedDebate.categoryName || "카테고리"}
+                      </span>
+                      <span
+                        className={`debate-detail-badge debate-detail-status-badge ${selectedDebate.status?.toLowerCase()}`}
+                      >
+                        {selectedDebate.status === "ACTIVE"
+                          ? "진행중"
+                          : selectedDebate.status === "ENDED"
+                            ? "종료됨"
+                            : "예정"}
+                      </span>
+                      {selectedDebate.isHidden && (
+                        <span className="debate-detail-badge" style={{ backgroundColor: "var(--warning-color)", color: "white" }}>
+                          숨김
+                        </span>
+                      )}
+                    </div>
+                  </div>
+
+                  <h1 className="debate-detail-article-title">{selectedDebate.title}</h1>
+
+                  <div className="debate-detail-article-meta">
+                    <div className="debate-detail-meta-left">
+                      <UserAvatar
+                        src={selectedDebate.user?.profileImage}
+                        alt={selectedDebate.user?.nickname || selectedDebate.userId || "작성자"}
+                        size="small"
+                      />
+                      <span className="debate-detail-author-name">
+                        {selectedDebate.user?.nickname ||
+                          selectedDebate.userId ||
+                          "작성자"}
+                      </span>
+                      <span className="debate-detail-separator">·</span>
+                      <span className="date">
+                        {selectedDebate.createdAt
+                          ? format(new Date(selectedDebate.createdAt), "yyyy.MM.dd")
+                          : "-"}
+                      </span>
+                    </div>
+                    <div className="debate-detail-meta-right">
+                      <span>조회 {selectedDebate.viewCount?.toLocaleString() || 0}</span>
+                      <span>댓글 {selectedDebate.commentCount?.toLocaleString() || 0}</span>
+                    </div>
+                  </div>
+
+                  <div
+                    className="debate-detail-article-content ql-editor"
+                    dangerouslySetInnerHTML={{ __html: selectedDebate.content }}
+                  />
+
+                  <div className="debate-detail-article-footer">
+                    <button
+                      className="debate-detail-list-btn"
+                      onClick={() => {
+                        setShowDetailModal(false);
+                        setComments([]);
+                        setCommentPage(0);
+                        setCommentSort("latest");
+                      }}
+                    >
+                      닫기
+                    </button>
+                  </div>
+
+                  {/* 관리자 액션 버튼 */}
+                  <div className="debate-detail-admin-actions">
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        setShowDetailModal(false);
+                        handleEdit(selectedDebate);
+                      }}
+                    >
+                      수정
+                    </button>
+                    <button
+                      className="btn btn-secondary"
+                      onClick={() => {
+                        if (window.confirm("숨김 상태를 변경하시겠습니까?")) {
+                          handleToggleHidden(selectedDebate.id);
+                          setShowDetailModal(false);
+                        }
+                      }}
+                    >
+                      {selectedDebate.isHidden ? "공개" : "숨김"}
+                    </button>
+                    <button
+                      className="btn btn-danger"
+                      onClick={() => {
+                        if (window.confirm("정말 삭제하시겠습니까?")) {
+                          handleDelete(selectedDebate.id);
+                          setShowDetailModal(false);
+                        }
+                      }}
+                    >
+                      삭제
+                    </button>
+                  </div>
+                </article>
+
+                {/* 댓글 섹션 */}
+                <section className="debate-detail-comment-section">
+                  <div className="debate-detail-comment-header-row">
+                    <h3 className="debate-detail-section-header">
+                      댓글 <span className="debate-detail-count">{selectedDebate.commentCount || 0}</span>
+                    </h3>
+
+                    {/* 정렬 탭 */}
+                    <div className="debate-detail-sort-tabs">
+                      <button
+                        className={commentSort === "latest" ? "active" : ""}
+                        onClick={async () => {
+                          setCommentSort("latest");
+                          setCommentPage(0);
+                          await fetchComments(selectedDebate.id);
+                        }}
+                      >
+                        최신순
+                      </button>
+                      <button
+                        className={commentSort === "oldest" ? "active" : ""}
+                        onClick={async () => {
+                          setCommentSort("oldest");
+                          setCommentPage(0);
+                          await fetchComments(selectedDebate.id);
+                        }}
+                      >
+                        오래된순
+                      </button>
+                      <button
+                        className={commentSort === "replies" ? "active" : ""}
+                        onClick={async () => {
+                          setCommentSort("replies");
+                          setCommentPage(0);
+                          await fetchComments(selectedDebate.id);
+                        }}
+                      >
+                        답글순
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="debate-detail-comment-list">{renderComments()}</div>
+
+                  {/* 페이지네이션 */}
+                  {commentTotalPages > 1 && (
+                    <div className="debate-detail-pagination">
+                      <button
+                        disabled={commentPage === 0}
+                        onClick={async () => {
+                          const newPage = Math.max(0, commentPage - 1);
+                          setCommentPage(newPage);
+                          await fetchComments(selectedDebate.id);
+                        }}
+                      >
+                        &lt;
+                      </button>
+                      {[...Array(commentTotalPages)].map((_, i) => (
+                        <button
+                          key={i}
+                          className={commentPage === i ? "active" : ""}
+                          onClick={async () => {
+                            setCommentPage(i);
+                            await fetchComments(selectedDebate.id);
+                          }}
+                        >
+                          {i + 1}
+                        </button>
+                      ))}
+                      <button
+                        disabled={commentPage === commentTotalPages - 1}
+                        onClick={async () => {
+                          const newPage = Math.min(commentTotalPages - 1, commentPage + 1);
+                          setCommentPage(newPage);
+                          await fetchComments(selectedDebate.id);
+                        }}
+                      >
+                        &gt;
+                      </button>
+                    </div>
+                  )}
+                </section>
               </div>
-              <div className="detail-row">
-                <label>제목:</label>
-                <span>{selectedDebate.title}</span>
-              </div>
-              <div className="detail-row">
-                <label>내용:</label>
-                <div className="content-display">{selectedDebate.content}</div>
-              </div>
-              <div className="detail-row">
-                <label>작성자:</label>
-                <span>
-                  {selectedDebate.user?.nickname ||
-                    selectedDebate.userId ||
-                    "-"}
-                </span>
-              </div>
-              <div className="detail-row">
-                <label>상태:</label>
-                <span
-                  className={`status-badge ${getStatusBadgeClass(
-                    selectedDebate.status
-                  )}`}
-                >
-                  {getStatusLabel(selectedDebate.status)}
-                </span>
-              </div>
-              <div className="detail-row">
-                <label>숨김 여부:</label>
-                <span>{selectedDebate.isHidden ? "숨김" : "공개"}</span>
-              </div>
-              <div className="detail-row">
-                <label>시작일시:</label>
-                <span>
-                  {selectedDebate.startDate
-                    ? format(
-                        new Date(selectedDebate.startDate),
-                        "yyyy-MM-dd HH:mm:ss"
-                      )
-                    : "-"}
-                </span>
-              </div>
-              <div className="detail-row">
-                <label>종료일시:</label>
-                <span>
-                  {selectedDebate.endDate
-                    ? format(
-                        new Date(selectedDebate.endDate),
-                        "yyyy-MM-dd HH:mm:ss"
-                      )
-                    : "-"}
-                </span>
-              </div>
-              <div className="detail-row">
-                <label>조회수:</label>
-                <span>{selectedDebate.viewCount || 0}</span>
-              </div>
-              <div className="detail-row">
-                <label>생성일시:</label>
-                <span>
-                  {selectedDebate.createdAt
-                    ? format(
-                        new Date(selectedDebate.createdAt),
-                        "yyyy-MM-dd HH:mm:ss"
-                      )
-                    : "-"}
-                </span>
-              </div>
-            </div>
-            <div className="modal-footer">
-              <button
-                className="btn btn-secondary"
-                onClick={() => setShowDetailModal(false)}
-              >
-                닫기
-              </button>
             </div>
           </div>
         </div>

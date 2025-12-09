@@ -1,13 +1,19 @@
 package com.debate.service;
 
+import com.debate.dto.response.CommentResponse;
 import com.debate.entity.Comment;
+import com.debate.entity.Debate;
 import com.debate.exception.ResourceNotFoundException;
 import com.debate.repository.CommentRepository;
+import com.debate.repository.DebateRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 /**
  * 관리자 댓글 운영 로직을 담당하는 서비스.
@@ -18,6 +24,33 @@ import org.springframework.transaction.annotation.Transactional;
 @RequiredArgsConstructor
 public class AdminCommentService {
     private final CommentRepository commentRepository;
+    private final DebateRepository debateRepository;
+
+    /**
+     * 특정 토론의 댓글을 페이지 조회한다. (숨김 댓글 포함)
+     *
+     * @param debateId 토론 ID
+     * @param pageable 페이지 정보
+     * @return 댓글 응답 페이지 결과 (대댓글 포함)
+     */
+    public Page<CommentResponse> getCommentsByDebate(Long debateId, Pageable pageable) {
+        Debate debate = debateRepository.findById(debateId)
+                .orElseThrow(() -> new ResourceNotFoundException("토론을 찾을 수 없습니다"));
+
+        Page<Comment> comments = commentRepository.findByDebateAndParentIsNull(debate, pageable);
+
+        return comments.map(comment -> {
+            CommentResponse response = CommentResponse.from(comment);
+            // 대댓글 조회 및 변환
+            List<Comment> replies = commentRepository.findByParent(comment);
+            if (replies != null && !replies.isEmpty()) {
+                response.setReplies(replies.stream()
+                        .map(CommentResponse::from)
+                        .collect(Collectors.toList()));
+            }
+            return response;
+        });
+    }
 
     /**
      * 조건에 맞는 댓글을 페이지 조회한다.

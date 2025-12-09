@@ -58,6 +58,14 @@ public class Comment {
     @Builder.Default
     private Boolean isHidden = false;
 
+    /**
+     * 삭제 여부 (Soft Delete)
+     */
+    @Column(name = "is_deleted", nullable = false)
+    @org.hibernate.annotations.Comment("삭제 여부")
+    @Builder.Default
+    private Boolean isDeleted = false;
+
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
     @org.hibernate.annotations.Comment("생성 일시")
@@ -67,5 +75,11 @@ public class Comment {
     @Column(name = "updated_at", nullable = false)
     @org.hibernate.annotations.Comment("수정 일시")
     private LocalDateTime updatedAt;
+
+    /**
+     * 좋아요 수 (가상 컬럼)
+     */
+    @org.hibernate.annotations.Formula("(select count(*) from comment_likes cl where cl.comment_id = id)")
+    private int likeCount;
 }
 

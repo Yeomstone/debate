@@ -29,6 +29,9 @@ public interface CommentRepository extends JpaRepository<Comment, Long> {
     /** 토론별 공개 댓글 수 */
     long countByDebateAndIsHiddenFalse(Debate debate);
     
+    /** 특정 토론의 최상위 댓글을 페이지 조회 (숨김 댓글 포함) */
+    Page<Comment> findByDebateAndParentIsNull(Debate debate, Pageable pageable);
+    
     @Query("SELECT c FROM Comment c WHERE " +
            "(:keyword IS NULL OR :keyword = '' OR c.content LIKE %:keyword%) " +
            "AND (:isHidden IS NULL OR c.isHidden = :isHidden)")

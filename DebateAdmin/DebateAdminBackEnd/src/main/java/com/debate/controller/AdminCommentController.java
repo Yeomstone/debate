@@ -1,6 +1,7 @@
 package com.debate.controller;
 
 import com.debate.dto.response.ApiResponse;
+import com.debate.dto.response.CommentResponse;
 import com.debate.entity.Comment;
 import com.debate.service.AdminCommentService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -9,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +25,33 @@ import org.springframework.web.bind.annotation.*;
 @RequiredArgsConstructor
 public class AdminCommentController {
     private final AdminCommentService adminCommentService;
+
+    /**
+     * 특정 토론의 댓글을 페이지 조회한다. (숨김 댓글 포함)
+     *
+     * @param debateId 토론 ID
+     * @param page     페이지 번호
+     * @param size     페이지 크기
+     * @param sort     정렬 기준 (예: "createdAt,desc")
+     * @return 댓글 응답 페이지 wrapped ApiResponse
+     */
+    @Operation(summary = "토론별 댓글 조회", description = "특정 토론의 댓글 목록을 조회합니다. 숨김 댓글도 포함됩니다.")
+    @GetMapping("/debate/{debateId}")
+    public ResponseEntity<ApiResponse<Page<CommentResponse>>> getCommentsByDebate(
+            @PathVariable Long debateId,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size,
+            @RequestParam(defaultValue = "createdAt,desc") String sort) {
+        // 정렬 파라미터 파싱
+        String[] sortParams = sort.split(",");
+        String sortBy = sortParams[0];
+        Sort.Direction direction = sortParams.length > 1 && "asc".equalsIgnoreCase(sortParams[1])
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
+        Pageable pageable = PageRequest.of(page, size, Sort.by(direction, sortBy));
+        
+        Page<CommentResponse> comments = adminCommentService.getCommentsByDebate(debateId, pageable);
+        return ResponseEntity.ok(ApiResponse.success(comments));
+    }
 
     /**
      * 키워드 및 숨김 여부 조건으로 댓글을 페이지 조회한다.

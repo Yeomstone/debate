@@ -1,0 +1,618 @@
+/* 토론 상세 모달 - 유저 사이트 스타일 */
+
+.debate-detail-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+  padding: 1.5rem; /* 유저 사이트 .container의 padding과 동일 */
+  overflow-y: auto;
+  overflow-x: hidden; /* 가로 스크롤 제거 */
+}
+
+.debate-detail-modal-content {
+  position: relative;
+  width: 100%;
+  /* 유저 사이트 debate-article의 실제 넓이: 1168px */
+  /* 모달 body padding (3rem * 2 = 6rem)을 고려하여 */
+  /* 모달 max-width = 1168px + 6rem */
+  max-width: calc(1168px + 6rem); /* 유저 사이트 debate-article 넓이와 동일하게 */
+  max-height: 90vh;
+  overflow-y: auto;
+  overflow-x: hidden; /* 가로 스크롤 제거 */
+  background-color: var(--primary-color);
+  border-radius: 20px;
+  padding: 0;
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.3);
+  margin: 0 auto; /* 중앙 정렬 */
+}
+
+.debate-detail-modal-close {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  width: 40px;
+  height: 40px;
+  border: none;
+  background-color: var(--bg-primary);
+  border-radius: 50%;
+  font-size: 1.5rem;
+  color: var(--text-primary);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 10;
+  transition: all 0.2s;
+  box-shadow: var(--shadow-md);
+}
+
+.debate-detail-modal-close:hover {
+  background-color: var(--bg-secondary);
+  transform: scale(1.1);
+}
+
+.debate-detail-modal-body {
+  position: relative;
+  padding: 3rem; /* 유저 사이트 .debate-article의 padding과 동일 */
+  background-color: var(--primary-color);
+}
+
+.debate-detail-animated-bg {
+  position: absolute;
+  top: -20%;
+  left: -20%;
+  width: 140%;
+  height: 140%;
+  background: radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.1), transparent 70%);
+  z-index: 0;
+  pointer-events: none;
+}
+
+.debate-detail-container {
+  position: relative;
+  z-index: 1;
+}
+
+/* 메인 아티클 카드 */
+.debate-detail-article {
+  background-color: var(--bg-primary);
+  border-radius: 20px;
+  padding: 3rem; /* 유저 사이트 .debate-article의 padding과 동일 */
+  box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.2);
+  margin-bottom: 2.5rem;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  /* 아티클의 실제 넓이 = 모달 넓이 - 모달 body padding (좌우 3rem씩) = (840px + 6rem) - 6rem = 840px */
+  /* 유저 사이트 아티클 넓이 = 컨테이너 넓이 - 컨테이너 padding (좌우 1.5rem씩) = 840px - 3rem */
+  /* 하지만 아티클 padding이 3rem이므로, 실제 컨텐츠 넓이는 동일하게 맞춰짐 */
+}
+
+/* 상단 정보 바 */
+.debate-detail-article-top-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.debate-detail-top-left {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.debate-detail-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.4rem 0.8rem;
+  border-radius: 50px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+  border: none;
+}
+
+.debate-detail-category-badge {
+  background-color: rgba(59, 130, 246, 0.1);
+  color: var(--primary-color);
+}
+
+.debate-detail-status-badge {
+  background-color: #f3f4f6;
+  color: #6b7280;
+}
+
+.debate-detail-status-badge.active {
+  background-color: rgba(16, 185, 129, 0.1);
+  color: var(--success-color);
+}
+
+.debate-detail-status-badge.ended {
+  background-color: rgba(239, 68, 68, 0.1);
+  color: var(--danger-color);
+}
+
+/* 제목 */
+.debate-detail-article-title {
+  font-size: 2.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+  margin-bottom: 1rem;
+  line-height: 1.3;
+  letter-spacing: -0.02em;
+  word-break: keep-all;
+}
+
+/* 메타 정보 */
+.debate-detail-article-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--border-light);
+  margin-bottom: 2rem;
+  color: var(--text-secondary);
+  font-size: 0.95rem;
+}
+
+.debate-detail-meta-left {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.debate-detail-meta-left .user-avatar-component {
+  flex-shrink: 0;
+}
+
+.debate-detail-author-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.debate-detail-separator {
+  color: var(--border-color);
+}
+
+.debate-detail-meta-right {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.9rem;
+}
+
+/* 본문 */
+.debate-detail-article-content {
+  font-size: 1.1rem;
+  line-height: 1.8;
+  color: var(--text-primary);
+  min-height: 200px;
+  margin-bottom: 3rem;
+}
+
+.debate-detail-article-content p {
+  margin-bottom: 1.2rem;
+}
+
+.debate-detail-article-content img {
+  max-width: 100%;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 1.5rem 0;
+}
+
+/* 하단 액션 버튼 */
+.debate-detail-article-footer {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.debate-detail-list-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.8rem 1.5rem;
+  border-radius: 12px;
+  font-weight: 600;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  background-color: var(--bg-tertiary);
+  border: none;
+  color: var(--text-primary);
+}
+
+.debate-detail-list-btn:hover {
+  background-color: #e5e7eb;
+}
+
+/* 관리자 액션 버튼 */
+.debate-detail-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border-light);
+}
+
+.debate-detail-admin-actions .btn {
+  flex: 1;
+}
+
+/* 다크모드 */
+[data-theme="dark"] .debate-detail-modal-content {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] .debate-detail-article,
+[data-theme="dark"] .debate-detail-modal-body {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] .debate-detail-list-btn:hover {
+  background-color: #374151;
+}
+
+/* 댓글 섹션 */
+.debate-detail-comment-section {
+  background: var(--bg-primary);
+  border-radius: 20px;
+  padding: 2.5rem;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  margin-top: 2.5rem;
+}
+
+.debate-detail-count {
+  color: var(--primary-color);
+  margin-left: 0.5rem;
+  font-size: 1.1rem;
+}
+
+.debate-detail-comment-header-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+}
+
+.debate-detail-section-header {
+  margin-bottom: 0;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-primary);
+}
+
+.debate-detail-sort-tabs {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.debate-detail-sort-tabs button {
+  background: none;
+  border: none;
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0.25rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s;
+}
+
+.debate-detail-sort-tabs button:hover {
+  color: var(--text-primary);
+  background-color: transparent;
+}
+
+.debate-detail-sort-tabs button.active {
+  color: var(--primary-dark);
+  font-weight: 700;
+}
+
+.debate-detail-comment-list {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.debate-detail-comment-block {
+  background: var(--bg-primary);
+  border-radius: 16px;
+  padding: 1.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+  transition: transform 0.2s, box-shadow 0.2s;
+  border: 2px solid transparent;
+}
+
+.debate-detail-comment-block:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+}
+
+/* 숨김 처리된 댓글 스타일 */
+.debate-detail-comment-block.hidden {
+  background: rgba(255, 193, 7, 0.08); /* 노란색 배경 (약간 투명) */
+  border: 2px solid rgba(255, 193, 7, 0.3); /* 노란색 테두리 */
+  opacity: 0.85;
+}
+
+.debate-detail-comment-block.hidden:hover {
+  background: rgba(255, 193, 7, 0.12);
+  border-color: rgba(255, 193, 7, 0.5);
+  opacity: 0.95;
+}
+
+.debate-detail-comment-row {
+  display: flex;
+  gap: 1rem;
+}
+
+.debate-detail-comment-root {
+  margin-bottom: 0.5rem;
+}
+
+.debate-detail-replies-container {
+  margin-top: 1rem;
+  padding-left: 1rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.debate-detail-comment-reply {
+  display: flex;
+  align-items: flex-start;
+  position: relative;
+  margin-left: 0;
+  background-color: transparent;
+  border-left: none;
+  padding: 0;
+  border-radius: 8px;
+  padding: 0.75rem;
+  transition: background-color 0.2s, border-color 0.2s;
+}
+
+/* 숨김 처리된 대댓글 스타일 */
+.debate-detail-comment-reply.hidden {
+  background: rgba(255, 193, 7, 0.08);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+  opacity: 0.85;
+}
+
+.debate-detail-comment-reply.hidden:hover {
+  background: rgba(255, 193, 7, 0.12);
+  border-color: rgba(255, 193, 7, 0.5);
+  opacity: 0.95;
+}
+
+.debate-detail-reply-line {
+  width: 20px;
+  height: 20px;
+  border-left: 2px solid var(--border-color);
+  border-bottom: 2px solid var(--border-color);
+  margin-right: 0.5rem;
+  margin-top: -10px;
+  border-bottom-left-radius: 8px;
+  flex-shrink: 0;
+}
+
+.debate-detail-comment-avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background: var(--bg-secondary);
+  color: var(--text-secondary);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.2rem;
+  flex-shrink: 0;
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+}
+
+.debate-detail-comment-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.debate-detail-comment-avatar-small {
+  width: 32px;
+  height: 32px;
+  font-size: 1rem;
+}
+
+.debate-detail-comment-main {
+  flex: 1;
+}
+
+.debate-detail-comment-header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.25rem;
+}
+
+.debate-detail-comment-name {
+  font-weight: 700;
+  color: var(--text-primary);
+}
+
+.debate-detail-comment-time {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+}
+
+.debate-detail-comment-text {
+  font-size: 0.95rem;
+  line-height: 1.5;
+  color: var(--text-primary);
+  margin-bottom: 0.25rem;
+  white-space: pre-wrap;
+}
+
+.debate-detail-comment-text.deleted {
+  color: #999;
+  font-style: italic;
+}
+
+.debate-detail-comment-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.debate-detail-comment-like {
+  font-size: 0.9rem;
+  color: var(--text-secondary);
+  cursor: default;
+}
+
+.debate-detail-comment-admin-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-left: auto;
+}
+
+.debate-detail-comment-action-btn {
+  background: none;
+  border: 1px solid var(--border-color);
+  border-radius: 0.5rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 0.75rem;
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: all 0.2s;
+  white-space: nowrap;
+}
+
+.debate-detail-comment-action-btn:hover {
+  background-color: var(--bg-secondary);
+  border-color: var(--primary-color);
+  color: var(--text-primary);
+}
+
+.debate-detail-comment-delete-btn:hover {
+  background-color: var(--danger-color);
+  border-color: var(--danger-color);
+  color: white;
+}
+
+.debate-detail-comment-hidden-badge {
+  color: var(--warning-color);
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+
+.debate-detail-no-comments {
+  text-align: center;
+  padding: 3rem;
+  color: var(--text-secondary);
+  font-style: italic;
+}
+
+.debate-detail-pagination {
+  display: flex;
+  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 2rem;
+}
+
+.debate-detail-pagination button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 8px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.debate-detail-pagination button:hover:not(:disabled) {
+  border-color: var(--primary-color);
+  color: var(--primary-color);
+}
+
+.debate-detail-pagination button.active {
+  background: var(--primary-color);
+  color: #000;
+  border-color: var(--primary-color);
+}
+
+.debate-detail-pagination button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* 다크모드 */
+[data-theme="dark"] .debate-detail-comment-section {
+  background-color: #1f2937;
+}
+
+[data-theme="dark"] .debate-detail-pagination button.active {
+  color: #fff;
+}
+
+/* 다크모드에서 숨김 댓글 스타일 */
+[data-theme="dark"] .debate-detail-comment-block.hidden {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+[data-theme="dark"] .debate-detail-comment-block.hidden:hover {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: rgba(255, 193, 7, 0.6);
+}
+
+[data-theme="dark"] .debate-detail-comment-reply.hidden {
+  background: rgba(255, 193, 7, 0.15);
+  border-color: rgba(255, 193, 7, 0.4);
+}
+
+[data-theme="dark"] .debate-detail-comment-reply.hidden:hover {
+  background: rgba(255, 193, 7, 0.2);
+  border-color: rgba(255, 193, 7, 0.6);
+}
+
+/* 반응형 */
+@media (max-width: 768px) {
+  .debate-detail-modal-overlay {
+    padding: 0; /* 모바일에서는 padding 제거 */
+  }
+
+  .debate-detail-modal-content {
+    max-width: 100%;
+    border-radius: 0;
+    max-height: 100vh;
+  }
+
+  .debate-detail-modal-body {
+    padding: 1.5rem;
+  }
+
+  .debate-detail-article {
+    padding: 1.5rem;
+  }
+
+  .debate-detail-article-title {
+    font-size: 1.6rem;
+  }
+
+  .debate-detail-comment-section {
+    padding: 1.5rem;
+  }
+}
+
