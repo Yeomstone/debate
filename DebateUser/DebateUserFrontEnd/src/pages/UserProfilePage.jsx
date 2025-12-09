@@ -11,6 +11,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { userService } from '../services/userService'
+import UserAvatar from '../components/common/UserAvatar'
 import './UserProfilePage.css'
 
 /**
@@ -64,7 +65,13 @@ const UserProfilePage = () => {
       <div className="container">
         <div className="profile-section">
           <div className="profile-header">
-            <div className="profile-avatar">👤</div>
+            <div className="profile-avatar">
+              <UserAvatar
+                src={profile.profileImage}
+                alt={profile.nickname || '이름 없음'}
+                size="large"
+              />
+            </div>
             <div className="profile-info">
               <h1>{profile.nickname || '이름 없음'}</h1>
               <p>{profile.email}</p>
