@@ -29,12 +29,27 @@ public class UserResponse {
     private Long likeCount;           // 받은 좋아요 수
     private Long participatedCount;   // 참여한 토론 수 (입장 선택한 토론)
 
+    /**
+     * 프로필 이미지 URL 경로 변환
+     * 기존 /files/editor/images/ 경로를 /files/user/profile/ 경로로 변환
+     */
+    private static String normalizeProfileImageUrl(String profileImage) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return profileImage;
+        }
+        // 기존 경로를 새 경로로 변환
+        if (profileImage.startsWith("/files/editor/images/")) {
+            return profileImage.replace("/files/editor/images/", "/files/user/profile/");
+        }
+        return profileImage;
+    }
+
     public static UserResponse from(User user) {
         return UserResponse.builder()
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .profileImage(user.getProfileImage())
+                .profileImage(normalizeProfileImageUrl(user.getProfileImage()))
                 .bio(user.getBio())
                 .status(user.getStatus())
                 .emailVerified(user.getEmailVerified())
@@ -48,7 +63,7 @@ public class UserResponse {
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .profileImage(user.getProfileImage())
+                .profileImage(normalizeProfileImageUrl(user.getProfileImage()))
                 .bio(user.getBio())
                 .status(user.getStatus())
                 .emailVerified(user.getEmailVerified())

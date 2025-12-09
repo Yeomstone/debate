@@ -29,6 +29,21 @@ public class CommentResponse {
     private int likeCount;
     private boolean liked;
 
+    /**
+     * 프로필 이미지 URL 경로 변환
+     * 기존 /files/editor/images/ 경로를 /files/user/profile/ 경로로 변환
+     */
+    private static String normalizeProfileImageUrl(String profileImage) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return profileImage;
+        }
+        // 기존 경로를 새 경로로 변환
+        if (profileImage.startsWith("/files/editor/images/")) {
+            return profileImage.replace("/files/editor/images/", "/files/user/profile/");
+        }
+        return profileImage;
+    }
+
     public static CommentResponse from(Comment comment) {
         boolean deleted = comment.getIsDeleted() != null && comment.getIsDeleted();
 
@@ -36,7 +51,7 @@ public class CommentResponse {
                 .id(comment.getId())
                 .userId(deleted ? null : comment.getUser().getId())
                 .nickname(deleted ? "(삭제)" : comment.getUser().getNickname())
-                .profileImage(deleted ? null : comment.getUser().getProfileImage()) // 프로필 이미지 추가
+                .profileImage(deleted ? null : normalizeProfileImageUrl(comment.getUser().getProfileImage())) // 프로필 이미지 추가
                 .debateId(comment.getDebate().getId())
                 .parentId(comment.getParent() != null ? comment.getParent().getId() : null)
                 .content(deleted ? "삭제된 댓글입니다." : comment.getContent())

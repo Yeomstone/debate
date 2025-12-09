@@ -53,7 +53,7 @@ export const userService = {
     const formData = new FormData();
     formData.append('file', file);
     
-    const response = await api.post('/upload/image', formData);
+    const response = await api.post('/upload/profile', formData);
     // ApiResponse<String> 구조에서 data 필드가 URL임
     return response.data.data || response.data;
   },

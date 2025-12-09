@@ -39,6 +39,12 @@ public class AuthService {
     @Value("${file.upload-url-prefix:/uploads}")
     private String uploadUrlPrefix;
 
+    @Value("${file.profile-upload-dir:uploads/profile}")
+    private String profileUploadDir;
+
+    @Value("${file.profile-upload-url-prefix:/files/user/profile}")
+    private String profileUploadUrlPrefix;
+
     /**
      * 회원가입 처리
      * 
@@ -131,8 +137,8 @@ public class AuthService {
     }
 
     private String saveProfileImage(MultipartFile file) throws IOException {
-        // 업로드 디렉토리 생성
-        Path uploadPath = Paths.get(uploadDir).toAbsolutePath().normalize();
+        // 프로필 이미지 업로드 디렉토리 생성
+        Path uploadPath = Paths.get(profileUploadDir).toAbsolutePath().normalize();
         if (!Files.exists(uploadPath)) {
             Files.createDirectories(uploadPath);
         }
@@ -150,7 +156,7 @@ public class AuthService {
         Files.copy(file.getInputStream(), targetLocation, StandardCopyOption.REPLACE_EXISTING);
 
         // URL 반환
-        return uploadUrlPrefix + "/" + filename;
+        return profileUploadUrlPrefix + "/" + filename;
     }
 }
 

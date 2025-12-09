@@ -83,6 +83,21 @@ public class ChatService {
     }
 
     /**
+     * 프로필 이미지 URL 경로 변환
+     * 기존 /files/editor/images/ 경로를 /files/user/profile/ 경로로 변환
+     */
+    private String normalizeProfileImageUrl(String profileImage) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return profileImage;
+        }
+        // 기존 경로를 새 경로로 변환
+        if (profileImage.startsWith("/files/editor/images/")) {
+            return profileImage.replace("/files/editor/images/", "/files/user/profile/");
+        }
+        return profileImage;
+    }
+
+    /**
      * Entity를 DTO로 변환
      */
     private ChatMessageDTO toDTO(ChatMessage chatMessage, User user) {
@@ -91,7 +106,7 @@ public class ChatService {
                 .debateId(chatMessage.getDebate().getId())
                 .userId(user.getId())
                 .nickname(user.getNickname())
-                .profileImage(user.getProfileImage())
+                .profileImage(normalizeProfileImageUrl(user.getProfileImage()))
                 .message(chatMessage.getMessage())
                 .createdAt(chatMessage.getCreatedAt())
                 .type(ChatMessageDTO.MessageType.CHAT)

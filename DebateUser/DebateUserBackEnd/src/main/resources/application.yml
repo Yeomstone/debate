@@ -40,6 +40,8 @@ server:
 file:
   upload-dir: ../../Files/editor/images  # 파일 저장 디렉토리 (프로젝트 루트 기준: Debate/Files/editor/images)
   upload-url-prefix: /files/editor/images  # 파일 접근 URL prefix
+  profile-upload-dir: ../../Files/user/profile  # 프로필 이미지 저장 디렉토리 (프로젝트 루트 기준: Debate/Files/user/profile)
+  profile-upload-url-prefix: /files/user/profile  # 프로필 이미지 접근 URL prefix
 
 jwt:
   secret: debate-secret-key-for-jwt-token-generation-please-change-in-production

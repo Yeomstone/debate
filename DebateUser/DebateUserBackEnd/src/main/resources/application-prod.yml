@@ -50,6 +50,8 @@ server:
 file:
   upload-dir: ${FILE_UPLOAD_DIR:/home/ubuntu/opt/debate/files/editor/images}
   upload-url-prefix: /files/editor/images
+  profile-upload-dir: ${FILE_PROFILE_UPLOAD_DIR:/home/ubuntu/opt/debate/files/user/profile}
+  profile-upload-url-prefix: /files/user/profile
 
 jwt:
   secret: ${JWT_SECRET:debate-secret-key-for-jwt-token-generation-please-change-in-production}
