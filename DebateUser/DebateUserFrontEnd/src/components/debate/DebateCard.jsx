@@ -12,6 +12,7 @@
 
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { format } from 'date-fns'
+import UserAvatar from '../common/UserAvatar'
 import './DebateCard.css'
 
 /**
@@ -116,6 +117,12 @@ const DebateCard = ({ debate, filterState = {} }) => {
         <div className="debate-meta" onClick={(e) => e.stopPropagation()}>
           <span className="author">
             작성자:{' '}
+            <UserAvatar
+              src={debate.profileImage}
+              alt={debate.nickname || '알 수 없음'}
+              size="small"
+              className="author-avatar-inline"
+            />
             <span className="author-link" onClick={handleAuthorClick}>
               {debate.nickname || '알 수 없음'}
             </span>

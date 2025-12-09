@@ -746,7 +746,13 @@ const MyPage = () => {
                               <span className="category-badge">{bookmark.categoryName || '카테고리'}</span>
                             </div>
                             <h3 style={{ margin: '0.5rem 0' }}>{bookmark.title}</h3>
-                            <div className="debate-item-meta">
+                            <div className="debate-item-meta" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                              <UserAvatar
+                                src={bookmark.profileImage}
+                                alt={bookmark.nickname}
+                                size="small"
+                                className="bookmark-author-avatar"
+                              />
                               <span>{bookmark.nickname}</span>
                               <span className="date">{formatRelativeTime(bookmark.bookmarkedAt)}</span>
                             </div>
@@ -870,12 +876,20 @@ const MyPage = () => {
                     <div className="my-debate-list">
                       {blockedUsers.map((blockedUser) => (
                         <div key={blockedUser.id} className="my-debate-item" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <div>
-                            <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
-                              🚫 {blockedUser.nickname}
-                            </div>
-                            <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
-                              차단일: {blockedUser.blockedAt ? new Date(blockedUser.blockedAt).toLocaleDateString('ko-KR') : '알 수 없음'}
+                          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                            <UserAvatar
+                              src={blockedUser.profileImage}
+                              alt={blockedUser.nickname}
+                              size="small"
+                              className="blocked-user-avatar"
+                            />
+                            <div>
+                              <div style={{ fontWeight: '700', color: 'var(--text-primary)' }}>
+                                🚫 {blockedUser.nickname}
+                              </div>
+                              <div style={{ fontSize: '0.85rem', color: 'var(--text-secondary)', marginTop: '4px' }}>
+                                차단일: {blockedUser.blockedAt ? new Date(blockedUser.blockedAt).toLocaleDateString('ko-KR') : '알 수 없음'}
+                              </div>
                             </div>
                           </div>
                           <button

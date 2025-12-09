@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import RankingPodium from "./RankingPodium";
 import { getUserRanking } from "../services/userService";
 import { useTheme } from "../context/ThemeContext";
+import UserAvatar from "../components/common/UserAvatar";
 import "./RankingPage.css";
 import "./RankingPodium.css";
 
@@ -75,6 +76,12 @@ const RankingPage = () => {
             {topUsers.slice(3).map((user, index) => (
               <li key={user.id || index} className="ranking-list-item">
                 <span className="rank-number">{index + 4}</span>
+                <UserAvatar
+                  src={user.profileImage}
+                  alt={user.nickname}
+                  size="small"
+                  className="ranking-list-avatar"
+                />
                 <span className="user-nickname">{user.nickname}</span>
                 <span className="user-score">{getCriteriaLabel(criteria)} {user.totalLikes || 0}</span>
               </li>

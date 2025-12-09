@@ -119,6 +119,10 @@
   gap: 0.5rem;
 }
 
+.author-avatar {
+  flex-shrink: 0;
+}
+
 .author-name {
   font-weight: 700;
   color: var(--text-primary);

@@ -227,6 +227,10 @@
   gap: 6px;
 }
 
+.message-avatar {
+  flex-shrink: 0;
+}
+
 .message-nickname {
   font-size: 12px;
   font-weight: 700;

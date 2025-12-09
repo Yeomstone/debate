@@ -259,6 +259,7 @@ const DebateDetailPage = () => {
         title: debate.title,
         categoryName: debate.categoryName,
         nickname: debate.nickname,
+        profileImage: debate.profileImage, // 프로필 이미지 추가
         createdAt: debate.createdAt,
         bookmarkedAt: new Date().toISOString()
       });
@@ -280,6 +281,7 @@ const DebateDetailPage = () => {
         blockedUsers.push({
           id: debate.userId,
           nickname: debate.nickname,
+          profileImage: debate.profileImage, // 프로필 이미지 추가
           blockedAt: new Date().toISOString()
         });
         localStorage.setItem('blockedChatUsers', JSON.stringify(blockedUsers));
@@ -1024,6 +1026,12 @@ const DebateDetailPage = () => {
 
           <div className="article-meta">
             <div className="meta-left">
+              <UserAvatar
+                src={debate.profileImage}
+                alt={debate.nickname}
+                size="small"
+                className="author-avatar"
+              />
               <span className="author-name">{debate.nickname}</span>
               <span className="separator">·</span>
               <span className="date">

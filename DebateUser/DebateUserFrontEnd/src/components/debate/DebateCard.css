@@ -134,6 +134,17 @@
   color: var(--text-secondary);
   margin-bottom: 1rem;
   flex-wrap: wrap;
+  align-items: center;
+}
+
+.debate-meta .author {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.author-avatar-inline {
+  flex-shrink: 0;
 }
 
 /* 메타 정보 내 링크 (작성자 이름 등) */

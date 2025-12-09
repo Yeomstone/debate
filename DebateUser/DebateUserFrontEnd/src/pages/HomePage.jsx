@@ -14,6 +14,7 @@ import debateLogo from "../assets/debate-onlylogo.png";
 import { categoryService } from "../services/categoryService";
 import { debateService } from "../services/debateService";
 import { format } from "date-fns";
+import UserAvatar from "../components/common/UserAvatar";
 import "./HomePage.css";
 import { useTheme } from "../context/ThemeContext";
 import debateLogoLight from "../assets/debate-onlylogo.png";
@@ -306,6 +307,7 @@ const HomePage = () => {
         title: debate.title,
         category: debate.categoryName,
         author: debate.nickname,
+        profileImage: debate.profileImage, // 프로필 이미지 추가
         views: debate.viewCount || 0,
         comments: debate.commentCount || 0,
         likes: debate.likeCount || 0,
@@ -334,6 +336,7 @@ const HomePage = () => {
         title: debate.title,
         category: debate.categoryName,
         author: debate.nickname,
+        profileImage: debate.profileImage, // 프로필 이미지 추가
         views: debate.viewCount || 0,
         comments: debate.commentCount || 0,
         likes: debate.likeCount || 0,
@@ -572,17 +575,12 @@ const HomePage = () => {
                       <h3 className="debate-title">{debate.title}</h3>
                       <div className="debate-meta">
                         <span className="debate-author">
-                          <svg
-                            width="14"
-                            height="14"
-                            viewBox="0 0 24 24"
-                            fill="none"
-                            stroke="currentColor"
-                            strokeWidth="2"
-                          >
-                            <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                            <circle cx="12" cy="7" r="4"></circle>
-                          </svg>
+                          <UserAvatar
+                            src={debate.profileImage}
+                            alt={debate.author}
+                            size="small"
+                            className="home-debate-author-avatar"
+                          />
                           {debate.author}
                         </span>
                         <span className="debate-date">{debate.createdAt}</span>

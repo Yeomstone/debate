@@ -10,6 +10,7 @@ import { chatService } from '../services/chatService';
 import { reportService } from '../services/reportService';
 import api from '../services/api';
 import { format } from 'date-fns';
+import UserAvatar from './common/UserAvatar';
 import './ChatWidget.css';
 
 const ChatWidget = ({ debateId, debateTitle }) => {
@@ -153,7 +154,7 @@ const ChatWidget = ({ debateId, debateTitle }) => {
         }
         if (isMyMessage(msg)) return;
 
-        setActiveMenu(activeMenu?.index === index ? null : { userId: msg.userId, nickname: msg.nickname, index });
+        setActiveMenu(activeMenu?.index === index ? null : { userId: msg.userId, nickname: msg.nickname, profileImage: msg.profileImage, index });
     };
 
     // 쪽지 보내기 팝업 열기
@@ -210,7 +211,12 @@ const ChatWidget = ({ debateId, debateTitle }) => {
         if (window.confirm(`${activeMenu.nickname}님을 차단하시겠습니까?\n차단된 사용자의 메시지는 표시되지 않습니다.`)) {
             const blockedUsers = JSON.parse(localStorage.getItem('blockedChatUsers') || '[]');
             if (!blockedUsers.some(u => u.id === activeMenu.userId)) {
-                blockedUsers.push({ id: activeMenu.userId, nickname: activeMenu.nickname, blockedAt: new Date().toISOString() });
+                blockedUsers.push({ 
+                    id: activeMenu.userId, 
+                    nickname: activeMenu.nickname, 
+                    profileImage: activeMenu.profileImage, // 프로필 이미지 추가
+                    blockedAt: new Date().toISOString() 
+                });
                 localStorage.setItem('blockedChatUsers', JSON.stringify(blockedUsers));
             }
             alert(`${activeMenu.nickname}님이 차단되었습니다.\n차단 해제는 마이페이지 > 차단 관리에서 가능합니다.`);
@@ -293,6 +299,12 @@ const ChatWidget = ({ debateId, debateTitle }) => {
                                         <>
                                             {!isMyMessage(msg) && (
                                                 <div className="message-header" style={{ position: 'relative' }}>
+                                                    <UserAvatar
+                                                        src={msg.profileImage}
+                                                        alt={msg.nickname}
+                                                        size="small"
+                                                        className="message-avatar"
+                                                    />
                                                     <span className="message-nickname" onClick={(e) => handleNicknameClick(e, msg, index)}>
                                                         {msg.nickname}
                                                     </span>

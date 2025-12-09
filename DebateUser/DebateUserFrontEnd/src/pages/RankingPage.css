@@ -109,9 +109,14 @@
 .ranking-list-item {
   display: flex;
   align-items: center;
+  gap: 0.75rem;
   padding: 15px;
   border-bottom: 1px solid #eee;
   transition: background 0.2s;
+}
+
+.ranking-list-avatar {
+  flex-shrink: 0;
 }
 
 .dark-mode .ranking-list-item {
