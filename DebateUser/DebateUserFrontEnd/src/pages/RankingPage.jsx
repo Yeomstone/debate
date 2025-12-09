@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import RankingPodium from "./RankingPodium";
 import { getUserRanking } from "../services/userService";
 import { useTheme } from "../context/ThemeContext";
@@ -7,6 +8,7 @@ import "./RankingPage.css";
 import "./RankingPodium.css";
 
 const RankingPage = () => {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const [topUsers, setTopUsers] = useState([]);
@@ -34,7 +36,7 @@ const RankingPage = () => {
   }, [period, criteria]);
 
   const getCriteriaLabel = (c) => {
-    switch(c) {
+    switch (c) {
       case 'likes': return '좋아요';
       case 'votes': return '투표율';
       case 'comments': return '댓글 좋아요';
@@ -67,22 +69,32 @@ const RankingPage = () => {
       </div>
 
       <RankingPodium topUsers={topUsers} criteria={criteria} />
-      
+
       {/* 4위부터 리스트로 보여줄 수도 있음. 일단은 Podium만 렌더링 */}
       {topUsers.length > 3 && (
         <div className="ranking-list">
           <h3>Top 4 - 10</h3>
           <ul className="ranking-list-items">
             {topUsers.slice(3).map((user, index) => (
-              <li key={user.id || index} className="ranking-list-item">
+              <li key={user.userId || index} className="ranking-list-item">
                 <span className="rank-number">{index + 4}</span>
-                <UserAvatar
-                  src={user.profileImage}
-                  alt={user.nickname}
-                  size="small"
-                  className="ranking-list-avatar"
-                />
-                <span className="user-nickname">{user.nickname}</span>
+                <div
+                  className="clickable-nickname"
+                  onClick={() => navigate(`/users/${user.userId}`)}
+                >
+                  <UserAvatar
+                    src={user.profileImage}
+                    alt={user.nickname}
+                    size="small"
+                    className="ranking-list-avatar"
+                  />
+                </div>
+                <span
+                  className="user-nickname clickable-nickname"
+                  onClick={() => navigate(`/users/${user.userId}`)}
+                >
+                  {user.nickname}
+                </span>
                 <span className="user-score">{getCriteriaLabel(criteria)} {user.totalLikes || 0}</span>
               </li>
             ))}

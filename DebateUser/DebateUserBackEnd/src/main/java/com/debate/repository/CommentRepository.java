@@ -13,8 +13,12 @@ import java.util.List;
 @Repository
 public interface CommentRepository extends JpaRepository<Comment, Long> {
     Page<Comment> findByDebateAndIsHiddenFalseAndParentIsNull(Debate debate, Pageable pageable);
+
     List<Comment> findByParent(Comment parent);
+
     List<Comment> findByUser(User user);
+
+    Page<Comment> findByUserAndIsHiddenFalse(User user, Pageable pageable);
+
     long countByDebateAndIsHiddenFalse(Debate debate);
 }
-

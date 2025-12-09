@@ -606,7 +606,14 @@ const DebateDetailPage = () => {
             </div>
             <div className="comment-main">
               <div className="comment-header">
-                <span className="name">{comment.nickname}</span>
+                <span className="name">
+                  <span
+                    className="clickable-nickname"
+                    onClick={() => navigate(`/users/${comment.userId}`)}
+                  >
+                    {comment.nickname}
+                  </span>
+                </span>
                 <span className="time">
                   {format(new Date(comment.createdAt), "MM.dd HH:mm")}
                   {isModified && " (수정됨)"}
@@ -761,7 +768,14 @@ const DebateDetailPage = () => {
                     </div>
                     <div className="comment-main">
                       <div className="comment-header">
-                        <span className="name">{reply.nickname}</span>
+                        <span className="name">
+                          <span
+                            className="clickable-nickname"
+                            onClick={() => navigate(`/users/${reply.userId}`)}
+                          >
+                            {reply.nickname}
+                          </span>
+                        </span>
                         <span className="time">
                           {format(new Date(reply.createdAt), "MM.dd HH:mm")}
                           {isReplyModified && " (수정됨)"}
@@ -1032,7 +1046,12 @@ const DebateDetailPage = () => {
                 size="small"
                 className="author-avatar"
               />
-              <span className="author-name">{debate.nickname}</span>
+              <span
+                className="author-name clickable-nickname"
+                onClick={() => navigate(`/users/${debate.userId}`)}
+              >
+                {debate.nickname}
+              </span>
               <span className="separator">·</span>
               <span className="date">
                 {format(new Date(debate.createdAt), "yyyy.MM.dd")}

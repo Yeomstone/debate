@@ -326,3 +326,16 @@ body {
 .p-4 {
   padding: 2rem;
 }
+
+/* ============================================
+   클릭 가능한 닉네임 (Clickable Nickname)
+   ============================================ */
+.clickable-nickname {
+  cursor: pointer;
+  transition: color 0.2s, opacity 0.2s;
+}
+
+.clickable-nickname:hover {
+  color: var(--primary-color);
+  opacity: 0.85;
+}

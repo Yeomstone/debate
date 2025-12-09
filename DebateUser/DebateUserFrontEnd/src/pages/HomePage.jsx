@@ -304,10 +304,11 @@ const HomePage = () => {
 
       const mappedDebates = content.map((debate) => ({
         id: debate.id,
+        userId: debate.userId,
         title: debate.title,
         category: debate.categoryName,
         author: debate.nickname,
-        profileImage: debate.profileImage, // 프로필 이미지 추가
+        profileImage: debate.profileImage,
         views: debate.viewCount || 0,
         comments: debate.commentCount || 0,
         likes: debate.likeCount || 0,
@@ -333,10 +334,11 @@ const HomePage = () => {
 
       const mappedDebates = content.map((debate) => ({
         id: debate.id,
+        userId: debate.userId,
         title: debate.title,
         category: debate.categoryName,
         author: debate.nickname,
-        profileImage: debate.profileImage, // 프로필 이미지 추가
+        profileImage: debate.profileImage,
         views: debate.viewCount || 0,
         comments: debate.commentCount || 0,
         likes: debate.likeCount || 0,
@@ -574,7 +576,13 @@ const HomePage = () => {
                     <div className="debate-card-content">
                       <h3 className="debate-title">{debate.title}</h3>
                       <div className="debate-meta">
-                        <span className="debate-author">
+                        <span
+                          className="debate-author clickable-nickname"
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            navigate(`/users/${debate.userId}`);
+                          }}
+                        >
                           <UserAvatar
                             src={debate.profileImage}
                             alt={debate.author}

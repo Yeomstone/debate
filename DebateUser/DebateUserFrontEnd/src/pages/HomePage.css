@@ -106,6 +106,7 @@
     opacity: 0;
     transform: translateY(30px);
   }
+
   to {
     opacity: 1;
     transform: translateY(0);
@@ -127,9 +128,12 @@
 }
 
 @keyframes float {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-15px);
   }
@@ -277,12 +281,16 @@
 }
 
 @keyframes floatBubble {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translate(0, 0) scale(1);
   }
+
   33% {
     transform: translate(30px, -30px) scale(1.1);
   }
+
   66% {
     transform: translate(-20px, 20px) scale(0.9);
   }
@@ -309,7 +317,7 @@
   left: -50%;
   width: 200%;
   height: 200%;
-  background: 
+  background:
     radial-gradient(ellipse 30% 40% at 20% 30%, rgba(255, 193, 7, 0.12) 0%, transparent 50%),
     radial-gradient(ellipse 25% 35% at 80% 70%, rgba(255, 152, 0, 0.08) 0%, transparent 50%),
     radial-gradient(ellipse 35% 25% at 50% 90%, rgba(255, 215, 0, 0.06) 0%, transparent 50%);
@@ -318,10 +326,23 @@
 }
 
 @keyframes floatGradient {
-  0%, 100% { transform: translate(0, 0) rotate(0deg); }
-  25% { transform: translate(3%, 2%) rotate(2deg); }
-  50% { transform: translate(-2%, 4%) rotate(-1deg); }
-  75% { transform: translate(2%, -2%) rotate(1deg); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) rotate(0deg);
+  }
+
+  25% {
+    transform: translate(3%, 2%) rotate(2deg);
+  }
+
+  50% {
+    transform: translate(-2%, 4%) rotate(-1deg);
+  }
+
+  75% {
+    transform: translate(2%, -2%) rotate(1deg);
+  }
 }
 
 /* 떠다니는 글로우 오브 1 */
@@ -340,8 +361,17 @@
 }
 
 @keyframes floatOrb1 {
-  0%, 100% { transform: translate(0, 0) scale(1); opacity: 0.6; }
-  50% { transform: translate(-30px, 40px) scale(1.1); opacity: 0.4; }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+    opacity: 0.6;
+  }
+
+  50% {
+    transform: translate(-30px, 40px) scale(1.1);
+    opacity: 0.4;
+  }
 }
 
 /* 파티클 컨테이너 - 활성화 */
@@ -437,18 +467,23 @@
 }
 
 @keyframes floatParticle {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0) translateX(0) scale(1);
     opacity: 0.6;
   }
+
   25% {
     transform: translateY(-30px) translateX(20px) scale(1.2);
     opacity: 1;
   }
+
   50% {
     transform: translateY(-50px) translateX(-10px) scale(0.8);
     opacity: 0.5;
   }
+
   75% {
     transform: translateY(-20px) translateX(-30px) scale(1.1);
     opacity: 0.8;
@@ -470,8 +505,15 @@
 }
 
 @keyframes floatOrb2 {
-  0%, 100% { transform: translate(0, 0) scale(1); }
-  50% { transform: translate(40px, -30px) scale(1.2); }
+
+  0%,
+  100% {
+    transform: translate(0, 0) scale(1);
+  }
+
+  50% {
+    transform: translate(40px, -30px) scale(1.2);
+  }
 }
 
 .cta-content {
@@ -503,7 +545,7 @@
   align-items: center;
   justify-content: center;
   padding: 1.5rem 0;
-  
+
   /* 🎨 밝은 배경 */
   background: linear-gradient(180deg, #fafafa 0%, #f5f5f5 100%);
   position: relative;
@@ -533,7 +575,7 @@
   pointer-events: none;
 }
 
-.debates-section > .container {
+.debates-section>.container {
   max-width: 800px;
   width: 100%;
   padding: 0 1.5rem;
@@ -845,7 +887,7 @@
   background: #ffffff;
 }
 
-.categories-section > .categories-content {
+.categories-section>.categories-content {
   width: 100%;
   height: 100%;
   display: flex;
@@ -945,9 +987,12 @@
 }
 
 @keyframes bounce {
-  0%, 100% {
+
+  0%,
+  100% {
     transform: translateY(0);
   }
+
   50% {
     transform: translateY(-8px);
   }
@@ -1047,8 +1092,8 @@
 }
 
 /* HomePage에서 기존 Footer 숨기기 */
-.home-page ~ .footer,
-.home-page + footer,
+.home-page~.footer,
+.home-page+footer,
 body:has(.home-page) .footer {
   display: none !important;
 }
@@ -1116,11 +1161,12 @@ body:has(.home-page) .footer {
 
 /* ===== 반응형 디자인 ===== */
 @media (max-width: 1024px) {
+
   /* 태블릿에서는 스크롤 스냅 해제 */
   .home-page {
     scroll-snap-type: none;
   }
-  
+
   .hero-section,
   .cta-section,
   .debates-section,
@@ -1128,15 +1174,15 @@ body:has(.home-page) .footer {
     scroll-snap-align: none;
     min-height: auto;
   }
-  
+
   .page-indicators {
     display: none;
   }
-  
+
   .categories-grid {
     grid-template-columns: repeat(3, 1fr);
   }
-  
+
   .debates-grid-compact {
     grid-template-columns: 1fr;
   }
@@ -1258,16 +1304,50 @@ body:has(.home-page) .footer {
 }
 
 /* ===== 애니메이션 딜레이 ===== */
-.category-card:nth-child(1) { animation-delay: 0.1s; }
-.category-card:nth-child(2) { animation-delay: 0.15s; }
-.category-card:nth-child(3) { animation-delay: 0.2s; }
-.category-card:nth-child(4) { animation-delay: 0.25s; }
-.category-card:nth-child(5) { animation-delay: 0.3s; }
-.category-card:nth-child(6) { animation-delay: 0.35s; }
-.category-card:nth-child(7) { animation-delay: 0.4s; }
-.category-card:nth-child(8) { animation-delay: 0.45s; }
+.category-card:nth-child(1) {
+  animation-delay: 0.1s;
+}
 
-.debate-card-compact:nth-child(1) { animation-delay: 0.1s; }
-.debate-card-compact:nth-child(2) { animation-delay: 0.2s; }
-.debate-card-compact:nth-child(3) { animation-delay: 0.3s; }
-.debate-card-compact:nth-child(4) { animation-delay: 0.4s; }
+.category-card:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.category-card:nth-child(3) {
+  animation-delay: 0.2s;
+}
+
+.category-card:nth-child(4) {
+  animation-delay: 0.25s;
+}
+
+.category-card:nth-child(5) {
+  animation-delay: 0.3s;
+}
+
+.category-card:nth-child(6) {
+  animation-delay: 0.35s;
+}
+
+.category-card:nth-child(7) {
+  animation-delay: 0.4s;
+}
+
+.category-card:nth-child(8) {
+  animation-delay: 0.45s;
+}
+
+.debate-card-compact:nth-child(1) {
+  animation-delay: 0.1s;
+}
+
+.debate-card-compact:nth-child(2) {
+  animation-delay: 0.2s;
+}
+
+.debate-card-compact:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+.debate-card-compact:nth-child(4) {
+  animation-delay: 0.4s;
+}

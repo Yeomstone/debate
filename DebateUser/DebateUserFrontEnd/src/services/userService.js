@@ -52,10 +52,40 @@ export const userService = {
   async uploadImage(file) {
     const formData = new FormData();
     formData.append('file', file);
-    
+
     const response = await api.post('/upload/profile', formData);
     // ApiResponse<String> 구조에서 data 필드가 URL임
     return response.data.data || response.data;
+  },
+
+  /**
+   * 특정 사용자가 작성한 토론 목록 조회
+   * 
+   * @param {number} userId - 사용자 ID
+   * @param {number} page - 페이지 번호 (0부터 시작)
+   * @param {number} size - 페이지당 항목 수
+   * @returns {Promise<Object>} 페이징된 토론 목록
+   */
+  async getUserDebates(userId, page = 0, size = 10) {
+    const response = await api.get(`/users/${userId}/debates`, {
+      params: { page, size }
+    });
+    return response.data;
+  },
+
+  /**
+   * 특정 사용자가 작성한 댓글 목록 조회
+   * 
+   * @param {number} userId - 사용자 ID
+   * @param {number} page - 페이지 번호 (0부터 시작)
+   * @param {number} size - 페이지당 항목 수
+   * @returns {Promise<Object>} 페이징된 댓글 목록
+   */
+  async getUserComments(userId, page = 0, size = 10) {
+    const response = await api.get(`/users/${userId}/comments`, {
+      params: { page, size }
+    });
+    return response.data;
   },
 };
 

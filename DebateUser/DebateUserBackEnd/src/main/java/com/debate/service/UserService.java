@@ -37,9 +37,9 @@ public class UserService {
     /**
      * 사용자 랭킹 조회 (기간 및 기준별)
      *
-     * @param period 기간 (daily, monthly, yearly, all)
+     * @param period   기간 (daily, monthly, yearly, all)
      * @param criteria 기준 (likes, votes, comments)
-     * @param limit 조회할 상위 사용자 수
+     * @param limit    조회할 상위 사용자 수
      * @return 사용자 랭킹 목록
      */
     public List<UserRankingResponse> getUserRanking(String period, String criteria, int limit) {
@@ -90,24 +90,25 @@ public class UserService {
     public List<UserRankingResponse> getUserRanking(int limit) {
         return getUserRanking("all", "likes", limit);
     }
+
     public UserResponse getUserById(Long id) {
         User user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다"));
-        
+
         // 통계 정보 계산
         long debateCount = debateRepository.findByUserAndIsHiddenFalse(user, Pageable.unpaged()).getTotalElements();
         long commentCount = commentRepository.findByUser(user).size();
-        
+
         // 받은 좋아요 수: 사용자가 작성한 토론들에 받은 좋아요 총합
         long likeCount = debateRepository.findByUserAndIsHiddenFalse(user, Pageable.unpaged())
                 .getContent()
                 .stream()
                 .mapToLong(debate -> likeRepository.countByDebate(debate))
                 .sum();
-        
+
         // 참여한 토론 수: 입장을 선택한 토론 수
         long participatedCount = debateOpinionRepository.findByUser(user).size();
-        
+
         return UserResponse.from(user, debateCount, commentCount, likeCount, participatedCount);
     }
 
@@ -130,7 +131,6 @@ public class UserService {
         return UserResponse.from(user);
     }
 
-
     public User getUserEntity(Long id) {
         return userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다"));
@@ -141,5 +141,38 @@ public class UserService {
                 .orElseThrow(() -> new ResourceNotFoundException("사용자를 찾을 수 없습니다: " + email));
     }
 
-}
+    /**
+     * 특정 사용자가 작성한 토론 목록 조회 (페이징)
+     *
+     * @param userId   사용자 ID
+     * @param pageable 페이징 정보
+     * @return 사용자가 작성한 토론 목록
+     */
+    public org.springframework.data.domain.Page<com.debate.dto.response.DebateResponse> getUserDebates(Long userId,
+            Pageable pageable) {
+        User user = getUserEntity(userId);
 
+        return debateRepository.findByUserAndIsHiddenFalse(user, pageable)
+                .map(debate -> {
+                    long likeCount = likeRepository.countByDebate(debate);
+                    long commentCount = commentRepository.countByDebateAndIsHiddenFalse(debate);
+                    return com.debate.dto.response.DebateResponse.from(debate, likeCount, commentCount);
+                });
+    }
+
+    /**
+     * 특정 사용자가 작성한 댓글 목록 조회 (페이징)
+     *
+     * @param userId   사용자 ID
+     * @param pageable 페이징 정보
+     * @return 사용자가 작성한 댓글 목록
+     */
+    public org.springframework.data.domain.Page<com.debate.dto.response.CommentResponse> getUserComments(Long userId,
+            Pageable pageable) {
+        User user = getUserEntity(userId);
+
+        return commentRepository.findByUserAndIsHiddenFalse(user, pageable)
+                .map(com.debate.dto.response.CommentResponse::from);
+    }
+
+}

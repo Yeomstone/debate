@@ -9,11 +9,13 @@
  */
 
 import React, { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useTheme } from '../context/ThemeContext';
 import UserAvatar from '../components/common/UserAvatar';
 import './RankingPodium.css';
 
 const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
+  const navigate = useNavigate();
   const { theme } = useTheme();
   const isDarkMode = theme === 'dark';
   const [showConfetti, setShowConfetti] = useState(false);
@@ -260,14 +262,22 @@ const RankingPodium = ({ topUsers = [], criteria = 'likes' }) => {
 
                   {/* 사용자 정보 (단상 아래로 이동) */}
                   <div className="user-info">
-                    <div className="user-avatar">
+                    <div
+                      className="user-avatar clickable-nickname"
+                      onClick={() => navigate(`/users/${user.userId}`)}
+                    >
                       <UserAvatar
                         src={user.profileImage}
                         alt={user.nickname}
                         size="medium"
                       />
                     </div>
-                    <h3 className="user-nickname">{user.nickname}</h3>
+                    <h3
+                      className="user-nickname clickable-nickname"
+                      onClick={() => navigate(`/users/${user.userId}`)}
+                    >
+                      {user.nickname}
+                    </h3>
                     <div className="user-stats">
                       <div className="stat-item">
                         <span className="stat-label">토론</span>
