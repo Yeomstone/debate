@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -37,7 +38,7 @@ public class AdminDebateController {
      * @param size      페이지 크기
      * @return 조건에 맞는 토론 페이지 wrapped ApiResponse
      */
-    @Operation(summary = "토론 목록 조회", description = "검색 조건에 따라 토론 목록을 조회합니다.")
+    @Operation(summary = "토론 목록 조회", description = "검색 조건에 따라 토론 목록을 조회합니다. 최신 순으로 정렬됩니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Debate>>> getDebates(
             @RequestParam(required = false) String keyword,
@@ -45,7 +46,8 @@ public class AdminDebateController {
             @RequestParam(required = false) Boolean isHidden,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        // 최신 순으로 정렬 (createdAt 내림차순)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Debate> debates = adminDebateService.searchDebates(keyword, status, isHidden, pageable);
         return ResponseEntity.ok(ApiResponse.success(debates));
     }

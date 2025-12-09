@@ -10,6 +10,7 @@ import com.debate.repository.ReportRepository;
 import com.debate.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -75,10 +76,11 @@ public class AdminDashboardService {
      * 최근 가입한 회원 목록을 조회한다.
      *
      * @param limit 조회할 최대 인원수
-     * @return 회원 목록
+     * @return 회원 목록 (최신순 정렬)
      */
     public List<User> getRecentUsers(int limit) {
-        return userRepository.findAll(PageRequest.of(0, limit))
+        // 최신순으로 정렬 (createdAt 내림차순)
+        return userRepository.findAll(PageRequest.of(0, limit, Sort.by(Sort.Direction.DESC, "createdAt")))
                 .getContent();
     }
 

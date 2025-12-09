@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -34,14 +35,15 @@ public class AdminUserController {
      * @param size    페이지 크기
      * @return 회원 페이지 wrapped ApiResponse
      */
-    @Operation(summary = "회원 목록 조회", description = "검색 조건에 따라 회원 목록을 조회합니다.")
+    @Operation(summary = "회원 목록 조회", description = "검색 조건에 따라 회원 목록을 조회합니다. 최신순으로 정렬됩니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<User>>> getUsers(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) User.UserStatus status,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        // 최신순으로 정렬 (createdAt 내림차순)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<User> users = adminUserService.searchUsers(keyword, status, pageable);
         return ResponseEntity.ok(ApiResponse.success(users));
     }

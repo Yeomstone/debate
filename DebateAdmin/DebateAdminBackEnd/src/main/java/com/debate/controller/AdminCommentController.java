@@ -62,14 +62,15 @@ public class AdminCommentController {
      * @param size     페이지 크기
      * @return 댓글 페이지 wrapped ApiResponse
      */
-    @Operation(summary = "댓글 목록 조회", description = "검색 조건에 따라 댓글 목록을 조회합니다.")
+    @Operation(summary = "댓글 목록 조회", description = "검색 조건에 따라 댓글 목록을 조회합니다. 최신순으로 정렬됩니다.")
     @GetMapping
     public ResponseEntity<ApiResponse<Page<Comment>>> getComments(
             @RequestParam(required = false) String keyword,
             @RequestParam(required = false) Boolean isHidden,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
-        Pageable pageable = PageRequest.of(page, size);
+        // 최신순으로 정렬 (createdAt 내림차순)
+        Pageable pageable = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "createdAt"));
         Page<Comment> comments = adminCommentService.searchComments(keyword, isHidden, pageable);
         return ResponseEntity.ok(ApiResponse.success(comments));
     }
