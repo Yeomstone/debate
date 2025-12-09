@@ -29,6 +29,21 @@ public class UserDetailResponse {
     private Long commentCount;
 
     /**
+     * 프로필 이미지 URL 경로 변환
+     * 기존 /files/editor/images/ 경로를 /files/user/profile/ 경로로 변환
+     */
+    private static String normalizeProfileImageUrl(String profileImage) {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return profileImage;
+        }
+        // 기존 경로를 새 경로로 변환
+        if (profileImage.startsWith("/files/editor/images/")) {
+            return profileImage.replace("/files/editor/images/", "/files/user/profile/");
+        }
+        return profileImage;
+    }
+
+    /**
      * 회원 엔티티와 활동 지표를 DTO로 변환한다.
      *
      * @param user         회원 엔티티
@@ -41,7 +56,7 @@ public class UserDetailResponse {
                 .id(user.getId())
                 .email(user.getEmail())
                 .nickname(user.getNickname())
-                .profileImage(user.getProfileImage())
+                .profileImage(normalizeProfileImageUrl(user.getProfileImage()))
                 .bio(user.getBio())
                 .status(user.getStatus())
                 .emailVerified(user.getEmailVerified())

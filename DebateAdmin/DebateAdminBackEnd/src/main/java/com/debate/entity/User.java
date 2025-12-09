@@ -1,5 +1,6 @@
 package com.debate.entity;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
@@ -53,6 +54,22 @@ public class User {
     @Column(name = "profile_image", length = 500)
     @Comment("프로필 이미지 URL")
     private String profileImage;
+
+    /**
+     * 프로필 이미지 URL 경로 변환 (JSON 직렬화 시)
+     * 기존 /files/editor/images/ 경로를 /files/user/profile/ 경로로 변환
+     */
+    @JsonGetter("profileImage")
+    public String getProfileImageForJson() {
+        if (profileImage == null || profileImage.isEmpty()) {
+            return profileImage;
+        }
+        // 기존 경로를 새 경로로 변환
+        if (profileImage.startsWith("/files/editor/images/")) {
+            return profileImage.replace("/files/editor/images/", "/files/user/profile/");
+        }
+        return profileImage;
+    }
 
     @Column(columnDefinition = "TEXT")
     @Comment("자기소개")
