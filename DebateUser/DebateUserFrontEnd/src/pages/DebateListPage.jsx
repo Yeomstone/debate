@@ -59,6 +59,52 @@ const DebateListPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [categoryId, status, sort, page, keyword]);
 
+  /**
+   * HTML 콘텐츠의 이미지 URL을 현재 프로토콜에 맞게 변환
+   * HTTPS 페이지에서 HTTP 이미지를 로드하는 Mixed Content 문제 방지
+   * IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
+   */
+  const convertImageUrls = (htmlContent) => {
+    if (!htmlContent) return htmlContent;
+
+    const currentOrigin = window.location.origin;
+
+    // 현재 페이지가 HTTPS인 경우
+    if (window.location.protocol === "https:") {
+      // IP 주소를 도메인으로 변환 (13.209.254.24 -> debate.me.kr)
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="https://debate.me.kr$1"`
+      );
+
+      // HTTP 이미지 URL을 HTTPS로 변환
+      htmlContent = htmlContent.replace(
+        /src="http:\/\/([^"]+)"/g,
+        'src="https://$1"'
+      );
+
+      // 상대 경로 이미지를 절대 경로로 변환 (프로토콜 포함)
+      htmlContent = htmlContent.replace(
+        /src="(\/[^"]+)"/g,
+        `src="${currentOrigin}$1"`
+      );
+    } else {
+      // HTTP 페이지에서도 IP 주소를 도메인으로 변환
+      htmlContent = htmlContent.replace(
+        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
+        `src="http://debate.me.kr$1"`
+      );
+
+      // 상대 경로를 절대 경로로 변환
+      htmlContent = htmlContent.replace(
+        /src="(\/[^"]+)"/g,
+        `src="${currentOrigin}$1"`
+      );
+    }
+
+    return htmlContent;
+  };
+
   const fetchDebates = async (append = false) => {
     try {
       if (append) setLoadingMore(true);
@@ -92,11 +138,17 @@ const DebateListPage = () => {
       }
 
       const pageData = response.data || response;
+      
+      // 각 토론의 content에 포함된 이미지 URL 변환
+      const debates = (pageData.content || []).map(debate => ({
+        ...debate,
+        content: convertImageUrls(debate.content)
+      }));
 
       if (append) {
-        setDebates((prev) => [...prev, ...(pageData.content || [])]);
+        setDebates((prev) => [...prev, ...debates]);
       } else {
-        setDebates(pageData.content || []);
+        setDebates(debates);
       }
       setTotalPages(pageData.totalPages || 0);
     } catch (error) {
@@ -161,7 +213,14 @@ const DebateListPage = () => {
           response = await debateService.getAllDebates(nextPage, 10, sort);
         }
         const pageData = response.data || response;
-        setDebates((prev) => [...prev, ...(pageData.content || [])]);
+        
+        // 각 토론의 content에 포함된 이미지 URL 변환
+        const debates = (pageData.content || []).map(debate => ({
+          ...debate,
+          content: convertImageUrls(debate.content)
+        }));
+        
+        setDebates((prev) => [...prev, ...debates]);
         setTotalPages(pageData.totalPages || 0);
         setCurrentLoadedPage(nextPage);
       } catch (error) {
