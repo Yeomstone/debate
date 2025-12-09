@@ -9,6 +9,8 @@ import { useState } from 'react'
 import { Link, useLocation, useNavigate } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 import { useTheme } from '../../context/ThemeContext'
+import debateLogoLight from '../../assets/debate-onlylogo.png'
+import debateLogoDark from '../../assets/debate-logo-dark.png'
 import './AdminLayout.css'
 
 const AdminLayout = ({ children }) => {
@@ -17,6 +19,7 @@ const AdminLayout = ({ children }) => {
   const { admin, logout } = useAuth()
   const { theme, toggleTheme } = useTheme()
   const [sidebarOpen, setSidebarOpen] = useState(true)
+  const currentLogo = theme === 'dark' ? debateLogoDark : debateLogoLight
 
   const handleLogout = () => {
     logout()
@@ -58,11 +61,11 @@ const AdminLayout = ({ children }) => {
         <div className="admin-logo">
           <Link to="/" className="logo-link">
             <img 
-              src="/images/DEBATE.png" 
+              src={currentLogo}
               alt="Debate Logo" 
               className="logo-image"
             />
-            <span className="logo-text">Debate Admin</span>
+            <span className="logo-text">DEBATE</span>
           </Link>
           {/* 사이드바가 열려있을 때만 사이드바 안에 토글 버튼 표시 */}
           {sidebarOpen && (
@@ -107,11 +110,11 @@ const AdminLayout = ({ children }) => {
             {!sidebarOpen && (
               <Link to="/" className="header-logo-link">
                 <img 
-                  src="/images/DEBATE.png" 
+                  src={currentLogo}
                   alt="Debate Logo" 
                   className="header-logo-image"
                 />
-                <span className="header-logo-text">Debate Admin</span>
+                <span className="header-logo-text">DEBATE</span>
               </Link>
             )}
           </div>

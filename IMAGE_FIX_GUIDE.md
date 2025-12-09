@@ -217,3 +217,4 @@ app:
 - Nginx 설정 파일: `debate-https.nginx` (프로젝트 루트)
 - 백엔드 파일 저장 경로: `/home/ubuntu/opt/debate/files/editor/images`
 - 백엔드 파일 URL prefix: `/files/editor/images`
+

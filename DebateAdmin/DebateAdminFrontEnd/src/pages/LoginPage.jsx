@@ -6,12 +6,15 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 import { useTheme } from '../context/ThemeContext'
+import debateLogoLight from '../assets/debate-onlylogo.png'
+import debateLogoDark from '../assets/debate-logo-dark.png'
 import './LoginPage.css'
 
 const LoginPage = () => {
   const navigate = useNavigate()
   const { login } = useAuth()
   const { theme, toggleTheme } = useTheme()
+  const currentLogo = theme === 'dark' ? debateLogoDark : debateLogoLight
 
   const [formData, setFormData] = useState({
     adminId: '',
@@ -49,11 +52,11 @@ const LoginPage = () => {
         </div>
         <div className="login-logo">
           <img 
-            src="/images/DEBATE.png" 
+            src={currentLogo}
             alt="Debate Logo" 
             className="login-logo-image"
           />
-          <span className="logo-text">Debate Admin</span>
+          <span className="logo-text">DEBATE</span>
         </div>
         <h2>관리자 로그인</h2>
         <form onSubmit={handleSubmit} className="login-form">
