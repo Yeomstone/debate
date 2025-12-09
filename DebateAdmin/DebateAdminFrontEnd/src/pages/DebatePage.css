@@ -146,23 +146,37 @@
 
 .form-input {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 0.75rem;
+  border: 2px solid #000000;
+  border-radius: 8px;
   font-size: 0.875rem;
   background-color: var(--bg-primary);
   color: var(--text-primary);
+  transition: all 0.3s ease;
+}
+
+.form-input:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
 }
 
 .form-textarea {
   width: 100%;
-  padding: 0.5rem;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  padding: 0.75rem;
+  border: 2px solid #000000;
+  border-radius: 8px;
   font-size: 0.875rem;
   background-color: var(--bg-primary);
   color: var(--text-primary);
   resize: vertical;
   font-family: inherit;
+  transition: all 0.3s ease;
+}
+
+.form-textarea:focus {
+  outline: none;
+  border-color: var(--primary-color);
+  box-shadow: 0 0 0 3px rgba(255, 193, 7, 0.2);
 }
 

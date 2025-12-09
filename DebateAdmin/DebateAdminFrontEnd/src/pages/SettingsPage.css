@@ -1,4 +1,4 @@
-/* ?úÏä§???§Ï†ï ?òÏù¥ÏßÄ ?§Ì???*/
+/* ?ÔøΩÏä§???ÔøΩÏ†ï ?ÔøΩÏù¥ÏßÄ ?ÔøΩÔøΩ???*/
 
 .settings-page {
   display: flex;
@@ -14,24 +14,29 @@
 
 .tab-button {
   padding: 0.75rem 1.5rem;
-  background: none;
-  border: none;
-  border-bottom: 2px solid transparent;
+  background: transparent;
+  border: 2px solid transparent;
+  border-bottom: 3px solid transparent;
   color: var(--text-secondary);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.2s;
-  margin-bottom: -2px;
+  transition: all 0.3s ease;
+  margin-bottom: -3px;
+  border-radius: 8px 8px 0 0;
 }
 
 .tab-button:hover {
   color: var(--text-primary);
+  background-color: var(--bg-secondary);
 }
 
 .tab-button.active {
-  color: var(--primary-color);
-  border-bottom-color: var(--primary-color);
+  background: linear-gradient(135deg, #ffd700 0%, #ffa500 100%);
+  color: #000000;
+  border-bottom-color: #000000;
+  border-width: 3px;
+  font-weight: 700;
 }
 
 .settings-form {
@@ -62,11 +67,13 @@
 
 .info-box {
   background-color: var(--bg-secondary);
-  border-left: 4px solid var(--info-color);
+  border: 2px solid #000000;
+  border-left: 4px solid var(--primary-color);
   padding: 1rem;
-  border-radius: 4px;
+  border-radius: 8px;
   color: var(--text-secondary);
   font-size: 0.875rem;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .info-box p {

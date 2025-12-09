@@ -1,4 +1,4 @@
-/* ?�계 �?분석 ?�이지 ?��???*/
+/* ?�계 �?분석 ?�이지 ?��???*/
 
 .statistics-page {
   display: flex;
@@ -14,12 +14,19 @@
 
 .stat-card {
   background-color: var(--bg-primary);
-  border-radius: 8px;
+  border: 3px solid #000000;
+  border-radius: 16px;
   padding: 1.5rem;
   display: flex;
   align-items: center;
   gap: 1rem;
-  box-shadow: var(--shadow);
+  box-shadow: 3px 3px 0px #000000;
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 4px 5px 0px #000000;
 }
 
 .stat-icon {
@@ -29,8 +36,10 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: var(--bg-secondary);
-  border-radius: 8px;
+  background: linear-gradient(135deg, #ffc107 0%, #ffb300 100%);
+  border: 2px solid #000000;
+  border-radius: 12px;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .stat-content {
@@ -63,9 +72,16 @@
 
 .chart-card {
   background-color: var(--bg-primary);
-  border-radius: 8px;
+  border: 3px solid #000000;
+  border-radius: 16px;
   padding: 1.5rem;
-  box-shadow: var(--shadow);
+  box-shadow: 3px 3px 0px #000000;
+  transition: all 0.3s ease;
+}
+
+.chart-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 4px 5px 0px #000000;
 }
 
 .chart-content {

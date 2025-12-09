@@ -1,4 +1,4 @@
-/* 카테고리 관�??�이지 ?��???*/
+/* 카테고리 관�??�이지 ?��???*/
 
 .categories-page {
   display: flex;
@@ -14,20 +14,29 @@
 }
 
 .btn-icon {
-  background: none;
-  border: 1px solid var(--border-color);
-  border-radius: 4px;
+  background: var(--bg-primary);
+  border: 2px solid #000000;
+  border-radius: 8px;
   padding: 0.25rem 0.5rem;
   cursor: pointer;
   font-size: 0.875rem;
   color: var(--text-primary);
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   min-width: 32px;
+  font-weight: 600;
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .btn-icon:hover:not(:disabled) {
-  background-color: var(--bg-secondary);
-  border-color: var(--primary-color);
+  background-color: var(--primary-color);
+  color: #000000;
+  transform: translateY(-2px);
+  box-shadow: 4px 4px 0px #000000;
+}
+
+.btn-icon:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 1px 1px 0px #000000;
 }
 
 .btn-icon:disabled {

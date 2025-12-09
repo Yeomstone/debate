@@ -13,9 +13,10 @@
 
 /* CSS 변수 정의 (Light Mode) */
 :root {
-  --primary-color: #1e40af;
-  --primary-dark: #1e3a8a;
-  --primary-light: #3b82f6;
+  /* 메인 색상 - 옐로우 (유저 사이트와 동일) */
+  --primary-color: #FFC107;
+  --primary-dark: #FFB300;
+  --primary-light: #FFCA28;
   
   --secondary-color: #f97316;
   --secondary-dark: #ea580c;
@@ -44,6 +45,10 @@
   --shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
   --shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
   --shadow-xl: 0 20px 25px rgba(0, 0, 0, 0.1);
+  
+  /* 유저 사이트 스타일 그림자 효과 */
+  --shadow-bold: 3px 3px 0px #000000;
+  --shadow-bold-hover: 6px 10px 0px #000000;
 }
 
 /* 다크모드 변수 */
@@ -90,48 +95,82 @@ body {
   padding: 0;
 }
 
-/* 공통 버튼 스타일 */
+/* 공통 버튼 스타일 - 유저 사이트 스타일 적용 */
 .btn {
   padding: 0.75rem 1.5rem;
-  border: none;
-  border-radius: 4px;
+  border: 3px solid #000000;
+  border-radius: 50px;
   font-size: 1rem;
-  font-weight: 600;
+  font-weight: 700;
   cursor: pointer;
-  transition: all 0.2s;
+  transition: all 0.3s ease;
   text-decoration: none;
   display: inline-block;
+  text-align: center;
+  letter-spacing: 0.05em;
+  box-shadow: var(--shadow-bold);
 }
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: white;
+  color: #000000;
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--primary-dark);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-bold-hover), 0 8px 20px rgba(255, 193, 7, 0.4);
+}
+
+.btn-primary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0px #000000;
 }
 
 .btn-danger {
   background-color: var(--danger-color);
   color: white;
+  border-color: #000000;
 }
 
 .btn-danger:hover:not(:disabled) {
   background-color: #dc2626;
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-bold-hover);
 }
 
 .btn-secondary {
-  background-color: var(--bg-tertiary);
-  color: var(--text-primary);
+  background-color: transparent;
+  color: #000000;
+  border-color: #000000;
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: var(--border-color);
+  background-color: #000000;
+  color: var(--primary-color);
+  transform: translateY(-4px);
+  box-shadow: 6px 10px 0px var(--primary-color), 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.btn-secondary:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: 2px 2px 0px var(--primary-color);
+}
+
+.btn-sm {
+  padding: 0.5rem 1rem;
+  font-size: 0.875rem;
+  border-width: 2px;
+  box-shadow: 2px 2px 0px #000000;
+}
+
+.btn-sm:hover:not(:disabled) {
+  box-shadow: 4px 6px 0px #000000;
 }
 
 .btn:disabled {
   opacity: 0.6;
   cursor: not-allowed;
+  transform: none !important;
 }
 
