@@ -48,12 +48,14 @@ Write-Host "Build complete: $distPath" -ForegroundColor Green
 # 3. Upload to Server
 Write-Host "`n[3/4] Uploading files to server..." -ForegroundColor Yellow
 
-# Create remote directory if not exists
+# Create remote directory if not exists and set permissions
 Write-Host "Checking/Creating remote directory: $REMOTE_PATH"
-ssh -i $SSH_KEY $SERVER "mkdir -p $REMOTE_PATH"
+ssh -i $SSH_KEY $SERVER "mkdir -p $REMOTE_PATH && sudo chown -R ubuntu:ubuntu $REMOTE_PATH && chmod -R 755 $REMOTE_PATH"
 
 # Clear existing files and upload new ones
-ssh -i $SSH_KEY $SERVER "rm -rf ${REMOTE_PATH}/*"
+Write-Host "Clearing existing files..."
+ssh -i $SSH_KEY $SERVER "rm -rf ${REMOTE_PATH}/* 2>/dev/null || true"
+Write-Host "Uploading new files..."
 scp -i $SSH_KEY -r "${distPath}\*" "${SERVER}:${REMOTE_PATH}/"
 
 if ($LASTEXITCODE -ne 0) {
