@@ -54,6 +54,21 @@
         0 0 0 8px var(--bg-secondary, #f5f5f5);
 }
 
+/* 클릭 가능한 아바타 */
+.user-avatar-component.clickable {
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.user-avatar-component.clickable:hover {
+    transform: scale(1.1);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+.user-avatar-component.clickable:active {
+    transform: scale(1.05);
+}
+
 /* 호버 효과 (large, xlarge용) */
 .user-avatar-component.large:hover,
 .user-avatar-component.xlarge:hover {

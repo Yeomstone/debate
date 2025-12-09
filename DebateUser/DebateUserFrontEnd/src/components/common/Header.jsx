@@ -400,6 +400,7 @@ const Header = () => {
                       src={user?.profileImage}
                       alt={user?.nickname || "사용자"}
                       size="medium"
+                      showModal={false}
                     />
                   </button>
 
