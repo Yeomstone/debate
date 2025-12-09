@@ -97,75 +97,100 @@ body {
 
 /* 공통 버튼 스타일 - 유저 사이트 스타일 적용 */
 .btn {
-  padding: 0.75rem 1.5rem;
-  border: 3px solid #000000;
-  border-radius: 50px;
-  font-size: 1rem;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.3s ease;
-  text-decoration: none;
   display: inline-block;
+  padding: 0.75rem 1.5rem;
+  border: none;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+  transition: all 0.3s;
   text-align: center;
-  letter-spacing: 0.05em;
-  box-shadow: var(--shadow-bold);
 }
 
 .btn-primary {
   background-color: var(--primary-color);
-  color: #000000;
+  color: #000;
+  /* Yellow 배경에는 검은 글씨가 가독성이 좋음 */
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: var(--primary-dark);
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-bold-hover), 0 8px 20px rgba(255, 193, 7, 0.4);
 }
 
-.btn-primary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 2px 2px 0px #000000;
+.btn-outline {
+  background-color: transparent;
+  color: var(--primary-color);
+  border: 2px solid var(--primary-color);
+}
+
+.btn-outline:hover:not(:disabled) {
+  background-color: var(--primary-color);
+  color: white;
 }
 
 .btn-danger {
   background-color: var(--danger-color);
   color: white;
-  border-color: #000000;
 }
 
 .btn-danger:hover:not(:disabled) {
   background-color: #dc2626;
-  transform: translateY(-4px);
-  box-shadow: var(--shadow-bold-hover);
 }
 
 .btn-secondary {
   background-color: transparent;
-  color: #000000;
-  border-color: #000000;
+  color: var(--text-primary);
+  border: 2px solid var(--border-color);
 }
 
 .btn-secondary:hover:not(:disabled) {
-  background-color: #000000;
+  background-color: var(--bg-secondary);
+  border-color: var(--primary-color);
   color: var(--primary-color);
-  transform: translateY(-4px);
-  box-shadow: 6px 10px 0px var(--primary-color), 0 8px 20px rgba(0, 0, 0, 0.3);
-}
-
-.btn-secondary:active:not(:disabled) {
-  transform: translateY(0);
-  box-shadow: 2px 2px 0px var(--primary-color);
 }
 
 .btn-sm {
   padding: 0.5rem 1rem;
   font-size: 0.875rem;
-  border-width: 2px;
-  box-shadow: 2px 2px 0px #000000;
 }
 
-.btn-sm:hover:not(:disabled) {
-  box-shadow: 4px 6px 0px #000000;
+/* 다크 모드에서 버튼 스타일 조정 */
+[data-theme="dark"] .btn,
+[data-theme="dark"] button {
+  background-color: var(--bg-secondary);
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn:hover:not(:disabled),
+[data-theme="dark"] button:hover:not(:disabled) {
+  background-color: var(--bg-tertiary);
+}
+
+/* 프라이머리 버튼 */
+[data-theme="dark"] .btn-primary {
+  background-color: #ffd700;
+  color: #000000;
+  border: none;
+}
+
+[data-theme="dark"] .btn-primary:hover:not(:disabled) {
+  background-color: #ffed4e;
+}
+
+/* 세컨더리 버튼 */
+[data-theme="dark"] .btn-secondary {
+  background-color: transparent;
+  color: var(--text-primary);
+  border-color: var(--border-color);
+}
+
+[data-theme="dark"] .btn-secondary:hover:not(:disabled) {
+  background-color: var(--bg-secondary);
+  border-color: var(--primary-color);
+  color: var(--primary-color);
 }
 
 .btn:disabled {
