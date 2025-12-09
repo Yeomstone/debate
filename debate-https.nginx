@@ -49,6 +49,16 @@ server {
         add_header X-Debug-Location "files-images-regex" always;
     }
 
+    # 프로필 이미지 경로 (정적 파일로 직접 제공)
+    location ~* ^/files/user/profile/(.+\.(jpg|jpeg|png|gif|webp|svg))$ {
+        root /home/ubuntu/opt/debate;
+        expires 1d;
+        add_header Cache-Control "public, max-age=86400";
+        add_header X-Debug-Location "files-user-profile-regex" always;
+        # 먼저 user/profile에서 찾고, 없으면 editor/images에서 찾기 (파일명만 추출)
+        try_files /files/user/profile/$1 /files/editor/images/$1 =404;
+    }
+
     location /api {
         proxy_pass http://localhost:9001;
         proxy_http_version 1.1;
@@ -85,6 +95,16 @@ server {
         expires 1d;
         add_header Cache-Control "public, max-age=86400";
         add_header X-Debug-Location "files-images-regex" always;
+    }
+
+    # 프로필 이미지 경로 (정적 파일로 직접 제공)
+    location ~* ^/files/user/profile/(.+\.(jpg|jpeg|png|gif|webp|svg))$ {
+        root /home/ubuntu/opt/debate;
+        expires 1d;
+        add_header Cache-Control "public, max-age=86400";
+        add_header X-Debug-Location "files-user-profile-regex" always;
+        # 먼저 user/profile에서 찾고, 없으면 editor/images에서 찾기 (파일명만 추출)
+        try_files /files/user/profile/$1 /files/editor/images/$1 =404;
     }
 
     location /api {
