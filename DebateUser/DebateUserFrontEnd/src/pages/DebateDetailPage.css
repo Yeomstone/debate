@@ -907,7 +907,37 @@
   white-space: pre-wrap;
 }
 
-.reply-btn {
+/* 답글 달기 버튼 - 다크모드 전역 button 스타일 override */
+.comment-actions .reply-btn,
+.comment-actions button.reply-btn {
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.8rem !important;
+  cursor: pointer;
+  padding: 0 !important;
+  font-weight: 600;
+}
+
+.comment-actions .reply-btn:hover,
+.comment-actions button.reply-btn:hover {
+  color: var(--primary-color) !important;
+  text-decoration: underline;
+  background: none !important;
+  background-color: transparent !important;
+}
+
+/* 댓글 액션 버튼 영역 (좋아요, 답글, 수정, 삭제) */
+.comment-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 0.25rem;
+}
+
+/* 댓글 좋아요 버튼 */
+.comment-like-btn {
   background: none;
   border: none;
   color: var(--text-secondary);
@@ -917,9 +947,39 @@
   font-weight: 600;
 }
 
-.reply-btn:hover {
+.comment-like-btn:hover {
   color: var(--primary-color);
+}
+
+.comment-like-btn.active {
+  color: var(--danger-color);
+}
+
+/* 수정/삭제 버튼 (답글 달기와 동일한 스타일) */
+/* 다크모드 전역 button 스타일을 override하기 위해 !important 사용 */
+.comment-actions .action-btn,
+.comment-actions button.action-btn {
+  background: none !important;
+  background-color: transparent !important;
+  border: none !important;
+  color: var(--text-secondary) !important;
+  font-size: 0.8rem !important;
+  cursor: pointer;
+  padding: 0 !important;
+  font-weight: 600;
+}
+
+.comment-actions .action-btn:hover,
+.comment-actions button.action-btn:hover {
+  color: var(--primary-color) !important;
   text-decoration: underline;
+  background: none !important;
+  background-color: transparent !important;
+}
+
+.comment-actions .action-btn.delete:hover,
+.comment-actions button.action-btn.delete:hover {
+  color: var(--danger-color) !important;
 }
 
 /* 답글 입력 폼 컨테이너 */
