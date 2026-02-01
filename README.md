@@ -71,17 +71,4 @@ Debate/
 - 신고 처리
 - 카테고리 관리
 
-## 실행 방법
 
-### 백엔드
-```bash
-cd DebateUser/DebateUserBackEnd
-./gradlew bootRun
-```
-
-### 프론트엔드
-```bash
-cd DebateUser/DebateUserFrontEnd
-npm install
-npm run dev
-```
