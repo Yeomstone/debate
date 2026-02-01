@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Social Impact Tracker - 포트폴리오</title>
+    <link href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" rel="stylesheet">
+    <style>
+        @page { size: 1280px 720px; margin: 0; }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        
+        :root {
+            --bg: #0a0a0a;
+            --accent: #10b981;
+            --accent-dim: rgba(16, 185, 129, 0.15);
+            --text: #ffffff;
+            --text-dim: #737373;
+            --line: #262626;
+        }
+
+        body {
+            font-family: 'Pretendard', -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            -webkit-print-color-adjust: exact;
+        }
+
+        .slide {
+            width: 1280px;
+            height: 720px;
+            margin: 0 auto;
+            background: var(--bg);
+            position: relative;
+            page-break-after: always;
+            padding: 60px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .page-num {
+            position: absolute;
+            bottom: 25px;
+            right: 60px;
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* 헤더 */
+        .head {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin-bottom: 40px;
+        }
+
+        .head-num {
+            color: var(--accent);
+            font-size: 14px;
+            font-weight: 700;
+        }
+
+        .head h2 {
+            font-size: 32px;
+            font-weight: 700;
+        }
+
+        /* 그리드 */
+        .grid {
+            flex: 1;
+            display: grid;
+            gap: 50px;
+            align-items: start;
+        }
+
+        .grid-2 { grid-template-columns: 1fr 1fr; }
+        .grid-3 { grid-template-columns: repeat(3, 1fr); }
+        .grid-5 { grid-template-columns: repeat(5, 1fr); }
+
+        /* 텍스트 */
+        h3 {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+
+        p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: #a3a3a3;
+        }
+
+        .label {
+            font-size: 12px;
+            color: var(--accent);
+            font-weight: 600;
+            letter-spacing: 1px;
+            margin-bottom: 12px;
+        }
+
+        /* 리스트 - 박스 없이 */
+        .list {
+            list-style: none;
+        }
+
+        .list li {
+            font-size: 14px;
+            color: #a3a3a3;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--line);
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+        }
+
+        .list li:last-child { border-bottom: none; }
+
+        .list li::before {
+            content: '';
+            width: 6px;
+            height: 6px;
+            background: var(--accent);
+            margin-top: 8px;
+            flex-shrink: 0;
+        }
+
+        /* 표지 */
+        .cover {
+            display: grid;
+            grid-template-columns: 1fr 1.1fr;
+            gap: 50px;
+            align-items: center;
+            padding: 60px;
+        }
+
+        .cover h1 {
+            font-size: 56px;
+            font-weight: 800;
+            line-height: 1.1;
+            margin-bottom: 20px;
+        }
+
+        .cover .sub {
+            font-size: 18px;
+            color: #737373;
+            margin-bottom: 50px;
+            line-height: 1.6;
+        }
+
+        .cover-stats {
+            display: flex;
+            gap: 50px;
+        }
+
+        .stat-num {
+            font-size: 40px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* 미니 대시보드 */
+        .mini-dash {
+            padding: 30px 0;
+        }
+
+        .dash-head {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-bottom: 24px;
+        }
+
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 16px;
+            height: 140px;
+            margin-bottom: 16px;
+        }
+
+        .bar {
+            flex: 1;
+            background: linear-gradient(180deg, var(--accent), rgba(16,185,129,0.2));
+            position: relative;
+        }
+
+        .bar span {
+            position: absolute;
+            bottom: -24px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        .dash-stats {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-top: 30px;
+        }
+
+        .dash-stat {
+            text-align: center;
+            padding: 16px 0;
+            border-top: 1px solid var(--line);
+        }
+
+        .dash-stat strong {
+            display: block;
+            font-size: 20px;
+            color: var(--accent);
+        }
+
+        .dash-stat span {
+            font-size: 11px;
+            color: var(--text-dim);
+        }
+
+        /* Before/After */
+        .compare {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 40px;
+        }
+
+        .compare-item {
+            padding: 30px 0;
+            border-top: 3px solid;
+        }
+
+        .compare-item.bad { border-color: #ef4444; }
+        .compare-item.good { border-color: var(--accent); }
+
+        .compare-item .big {
+            font-size: 48px;
+            font-weight: 800;
+        }
+
+        .compare-item.bad .big { color: #ef4444; }
+        .compare-item.good .big { color: var(--accent); }
+
+        /* 아키텍처 - 심플 */
+        .arch {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 20px;
+            padding: 40px 0;
+        }
+
+        .arch-item {
+            width: 100px;
+            text-align: center;
+        }
+
+        .arch-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 11px;
+            font-weight: 700;
+            color: #000;
+        }
+
+        .arch-icon.c1 { background: #61dafb; }
+        .arch-icon.c2 { background: #00c7b7; }
+        .arch-icon.c3 { background: #6db33f; }
+        .arch-icon.c4 { background: #f29111; }
+        .arch-icon.c5 { background: #8b5cf6; }
+
+        .arch-name {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        .arch-arrow {
+            font-size: 20px;
+            color: #fff;
+        }
+
+        /* 플로우 - 심플 */
+        .flow {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 24px;
+            margin-top: 40px;
+        }
+
+        .flow-item {
+            text-align: center;
+            position: relative;
+        }
+
+        .flow-item::after {
+            content: '→';
+            position: absolute;
+            right: -18px;
+            top: 10px;
+            color: var(--accent);
+            font-size: 18px;
+        }
+
+        .flow-item:last-child::after { display: none; }
+
+        .flow-num {
+            width: 32px;
+            height: 32px;
+            background: var(--accent);
+            color: #000;
+            font-size: 14px;
+            font-weight: 700;
+            line-height: 32px;
+            margin: 0 auto 12px;
+        }
+
+        .flow-title {
+            font-size: 14px;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .flow-desc {
+            font-size: 12px;
+            color: var(--text-dim);
+        }
+
+        /* 태그 - 심플 */
+        .tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 16px;
+            justify-content: center;
+        }
+
+        .tag {
+            font-size: 12px;
+            color: var(--text-dim);
+            padding: 8px 16px;
+            border: 1px solid var(--line);
+        }
+
+        .tag.main {
+            background: var(--accent);
+            border-color: var(--accent);
+            color: #000;
+        }
+
+        /* 차트 */
+        .line-chart {
+            height: 120px;
+            position: relative;
+            margin: 20px 0;
+        }
+
+        .line-chart svg {
+            width: 100%;
+            height: 100%;
+        }
+
+        .chart-line {
+            fill: none;
+            stroke: var(--accent);
+            stroke-width: 2.5;
+        }
+
+        .chart-fill {
+            fill: url(#g1);
+        }
+
+        .chart-dot {
+            fill: var(--accent);
+        }
+
+        /* 도넛 */
+        .donut {
+            width: 100px;
+            height: 100px;
+            position: relative;
+        }
+
+        .donut svg {
+            transform: rotate(-90deg);
+        }
+
+        .donut-bg { fill: none; stroke: #262626; stroke-width: 10; }
+        .donut-fg { fill: none; stroke: var(--accent); stroke-width: 10; stroke-linecap: round; stroke-dasharray: 251; stroke-dashoffset: 37; }
+
+        .donut-num {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            font-size: 22px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        /* 로드맵 */
+        .roadmap {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+        }
+
+        .phase {
+            padding-top: 20px;
+            border-top: 2px solid var(--accent);
+        }
+
+        .phase-num {
+            font-size: 11px;
+            color: var(--accent);
+            font-weight: 600;
+            margin-bottom: 10px;
+        }
+
+        .phase h4 {
+            font-size: 16px;
+            font-weight: 700;
+            margin-bottom: 8px;
+        }
+
+        .phase p {
+            font-size: 13px;
+            color: var(--text-dim);
+            line-height: 1.5;
+        }
+
+        /* 결과 */
+        .results {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 30px;
+            text-align: center;
+        }
+
+        .result-item strong {
+            display: block;
+            font-size: 42px;
+            font-weight: 800;
+            color: var(--accent);
+        }
+
+        .result-item span {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* 링크 */
+        .link-area {
+            background: var(--accent);
+            padding: 40px;
+            text-align: center;
+        }
+
+        .link-area a {
+            font-size: 32px;
+            font-weight: 800;
+            color: #000;
+            text-decoration: none;
+        }
+
+        .link-area p {
+            font-size: 13px;
+            color: rgba(0,0,0,0.5);
+            margin-top: 8px;
+        }
+
+        /* 메타 */
+        .meta {
+            display: flex;
+            gap: 40px;
+            margin-top: auto;
+            padding-top: 30px;
+            border-top: 1px solid var(--line);
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .meta strong {
+            color: var(--text);
+        }
+
+        @media print { .slide { margin: 0; } }
+    </style>
+</head>
+<body>
+
+<!-- 1. 표지 -->
+<div class="slide cover">
+    <div>
+        <h1>Social Impact<br>Tracker</h1>
+        <p class="sub">기업 ESG 데이터를 자동 수집하고<br>시각화하는 플랫폼</p>
+        <div class="cover-stats">
+            <div>
+                <div class="stat-num">3,985</div>
+                <div class="stat-label">등록 기업</div>
+            </div>
+            <div>
+                <div class="stat-num">60,775</div>
+                <div class="stat-label">수집 뉴스</div>
+            </div>
+            <div>
+                <div class="stat-num">7,585억</div>
+                <div class="stat-label">총 기부금</div>
+            </div>
+        </div>
+    </div>
+    <div class="mini-dash">
+        <div class="dash-head">연도별 온실가스 배출량 (tCO₂e)</div>
+        <div class="bar-chart">
+            <div class="bar" style="height: 37%;"><span>'21</span></div>
+            <div class="bar" style="height: 38%;"><span>'22</span></div>
+            <div class="bar" style="height: 37%;"><span>'23</span></div>
+            <div class="bar" style="height: 100%;"><span>'24</span></div>
+        </div>
+        <div class="dash-stats">
+            <div class="dash-stat">
+                <strong>15.1억</strong>
+                <span>누적 배출량 (톤)</span>
+            </div>
+            <div class="dash-stat">
+                <strong>100%</strong>
+                <span>검증률</span>
+            </div>
+            <div class="dash-stat">
+                <strong>5년</strong>
+                <span>데이터 기간</span>
+            </div>
+        </div>
+        <p style="font-size: 10px; color: #525252; margin-top: 12px; text-align: right;">* 금융감독원 DART 공시 데이터 기반</p>
+    </div>
+    <span class="page-num">1 / 7</span>
+</div>
+
+<!-- 2. 문제 정의 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">01</span>
+        <h2>프로젝트 배경</h2>
+    </div>
+    <div class="grid grid-2">
+        <div>
+            <div class="label">PROBLEM</div>
+            <h3>ESG 데이터, 왜 활용이 어려운가</h3>
+            <ul class="list">
+                <li>데이터가 사업보고서, 뉴스 등에 분산</li>
+                <li>금융감독원 DART 접근에 전문지식 필요</li>
+                <li>기업 ESG 현황 파악에 평균 2시간+ 소요</li>
+            </ul>
+            
+            <div style="margin-top: 40px;">
+                <div class="label">SOLUTION</div>
+                <h3>통합 ESG 데이터 플랫폼</h3>
+                <ul class="list">
+                    <li>흩어진 데이터를 자동으로 한곳에 수집</li>
+                    <li>누구나 쉽게 검색하고 비교하는 UI</li>
+                    <li>차트로 직관적 데이터 이해</li>
+                </ul>
+            </div>
+        </div>
+        <div>
+            <div class="label">BEFORE / AFTER</div>
+            <div class="compare">
+                <div class="compare-item bad">
+                    <div class="big">2시간+</div>
+                    <p style="margin-top: 12px;">DART 접속 → 검색 → 다운로드<br>→ 200페이지에서 찾기</p>
+                </div>
+                <div class="compare-item good">
+                    <div class="big">30초</div>
+                    <p style="margin-top: 12px;">SIT 접속 → 검색<br>→ 즉시 확인</p>
+                </div>
+            </div>
+            <div style="text-align: center; margin-top: 40px;">
+                <span class="stat-num">240배</span>
+                <span style="font-size: 16px; color: var(--text-dim); margin-left: 12px;">시간 단축</span>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">2 / 7</span>
+</div>
+
+<!-- 3. 시스템 아키텍처 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">02</span>
+        <h2>시스템 아키텍처</h2>
+    </div>
+    <div>
+        <div class="arch">
+            <div class="arch-item">
+                <div class="arch-icon c1">React<br>Vite</div>
+                <div class="arch-name">Frontend</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-item">
+                <div class="arch-icon c2">Netlify</div>
+                <div class="arch-name">CDN</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-item">
+                <div class="arch-icon c3">Spring<br>Boot</div>
+                <div class="arch-name">REST API</div>
+            </div>
+            <span class="arch-arrow">→</span>
+            <div class="arch-item">
+                <div class="arch-icon c4">MySQL</div>
+                <div class="arch-name">Database</div>
+            </div>
+            <span class="arch-arrow">←</span>
+            <div class="arch-item">
+                <div class="arch-icon c5">Dart<br>Naver</div>
+                <div class="arch-name">외부 API</div>
+            </div>
+        </div>
+
+        <div class="flow">
+            <div class="flow-item">
+                <div class="flow-num">1</div>
+                <div class="flow-title">수집</div>
+                <div class="flow-desc">WebClient로<br>외부 API 호출</div>
+            </div>
+            <div class="flow-item">
+                <div class="flow-num">2</div>
+                <div class="flow-title">정제</div>
+                <div class="flow-desc">중복 제거<br>NULL 처리</div>
+            </div>
+            <div class="flow-item">
+                <div class="flow-num">3</div>
+                <div class="flow-title">저장</div>
+                <div class="flow-desc">JPA로<br>MySQL 저장</div>
+            </div>
+            <div class="flow-item">
+                <div class="flow-num">4</div>
+                <div class="flow-title">조회</div>
+                <div class="flow-desc">REST API로<br>데이터 제공</div>
+            </div>
+            <div class="flow-item">
+                <div class="flow-num">5</div>
+                <div class="flow-title">시각화</div>
+                <div class="flow-desc">Recharts로<br>차트 렌더링</div>
+            </div>
+        </div>
+
+        <div class="grid grid-3" style="margin-top: 50px; gap: 40px; text-align: center;">
+            <div>
+                <div class="label">FRONTEND</div>
+                <div class="tags">
+                    <span class="tag main">React 18</span>
+                    <span class="tag">Vite</span>
+                    <span class="tag">Recharts</span>
+                    <span class="tag">Tailwind</span>
+                </div>
+            </div>
+            <div>
+                <div class="label">BACKEND</div>
+                <div class="tags">
+                    <span class="tag main">Spring Boot 3.2</span>
+                    <span class="tag">Java 17</span>
+                    <span class="tag">JPA</span>
+                </div>
+            </div>
+            <div>
+                <div class="label">INFRA</div>
+                <div class="tags">
+                    <span class="tag main">Railway</span>
+                    <span class="tag">Netlify</span>
+                    <span class="tag">MySQL</span>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">3 / 7</span>
+</div>
+
+<!-- 4. 데이터 시각화 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">03</span>
+        <h2>데이터 시각화</h2>
+    </div>
+    <div class="grid grid-2">
+        <div>
+            <div class="label">연도별 배출량 트렌드</div>
+            <div class="line-chart">
+                <svg viewBox="0 0 400 100" preserveAspectRatio="none">
+                    <defs>
+                        <linearGradient id="g1" x1="0%" y1="0%" x2="0%" y2="100%">
+                            <stop offset="0%" style="stop-color:#10b981;stop-opacity:0.3" />
+                            <stop offset="100%" style="stop-color:#10b981;stop-opacity:0" />
+                        </linearGradient>
+                    </defs>
+                    <path class="chart-fill" d="M0,65 L133,63 L266,66 L400,10 L400,100 L0,100 Z" />
+                    <path class="chart-line" d="M0,65 L133,63 L266,66 L400,10" />
+                    <circle class="chart-dot" cx="0" cy="65" r="4" />
+                    <circle class="chart-dot" cx="133" cy="63" r="4" />
+                    <circle class="chart-dot" cx="266" cy="66" r="4" />
+                    <circle class="chart-dot" cx="400" cy="10" r="4" />
+                </svg>
+            </div>
+            <div style="display: flex; justify-content: space-between; font-size: 12px; color: var(--text-dim);">
+                <span>2021</span><span>2022</span><span>2023</span><span>2024</span>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <div class="label">기업별 기부금 현황</div>
+                <div class="bar-chart" style="height: 100px;">
+                    <div class="bar" style="height: 100%;"><span>삼성</span></div>
+                    <div class="bar" style="height: 72%;"><span>SK</span></div>
+                    <div class="bar" style="height: 58%;"><span>LG</span></div>
+                    <div class="bar" style="height: 45%;"><span>현대</span></div>
+                    <div class="bar" style="height: 38%;"><span>롯데</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div>
+            <div class="label">데이터 수집 현황</div>
+            <div style="display: flex; align-items: center; gap: 30px; margin: 30px 0;">
+                <div class="donut">
+                    <svg width="100" height="100" viewBox="0 0 100 100">
+                        <circle class="donut-bg" cx="50" cy="50" r="40" />
+                        <circle class="donut-fg" cx="50" cy="50" r="40" />
+                    </svg>
+                    <div class="donut-num">85%</div>
+                </div>
+                <div>
+                    <h3 style="margin-bottom: 8px;">데이터 수집 성공률</h3>
+                    <p style="font-size: 14px;">전체 상장사 2,500+ 개 중<br>85% 수집 완료</p>
+                </div>
+            </div>
+
+            <div style="margin-top: 40px;">
+                <div class="label">구현된 기능</div>
+                <ul class="list">
+                    <li>통합 대시보드 (KPI 요약)</li>
+                    <li>긍정 뉴스 자동 수집 및 필터링</li>
+                    <li>온실가스 배출량 트렌드</li>
+                    <li>기업 간 기부금 비교</li>
+                    <li>실시간 기업 검색</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">4 / 7</span>
+</div>
+
+<!-- 5. 트러블슈팅 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">04</span>
+        <h2>문제 해결</h2>
+    </div>
+    <div class="grid grid-2">
+        <div>
+            <div class="label" style="color: #ef4444;">PROBLEM</div>
+            <h3>공공데이터포털 접속 불가</h3>
+            <p style="margin-bottom: 30px;">데이터센터 화재로 공공데이터포털 API가 장기간 중단되어 계획했던 데이터 수집이 불가능해졌습니다.</p>
+
+            <div class="label" style="color: var(--accent);">SOLUTION</div>
+            <h3>대체 데이터 소스 확보</h3>
+            <ul class="list">
+                <li>금융감독원 DART OpenAPI 활용</li>
+                <li>사업보고서 일괄 다운로드 로직 구현</li>
+                <li>필요 데이터 필드 자동 추출</li>
+            </ul>
+        </div>
+
+        <div>
+            <div class="label">배운 점</div>
+            <ul class="list">
+                <li><strong style="color: var(--text);">Plan B의 중요성</strong><br>외부 의존성에 대한 대안 항상 준비</li>
+                <li>&nbsp;<strong style="color: var(--text);">문제 해결 능력</strong><br>장애물을 기회로 전환하는 유연성</li>
+                <li><strong style="color: var(--text);">데이터 파이프라인</strong><br>수집 → 정제 → 저장 흐름 체계화</li>
+            </ul>
+
+            <div style="display: flex; gap: 40px; margin-top: 40px;">
+                <div style="text-align: center;">
+                    <div class="stat-num">↓50%</div>
+                    <div style="font-size: 12px; color: var(--text-dim);">API 의존도</div>
+                </div>
+                <div style="text-align: center;">
+                    <div class="stat-num">↑30%</div>
+                    <div style="font-size: 12px; color: var(--text-dim);">데이터 품질</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">5 / 7</span>
+</div>
+
+<!-- 6. 다음 개선 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">05</span>
+        <h2>다음 개선 제안</h2>
+    </div>
+    <div>
+        <div class="roadmap">
+            <div class="phase">
+                <div class="phase-num">PHASE 1</div>
+                <h4>AI 챗봇</h4>
+                <p>자연어로 질문하면 원하는 ESG 데이터를 찾는 대화형 인터페이스</p>
+            </div>
+            <div class="phase">
+                <div class="phase-num">PHASE 2</div>
+                <h4>기업 비교</h4>
+                <p>여러 기업 ESG 데이터를 Side-by-side 비교</p>
+            </div>
+            <div class="phase">
+                <div class="phase-num">PHASE 3</div>
+                <h4>알림 시스템</h4>
+                <p>관심 기업 신규 데이터 등록 시 알림 발송</p>
+            </div>
+            <div class="phase">
+                <div class="phase-num">PHASE 4</div>
+                <h4>Data Export</h4>
+                <p>데이터를 Excel, CSV로 다운로드</p>
+            </div>
+        </div>
+
+        <div class="grid grid-2" style="margin-top: 50px; gap: 60px;">
+            <div>
+                <div class="label">AI 챗봇 예시</div>
+                <div style="margin-top: 16px; padding: 20px; background: #111;">
+                    <p style="font-size: 14px; color: #737373; margin-bottom: 16px;">"삼성전자의 2023년 사회공헌 현황 알려줘"</p>
+                    <p style="font-size: 14px; color: var(--accent);">→ 삼성전자의 2023년 기부금 총액은 1,245억원이며, 주요 활동은 교육 지원, 의료 봉사...</p>
+                </div>
+            </div>
+            <div>
+                <div class="label">추가 개선 아이디어</div>
+                <ul class="list">
+                    <li>기업 간 ESG 점수 비교 대시보드</li>
+                    <li>PDF 리포트 자동 생성</li>
+                    <li>개발자용 API 제공</li>
+                    <li>모바일 앱 개발</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">6 / 7</span>
+</div>
+
+<!-- 7. 마무리 -->
+<div class="slide">
+    <div class="head">
+        <span class="head-num">06</span>
+        <h2>프로젝트 요약</h2>
+    </div>
+    <div class="grid grid-2">
+        <div>
+            <div class="results">
+                <div class="result-item">
+                    <strong>10+</strong>
+                    <span>React 페이지</span>
+                </div>
+                <div class="result-item">
+                    <strong>15+</strong>
+                    <span>API 엔드포인트</span>
+                </div>
+                <div class="result-item">
+                    <strong>6</strong>
+                    <span>DB 테이블</span>
+                </div>
+                <div class="result-item">
+                    <strong>2</strong>
+                    <span>외부 API</span>
+                </div>
+            </div>
+
+            <div style="margin-top: 50px;">
+                <div class="label">주요 성과</div>
+                <ul class="list">
+                    <li>Full-Stack 개발 (React + Spring Boot)</li>
+                    <li>외부 API 연동 및 데이터 파이프라인</li>
+                    <li>클라우드 배포 (Railway, Netlify)</li>
+                    <li>Recharts 데이터 시각화</li>
+                </ul>
+            </div>
+
+            <div style="margin-top: 30px;">
+                <div class="label">기술 스택</div>
+                <div class="tags">
+                    <span class="tag main">Java 17</span>
+                    <span class="tag main">Spring Boot</span>
+                    <span class="tag main">React 18</span>
+                    <span class="tag">MySQL</span>
+                    <span class="tag">Railway</span>
+                </div>
+            </div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; justify-content: center; gap: 30px;">
+            <div class="link-area">
+                <a href="https://sitrack.site" target="_blank">sitrack.site</a>
+                <p>클릭해서 직접 확인</p>
+            </div>
+
+            <div style="text-align: center; padding: 30px 0; border-top: 1px solid var(--line);">
+                <div style="font-size: 28px; font-weight: 800;">Full-Stack 개발</div>
+                <div style="font-size: 14px; color: var(--text-dim); margin-top: 8px;">기획 · 디자인 · 개발 · 배포</div>
+                <div style="font-size: 13px; color: var(--text-dim); margin-top: 16px;">개인 프로젝트 · 2개월</div>
+            </div>
+        </div>
+    </div>
+    <span class="page-num">7 / 7</span>
+</div>
+
+</body>
+</html>

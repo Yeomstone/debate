@@ -176,3 +176,30 @@ application-local.properties
 *.local.yml
 *.local.properties
 
+# Private/Personal Information
+private_info/
+resume.pdf
+**/resume.pdf
+염민규_*.pdf
+자기소개서*.pdf
+*_포트폴리오_*.pdf
+
+# Temporary/Analysis Files
+mockup/
+Files/
+temp_gradle/
+*.sql
+*.json
+!package.json
+!package-lock.json
+!tsconfig.json
+*.py
+*.ps1
+*.nginx
+*.conf
+*.service
+*.txt
+*.md
+!README.md
+!**/README.md
+

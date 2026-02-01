@@ -9,7 +9,6 @@ import { reportService } from "../services/reportService";
 import { format } from "date-fns";
 import "./DebateDetailPage.css";
 import ChatWidget from "../components/ChatWidget";
-import UserAvatar from "../components/common/UserAvatar";
 
 const DebateDetailPage = () => {
   const { id } = useParams();
@@ -84,22 +83,12 @@ const DebateDetailPage = () => {
   /**
    * HTML 콘텐츠의 이미지 URL을 현재 프로토콜에 맞게 변환
    * HTTPS 페이지에서 HTTP 이미지를 로드하는 Mixed Content 문제 방지
-   * IP 주소를 도메인으로 변환하여 SSL 인증서 경고 방지
    */
   const convertImageUrls = (htmlContent) => {
     if (!htmlContent) return htmlContent;
 
-    const currentOrigin = window.location.origin;
-    const currentHost = window.location.host;
-
     // 현재 페이지가 HTTPS인 경우
     if (window.location.protocol === "https:") {
-      // IP 주소를 도메인으로 변환 (13.209.254.24 -> debate.me.kr)
-      htmlContent = htmlContent.replace(
-        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
-        `src="https://debate.me.kr$1"`
-      );
-
       // HTTP 이미지 URL을 HTTPS로 변환
       htmlContent = htmlContent.replace(
         /src="http:\/\/([^"]+)"/g,
@@ -109,19 +98,13 @@ const DebateDetailPage = () => {
       // 상대 경로 이미지를 절대 경로로 변환 (프로토콜 포함)
       htmlContent = htmlContent.replace(
         /src="(\/[^"]+)"/g,
-        `src="${currentOrigin}$1"`
+        `src="${window.location.origin}$1"`
       );
     } else {
-      // HTTP 페이지에서도 IP 주소를 도메인으로 변환
-      htmlContent = htmlContent.replace(
-        /src="https?:\/\/13\.209\.254\.24(\/[^"]+)"/g,
-        `src="http://debate.me.kr$1"`
-      );
-
-      // 상대 경로를 절대 경로로 변환
+      // HTTP 페이지에서도 상대 경로를 절대 경로로 변환
       htmlContent = htmlContent.replace(
         /src="(\/[^"]+)"/g,
-        `src="${currentOrigin}$1"`
+        `src="${window.location.origin}$1"`
       );
     }
 
@@ -259,7 +242,6 @@ const DebateDetailPage = () => {
         title: debate.title,
         categoryName: debate.categoryName,
         nickname: debate.nickname,
-        profileImage: debate.profileImage, // 프로필 이미지 추가
         createdAt: debate.createdAt,
         bookmarkedAt: new Date().toISOString()
       });
@@ -281,7 +263,6 @@ const DebateDetailPage = () => {
         blockedUsers.push({
           id: debate.userId,
           nickname: debate.nickname,
-          profileImage: debate.profileImage, // 프로필 이미지 추가
           blockedAt: new Date().toISOString()
         });
         localStorage.setItem('blockedChatUsers', JSON.stringify(blockedUsers));
@@ -482,61 +463,20 @@ const DebateDetailPage = () => {
   const handleDeleteComment = async (commentId) => {
     if (!window.confirm("댓글을 정말로 삭제하시겠습니까?")) return;
 
-    // 삭제 대상 댓글 찾기 (대댓글 유무 확인)
-    const findComment = (list, targetId) => {
-      for (const c of list) {
-        if (c.id === targetId) return c;
-        if (c.replies && c.replies.length > 0) {
-          const found = findComment(c.replies, targetId);
-          if (found) return found;
-        }
-      }
-      return null;
-    };
-
-    const targetComment = findComment(comments, commentId);
-    const hasReplies = targetComment && targetComment.replies && targetComment.replies.length > 0;
-
     // 낙관적 업데이트
-    const softDeleteOrRemove = (list) => {
+    const deleteFromList = (list) => {
       return list
+        .filter((c) => c.id !== commentId)
         .map((c) => {
-          // 대상 댓글 처리
-          if (c.id === commentId) {
-            // 대댓글이 있는 부모 댓글: soft delete (삭제된 댓글입니다로 표시)
-            if (hasReplies) {
-              return {
-                ...c,
-                isDeleted: true,
-                content: "삭제된 댓글입니다.",
-                nickname: "(삭제)",
-              };
-            }
-            // 대댓글이 없는 경우: 완전 삭제 (null 반환 후 filter)
-            return null;
-          }
-          // 대댓글 내부에서 삭제 대상 찾기
           if (c.replies && c.replies.length > 0) {
-            return {
-              ...c,
-              replies: c.replies
-                .map((reply) => {
-                  if (reply.id === commentId) {
-                    // 대댓글 삭제: 완전 삭제
-                    return null;
-                  }
-                  return reply;
-                })
-                .filter(Boolean),
-            };
+            return { ...c, replies: deleteFromList(c.replies) };
           }
           return c;
-        })
-        .filter(Boolean); // null 제거 (완전 삭제된 댓글)
+        });
     };
 
     const prevComments = [...comments];
-    setComments((prev) => softDeleteOrRemove(prev));
+    setComments((prev) => deleteFromList(prev));
 
     // 댓글 수 감소 (화면상)
     setDebate((prev) => ({
@@ -589,31 +529,17 @@ const DebateDetailPage = () => {
       const replies = comment.replies || [];
       const isMyComment = user && String(user.id) === String(comment.userId);
       const isEditing = editingCommentId === comment.id;
-      // 삭제된 댓글이 아닌 경우에만 (수정됨) 표시
       const isModified =
-        !comment.isDeleted && comment.updatedAt && comment.updatedAt !== comment.createdAt;
+        comment.updatedAt && comment.updatedAt !== comment.createdAt;
 
       return (
         <div key={comment.id} className="comment-block">
           {/* 부모 댓글 */}
           <div className="comment-row root">
-            <div className="comment-avatar">
-              <UserAvatar
-                src={comment.profileImage}
-                alt={comment.nickname}
-                size="medium"
-              />
-            </div>
+            <div className="comment-avatar">{comment.nickname?.charAt(0)}</div>
             <div className="comment-main">
               <div className="comment-header">
-                <span className="name">
-                  <span
-                    className="clickable-nickname"
-                    onClick={() => navigate(`/users/${comment.userId}`)}
-                  >
-                    {comment.nickname}
-                  </span>
-                </span>
+                <span className="name">{comment.nickname}</span>
                 <span className="time">
                   {format(new Date(comment.createdAt), "MM.dd HH:mm")}
                   {isModified && " (수정됨)"}
@@ -752,30 +678,18 @@ const DebateDetailPage = () => {
                 const isMyReply =
                   user && String(user.id) === String(reply.userId);
                 const isReplyEditing = editingCommentId === reply.id;
-                // 삭제된 댓글이 아닌 경우에만 (수정됨) 표시
                 const isReplyModified =
-                  !reply.isDeleted && reply.updatedAt && reply.updatedAt !== reply.createdAt;
+                  reply.updatedAt && reply.updatedAt !== reply.createdAt;
 
                 return (
                   <div key={reply.id} className="comment-row reply">
                     <div className="reply-line"></div>
                     <div className="comment-avatar small">
-                      <UserAvatar
-                        src={reply.profileImage}
-                        alt={reply.nickname}
-                        size="small"
-                      />
+                      {reply.nickname?.charAt(0)}
                     </div>
                     <div className="comment-main">
                       <div className="comment-header">
-                        <span className="name">
-                          <span
-                            className="clickable-nickname"
-                            onClick={() => navigate(`/users/${reply.userId}`)}
-                          >
-                            {reply.nickname}
-                          </span>
-                        </span>
+                        <span className="name">{reply.nickname}</span>
                         <span className="time">
                           {format(new Date(reply.createdAt), "MM.dd HH:mm")}
                           {isReplyModified && " (수정됨)"}
@@ -989,18 +903,11 @@ const DebateDetailPage = () => {
                   {isMenuOpen && (
                     <div className="dropdown-menu">
                       <button
-                        onClick={() => {
-                          if (canEdit) {
-                            navigate(`/debate/${id}/edit`);
-                          } else {
-                            // 수정 불가 이유 표시
-                            if (debate.status === "ACTIVE") {
-                              alert("진행중인 토론은 수정할 수 없습니다.\n토론이 시작되기 전(예정 상태)에만 수정이 가능합니다.");
-                            } else if (debate.status === "ENDED") {
-                              alert("종료된 토론은 수정할 수 없습니다.");
-                            }
-                          }
-                        }}
+                        onClick={() =>
+                          canEdit && navigate(`/debate/${id}/edit`)
+                        }
+                        disabled={!canEdit}
+                        className={!canEdit ? "disabled" : ""}
                       >
                         수정하기
                       </button>
@@ -1040,18 +947,7 @@ const DebateDetailPage = () => {
 
           <div className="article-meta">
             <div className="meta-left">
-              <UserAvatar
-                src={debate.profileImage}
-                alt={debate.nickname}
-                size="small"
-                className="author-avatar"
-              />
-              <span
-                className="author-name clickable-nickname"
-                onClick={() => navigate(`/users/${debate.userId}`)}
-              >
-                {debate.nickname}
-              </span>
+              <span className="author-name">{debate.nickname}</span>
               <span className="separator">·</span>
               <span className="date">
                 {format(new Date(debate.createdAt), "yyyy.MM.dd")}
@@ -1233,10 +1129,7 @@ const DebateDetailPage = () => {
       </div>
 
       {/* 실시간 채팅 위젯 */}
-      <ChatWidget
-        debateId={parseInt(id)}
-        debateTitle={debate ? debate.title : ""}
-      />
+      <ChatWidget debateId={parseInt(id)} debateTitle={debate ? debate.title : ''} />
     </div>
   );
 };
